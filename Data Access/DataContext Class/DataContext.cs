@@ -16,12 +16,18 @@ namespace Data_Access.DataContext_Class
         }
 
         // DB tables
-        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Category>  Categories { get; set; }
+        public DbSet<SubCategory>  SubCategories { get; set; }
+        public DbSet<NestSubCategory>  NestSubCategories{ get; set; }
+        public DbSet<DynamicFormStructure>  DynamicFormStructures { get; set; }
+        public DbSet<ProductBrand>  ProductBrands{ get; set; }
 
 
 
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
     }
