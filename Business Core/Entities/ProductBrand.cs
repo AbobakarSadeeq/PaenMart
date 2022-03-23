@@ -12,9 +12,9 @@ namespace Business_Core.Entities
     {
         public int ProductBrandID { get; set; }
         public string? BrandName{ get; set; }
-        public DateTime? Created_At { get; set; }
         public int NestSubCategoryId { get; set; }
-        public virtual NestSubCategory NestSubCategory { get; set; }
+        public virtual NestSubCategory? NestSubCategory { get; set; }
+        public DateTime? Created_At { get; set; }
 
         
     }

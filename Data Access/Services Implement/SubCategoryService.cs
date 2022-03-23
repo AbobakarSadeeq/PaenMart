@@ -1,4 +1,4 @@
-﻿using Business_Core.Entities;
+﻿    using Business_Core.Entities;
 using Business_Core.IServices;
 using Business_Core.IUnitOfWork;
 using System;
@@ -27,8 +27,15 @@ namespace Data_Access.Services_Implement
 
         public async Task<IEnumerable<SubCategory>> GetSubCategories(int singleCategoryId)
         {
-            return await _unitofWork._SubCategoryRepository.GetAllSubCategoryByCategory(singleCategoryId);
+            return await _unitofWork._SubCategoryRepository
+                .GetAllSubCategoryByCategory(singleCategoryId);
 
+        }
+
+        public async Task<SubCategory> GetSubCategory(int Id)
+        {
+
+            return await _unitofWork._SubCategoryRepository.GetByKeyAsync(Id);
         }
 
         public async Task<SubCategory> InsertSubCategory(SubCategory subCategory)

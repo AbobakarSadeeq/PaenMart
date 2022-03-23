@@ -1,4 +1,7 @@
+using Business_Core.IUnitOfWork;
 using Data_Access.DataContext_Class;
+using Data_Access.Extensions;
+using Data_Access.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Presentation.AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +36,12 @@ var builder = WebApplication.CreateBuilder(args);
  builder.Services.AddDbContextPool<DataContext>(options =>
  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(AutoMappers));
 
 // Add services to the container.
-
+builder.Services.AddScoped<IUnitofWork, UnitofWork>();
+builder.Services.ConfigureServiceLayer();
 
 
 builder.Services.AddControllers();

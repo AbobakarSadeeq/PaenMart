@@ -1109,6 +1109,7 @@
         "dependencies": {
           "AutoMapper": "11.0.1",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "11.0.0",
+          "Business Core": "1.0.0",
           "Microsoft.AspNetCore.Http.Features": "5.0.15",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "6.0.3"
         },

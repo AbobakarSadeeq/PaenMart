@@ -22,7 +22,7 @@ namespace Data_Access.Repositories_Implement
         // Relationship
         public async Task<IEnumerable<SubCategory>> GetAllSubCategoryByCategory(int categoryId)
         {
-            return await _DataContext.SubCategories
+            return await _DataContext.SubCategories.Include(a=>a.NestSubCategories)
                 .Where(a => a.CategoryId == categoryId)
                 .ToListAsync();
 

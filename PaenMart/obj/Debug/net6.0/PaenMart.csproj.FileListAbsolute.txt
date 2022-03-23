@@ -41,7 +41,6 @@ C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\obj\Debug\net6.0\PaenMart.G
 C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\obj\Debug\net6.0\PaenMart.AssemblyInfoInputs.cache
 C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\obj\Debug\net6.0\PaenMart.AssemblyInfo.cs
 C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\obj\Debug\net6.0\PaenMart.csproj.CoreCompileInputs.cache
-C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\obj\Debug\net6.0\PaenMart.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\obj\Debug\net6.0\PaenMart.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\obj\Debug\net6.0\staticwebassets.build.json
 C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\obj\Debug\net6.0\staticwebassets.development.json
@@ -111,3 +110,4 @@ C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\bin\Debug\net6.0\Presentati
 C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\bin\Debug\net6.0\Business Core.pdb
 C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\bin\Debug\net6.0\Data Access.pdb
 C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\bin\Debug\net6.0\Presentation.pdb
+C:\Users\Abobakar\Documents\GitHub\PaenMart\PaenMart\obj\Debug\net6.0\PaenMart.MvcApplicationPartsAssemblyInfo.cs

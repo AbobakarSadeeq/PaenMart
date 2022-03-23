@@ -9,5 +9,7 @@ namespace Business_Core.IRepositories
 {
     public interface IProductBrandRepository : IRepository<int, ProductBrand>
     {
+        Task<IEnumerable<ProductBrand>> GetAllBrandByNestSubCategory(int categoryId);
+
     }
 }

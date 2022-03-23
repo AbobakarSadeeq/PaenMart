@@ -302,7 +302,11 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\Abobakar\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj": {
+                "projectPath": "C:\\Users\\Abobakar\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
