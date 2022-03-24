@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Data_Access.Migrations
 {
-    public partial class someTablesAddingToDatabase : Migration
+    public partial class addedManyToManyRelationship12 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,7 +15,7 @@ namespace Data_Access.Migrations
                 {
                     CategoryID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Created_At = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -24,18 +24,17 @@ namespace Data_Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DynamicFormStructures",
+                name: "ProductBrands",
                 columns: table => new
                 {
-                    DynamicFormStructureID = table.Column<int>(type: "int", nullable: false)
+                    ProductBrandID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FormStructure = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NestCategoryId = table.Column<int>(type: "int", nullable: false),
+                    BrandName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Created_At = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DynamicFormStructures", x => x.DynamicFormStructureID);
+                    table.PrimaryKey("PK_ProductBrands", x => x.ProductBrandID);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,7 +43,7 @@ namespace Data_Access.Migrations
                 {
                     SubCategoryID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     Created_At = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -65,20 +64,13 @@ namespace Data_Access.Migrations
                 {
                     NestSubCategoryID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NestSubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NestSubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SubCategoryId = table.Column<int>(type: "int", nullable: false),
-                    DynamicFormStructureId = table.Column<int>(type: "int", nullable: false),
                     Created_At = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_NestSubCategories", x => x.NestSubCategoryID);
-                    table.ForeignKey(
-                        name: "FK_NestSubCategories_DynamicFormStructures_DynamicFormStructureId",
-                        column: x => x.DynamicFormStructureId,
-                        principalTable: "DynamicFormStructures",
-                        principalColumn: "DynamicFormStructureID",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_NestSubCategories_SubCategories_SubCategoryId",
                         column: x => x.SubCategoryId,
@@ -88,30 +80,55 @@ namespace Data_Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductBrands",
+                name: "DynamicFormStructures",
                 columns: table => new
                 {
-                    ProductBrandID = table.Column<int>(type: "int", nullable: false)
+                    DynamicFormStructureID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BrandName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Created_At = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    NestSubCategoryId = table.Column<int>(type: "int", nullable: false)
+                    FormStructure = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NestSubCategoryId = table.Column<int>(type: "int", nullable: false),
+                    Created_At = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductBrands", x => x.ProductBrandID);
+                    table.PrimaryKey("PK_DynamicFormStructures", x => x.DynamicFormStructureID);
                     table.ForeignKey(
-                        name: "FK_ProductBrands_NestSubCategories_NestSubCategoryId",
+                        name: "FK_DynamicFormStructures_NestSubCategories_NestSubCategoryId",
                         column: x => x.NestSubCategoryId,
                         principalTable: "NestSubCategories",
                         principalColumn: "NestSubCategoryID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "NestSubCategoryProductBrands",
+                columns: table => new
+                {
+                    NestSubCategoryId = table.Column<int>(type: "int", nullable: false),
+                    ProductBrandId = table.Column<int>(type: "int", nullable: false),
+                    Created_At = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NestSubCategoryProductBrands", x => new { x.NestSubCategoryId, x.ProductBrandId });
+                    table.ForeignKey(
+                        name: "FK_NestSubCategoryProductBrands_NestSubCategories_NestSubCategoryId",
+                        column: x => x.NestSubCategoryId,
+                        principalTable: "NestSubCategories",
+                        principalColumn: "NestSubCategoryID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NestSubCategoryProductBrands_ProductBrands_ProductBrandId",
+                        column: x => x.ProductBrandId,
+                        principalTable: "ProductBrands",
+                        principalColumn: "ProductBrandID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_NestSubCategories_DynamicFormStructureId",
-                table: "NestSubCategories",
-                column: "DynamicFormStructureId",
+                name: "IX_DynamicFormStructures_NestSubCategoryId",
+                table: "DynamicFormStructures",
+                column: "NestSubCategoryId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -120,9 +137,9 @@ namespace Data_Access.Migrations
                 column: "SubCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductBrands_NestSubCategoryId",
-                table: "ProductBrands",
-                column: "NestSubCategoryId");
+                name: "IX_NestSubCategoryProductBrands_ProductBrandId",
+                table: "NestSubCategoryProductBrands",
+                column: "ProductBrandId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubCategories_CategoryId",
@@ -133,13 +150,16 @@ namespace Data_Access.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ProductBrands");
+                name: "DynamicFormStructures");
+
+            migrationBuilder.DropTable(
+                name: "NestSubCategoryProductBrands");
 
             migrationBuilder.DropTable(
                 name: "NestSubCategories");
 
             migrationBuilder.DropTable(
-                name: "DynamicFormStructures");
+                name: "ProductBrands");
 
             migrationBuilder.DropTable(
                 name: "SubCategories");

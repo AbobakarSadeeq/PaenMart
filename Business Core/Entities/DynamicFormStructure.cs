@@ -12,7 +12,7 @@ namespace Business_Core.Entities
     {
         public int DynamicFormStructureID { get; set; }
         public string? FormStructure { get; set; }
-        public int NestCategoryId { get; set; }
+        public int NestSubCategoryId { get; set; }
         public virtual NestSubCategory?  NestSubCategory { get; set; }
         public DateTime? Created_At { get; set; }
     }
@@ -27,7 +27,7 @@ namespace Business_Core.Entities
             // Relationship
             builder.HasOne<NestSubCategory>(s => s.NestSubCategory)
                 .WithOne(g => g.DynamicFormStructure)
-                .HasForeignKey<DynamicFormStructure>(a=>a.NestCategoryId)
+                .HasForeignKey<DynamicFormStructure>(a=>a.NestSubCategoryId)
                 .IsRequired(true);
 
             // Columns that required value to be inserted

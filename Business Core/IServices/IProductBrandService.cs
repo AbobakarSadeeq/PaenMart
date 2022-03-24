@@ -10,9 +10,13 @@ namespace Business_Core.IServices
     public interface IProductBrandService
     {
         Task<ProductBrand> InsertProductBrand(ProductBrand  productBrand);
-        Task<IEnumerable<ProductBrand>> GetProductBrands(int singleNestSubCategoryId);
+        Task<IEnumerable<Object>> GetProductBrands(int singleNestSubCategoryId);
         Task<ProductBrand> GetProductBrand(int Id);
         Task<ProductBrand> DeleteProductBrand(ProductBrand productBrand);
         Task<ProductBrand> UpdateProductBrand(ProductBrand OldData, ProductBrand UpdateData);
+
+        // NestSubCategoryProductBrand Crud
+        Task AddNestSubCategoryProductBrand(NestSubCategoryProductBrand data);
+
     }
 }

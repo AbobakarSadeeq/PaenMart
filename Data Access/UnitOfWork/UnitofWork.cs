@@ -25,6 +25,8 @@ namespace Data_Access.UnitOfWork
         public IDynamicFormStructureRepository _DynamicFormStructureRepository { get; init; }
         public UnitofWork(DataContext DataContext)
         {
+            _DataContext = DataContext;
+
             _CategoryRepository = new CategoryRepository(_DataContext);
             _SubCategoryRepository = new SubCategoryRepository(_DataContext);
             _NestSubCategoryRepository = new NestSubCategoryRepository(_DataContext);

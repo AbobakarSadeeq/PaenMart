@@ -18,10 +18,29 @@ namespace Data_Access.Repositories_Implement
             _DataContext = DataContext;
         }
 
-        public async Task<IEnumerable<ProductBrand>> GetAllBrandByNestSubCategory(int nestSubCategoryId)
+        
+
+        public async Task<IEnumerable<Object>> GetAllBrandByNestSubCategory(int nestSubCategoryId)
         {
-            return await _DataContext.ProductBrands
+            var findingNestSubCategoryId = await _DataContext.NestSubCategoryProductBrands
                 .Where(a => a.NestSubCategoryId == nestSubCategoryId).ToListAsync();
+
+            var gettingDataByNesSubCategoryIdOfBrand = from a in findingNestSubCategoryId
+                                                       join b in _DataContext.ProductBrands on a.ProductBrandId equals b.ProductBrandID
+                                                       select new
+                                                       {
+                                                           BrandID = b.ProductBrandID,
+                                                           BrandName = b.BrandName,
+                                                           Created_At = b.Created_At
+                                                       };
+            return gettingDataByNesSubCategoryIdOfBrand;
+        }
+
+        // NestSubCategoryProductBrand Crud
+
+        public async Task AddDataToNestSubProductBrand(NestSubCategoryProductBrand nestSubCategoryProductBrand)
+        {
+            await _DataContext.NestSubCategoryProductBrands.AddAsync(nestSubCategoryProductBrand);
         }
     }
 }

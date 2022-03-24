@@ -12,8 +12,7 @@ namespace Business_Core.Entities
     {
         public int ProductBrandID { get; set; }
         public string? BrandName{ get; set; }
-        public int NestSubCategoryId { get; set; }
-        public virtual NestSubCategory? NestSubCategory { get; set; }
+        public virtual ICollection<NestSubCategoryProductBrand>? NestSubCategoryProductBrand  { get; set; }
         public DateTime? Created_At { get; set; }
 
         
@@ -24,12 +23,6 @@ namespace Business_Core.Entities
         public void Configure(EntityTypeBuilder<ProductBrand> builder)
         {
             builder.HasKey(a => a.ProductBrandID);
-
-            // Relationship
-            builder.HasOne<NestSubCategory>(s => s.NestSubCategory)
-                .WithMany(g => g.ProductBrands)
-                .HasForeignKey(a => a.NestSubCategoryId)
-                .IsRequired(true);
 
             builder.Property(a => a.BrandName).IsRequired(true);
         }

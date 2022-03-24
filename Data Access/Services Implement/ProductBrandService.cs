@@ -1,6 +1,7 @@
 ﻿using Business_Core.Entities;
 using Business_Core.IServices;
 using Business_Core.IUnitOfWork;
+using Data_Access.DataContext_Class;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,13 @@ namespace Data_Access.Services_Implement
     public class ProductBrandService : IProductBrandService
     {
         private readonly IUnitofWork _unitofWork;
+
         public ProductBrandService(IUnitofWork unitOfWork)
         {
             _unitofWork = unitOfWork;
         }
+
+    
 
         public async Task<ProductBrand> DeleteProductBrand(ProductBrand productBrand)
         {
@@ -29,7 +33,7 @@ namespace Data_Access.Services_Implement
             return await _unitofWork._ProductBrandRepository.GetByKeyAsync(Id);
         }
 
-        public async Task<IEnumerable<ProductBrand>> GetProductBrands(int singleNestSubCategoryId)
+        public async Task<IEnumerable<Object>> GetProductBrands(int singleNestSubCategoryId)
         {
             return await _unitofWork._ProductBrandRepository.GetAllBrandByNestSubCategory(singleNestSubCategoryId);
         }
@@ -45,9 +49,17 @@ namespace Data_Access.Services_Implement
         public async Task<ProductBrand> UpdateProductBrand(ProductBrand OldData, ProductBrand UpdateData)
         {
             OldData.BrandName = UpdateData.BrandName;
-            OldData.NestSubCategoryId = UpdateData.NestSubCategoryId;
             await _unitofWork.CommitAsync();
             return OldData;
+        }
+
+        // NestSubCategoryProductBrand Crud
+
+        public async Task AddNestSubCategoryProductBrand(NestSubCategoryProductBrand data)
+        {
+            data.Created_At = DateTime.Now;
+           await  _unitofWork._ProductBrandRepository.AddDataToNestSubProductBrand(data);
+           await _unitofWork.CommitAsync();
         }
     }
 }

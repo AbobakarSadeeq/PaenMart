@@ -31,6 +31,7 @@ namespace Data_Access.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryID"), 1L, 1);
 
                     b.Property<string>("CategoryName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Created_At")
@@ -53,12 +54,16 @@ namespace Data_Access.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FormStructure")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NestCategoryId")
+                    b.Property<int>("NestSubCategoryId")
                         .HasColumnType("int");
 
                     b.HasKey("DynamicFormStructureID");
+
+                    b.HasIndex("NestSubCategoryId")
+                        .IsUnique();
 
                     b.ToTable("DynamicFormStructures");
                 });
@@ -74,10 +79,8 @@ namespace Data_Access.Migrations
                     b.Property<DateTime?>("Created_At")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DynamicFormStructureId")
-                        .HasColumnType("int");
-
                     b.Property<string>("NestSubCategoryName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SubCategoryId")
@@ -85,12 +88,27 @@ namespace Data_Access.Migrations
 
                     b.HasKey("NestSubCategoryID");
 
-                    b.HasIndex("DynamicFormStructureId")
-                        .IsUnique();
-
                     b.HasIndex("SubCategoryId");
 
                     b.ToTable("NestSubCategories");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.NestSubCategoryProductBrand", b =>
+                {
+                    b.Property<int>("NestSubCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductBrandId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Created_At")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("NestSubCategoryId", "ProductBrandId");
+
+                    b.HasIndex("ProductBrandId");
+
+                    b.ToTable("NestSubCategoryProductBrands");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.ProductBrand", b =>
@@ -102,17 +120,13 @@ namespace Data_Access.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductBrandID"), 1L, 1);
 
                     b.Property<string>("BrandName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Created_At")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("NestSubCategoryId")
-                        .HasColumnType("int");
-
                     b.HasKey("ProductBrandID");
-
-                    b.HasIndex("NestSubCategoryId");
 
                     b.ToTable("ProductBrands");
                 });
@@ -132,6 +146,7 @@ namespace Data_Access.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SubCategoryName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SubCategoryID");
@@ -141,34 +156,45 @@ namespace Data_Access.Migrations
                     b.ToTable("SubCategories");
                 });
 
-            modelBuilder.Entity("Business_Core.Entities.NestSubCategory", b =>
+            modelBuilder.Entity("Business_Core.Entities.DynamicFormStructure", b =>
                 {
-                    b.HasOne("Business_Core.Entities.DynamicFormStructure", "DynamicFormStructure")
-                        .WithOne("NestSubCategory")
-                        .HasForeignKey("Business_Core.Entities.NestSubCategory", "DynamicFormStructureId")
+                    b.HasOne("Business_Core.Entities.NestSubCategory", "NestSubCategory")
+                        .WithOne("DynamicFormStructure")
+                        .HasForeignKey("Business_Core.Entities.DynamicFormStructure", "NestSubCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("NestSubCategory");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.NestSubCategory", b =>
+                {
                     b.HasOne("Business_Core.Entities.SubCategory", "SubCategory")
                         .WithMany("NestSubCategories")
                         .HasForeignKey("SubCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DynamicFormStructure");
-
                     b.Navigation("SubCategory");
                 });
 
-            modelBuilder.Entity("Business_Core.Entities.ProductBrand", b =>
+            modelBuilder.Entity("Business_Core.Entities.NestSubCategoryProductBrand", b =>
                 {
                     b.HasOne("Business_Core.Entities.NestSubCategory", "NestSubCategory")
-                        .WithMany("ProductBrands")
+                        .WithMany("NestSubCategoryProductBrand")
                         .HasForeignKey("NestSubCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Business_Core.Entities.ProductBrand", "ProductBrand")
+                        .WithMany("NestSubCategoryProductBrand")
+                        .HasForeignKey("ProductBrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("NestSubCategory");
+
+                    b.Navigation("ProductBrand");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.SubCategory", b =>
@@ -187,14 +213,16 @@ namespace Data_Access.Migrations
                     b.Navigation("SubCategories");
                 });
 
-            modelBuilder.Entity("Business_Core.Entities.DynamicFormStructure", b =>
-                {
-                    b.Navigation("NestSubCategory");
-                });
-
             modelBuilder.Entity("Business_Core.Entities.NestSubCategory", b =>
                 {
-                    b.Navigation("ProductBrands");
+                    b.Navigation("DynamicFormStructure");
+
+                    b.Navigation("NestSubCategoryProductBrand");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.ProductBrand", b =>
+                {
+                    b.Navigation("NestSubCategoryProductBrand");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.SubCategory", b =>

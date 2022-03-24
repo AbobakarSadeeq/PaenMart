@@ -12,13 +12,12 @@ namespace Presentation.ViewModel
         public int SubCategoryID { get; set; }
         public string? SubCategoryName { get; set; }
         public int CategoryId { get; set; }
-        public Category? Category { get; set; }
         public DateTime? Created_At { get; set; }
-        public ICollection<NestSubCategory> NestSubCategories { get; set; }
+        public ICollection<NestSubCategoryViewModel> NestSubCategories { get; set; }
 
         public SubCategoryViewModel()
         {
-            NestSubCategories = new HashSet<NestSubCategory>();
+            NestSubCategories = new HashSet<NestSubCategoryViewModel>();
         }
     }
 }

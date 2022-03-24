@@ -1,3 +1,4 @@
+using Business_Core.IServices;
 using Business_Core.IUnitOfWork;
 using Data_Access.DataContext_Class;
 using Data_Access.Extensions;
@@ -43,6 +44,11 @@ builder.Services.AddAutoMapper(typeof(AutoMappers));
 builder.Services.AddScoped<IUnitofWork, UnitofWork>();
 builder.Services.ConfigureServiceLayer();
 
+// Nested Include Error.
+builder.Services.AddControllersWithViews()
+ .AddNewtonsoftJson(options =>
+ options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -73,11 +79,13 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // middleware of connection with client-side
-app.UseCors(a => {
-    a.WithOrigins(builder.Configuration["ApplicationSettings:Client_URL"].ToString())
+ 
+app.UseCors(a=> {
+    a.WithOrigins(builder.Configuration.GetValue<string>("Client_URL"))
         .AllowAnyHeader()
         .AllowAnyMethod();
 });
+
 
 app.UseAuthorization();
 
