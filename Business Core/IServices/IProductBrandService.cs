@@ -18,5 +18,10 @@ namespace Business_Core.IServices
         // NestSubCategoryProductBrand Crud
         Task AddNestSubCategoryProductBrand(NestSubCategoryProductBrand data);
 
+        IQueryable<NestSubCategoryProductBrandJoining> GetAllNestSubAndProductBrands();
+
+        Task DeleteDataFromNestAndBrand(int nestSubCategoryId, int productBrandId);
+
+
     }
 }

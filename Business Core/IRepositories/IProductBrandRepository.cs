@@ -15,5 +15,9 @@ namespace Business_Core.IRepositories
 
         Task AddDataToNestSubProductBrand(NestSubCategoryProductBrand nestSubCategoryProductBrand);
 
+        IQueryable<NestSubCategoryProductBrandJoining> GetAllNestSubAndProductBrands();
+
+        Task DeleteSingleNestSubCategoryProductBrand(int nestSubId, int brandId);
+
     }
 }

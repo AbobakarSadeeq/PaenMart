@@ -68,6 +68,24 @@ namespace PaenMart.Controllers
             return Ok("Done Inserting!");
         }
 
+        [HttpGet("GetAllProductsWithNestSubCategory")]
+
+        public IActionResult GetAllProductsWithNestSubCategory()
+        {
+            var gettingData =  _productBrandService.GetAllNestSubAndProductBrands();
+            return Ok(gettingData);
+        }
+
+        [HttpDelete("DeleteNestSubAndProductBrand")]
+        public async Task<IActionResult> DeleteNestSubAndProductBrand(NestSubCategoryProductBrandViewModel viewModelForIds)
+        {
+           await _productBrandService.DeleteDataFromNestAndBrand(viewModelForIds.NestSubCategoryId, viewModelForIds.ProductBrandId);
+            return Ok("Done Deleting");
+        }
+
+
+
+
 
 
     }
