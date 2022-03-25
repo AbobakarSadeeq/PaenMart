@@ -1,6 +1,7 @@
 ﻿using Business_Core.Entities;
 using Business_Core.IServices;
 using Business_Core.IUnitOfWork;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,9 @@ namespace Data_Access.Services_Implement
             return dynamicFormStructure;
         }
 
-        public async Task<IEnumerable<DynamicFormStructure>> GetDynamicFormAllStructures()
+        public async Task<IEnumerable<GetDynamicFormStructure>> GetDynamicFormAllStructures()
         {
-            throw new NotImplementedException();
+           return await _unitofWork._DynamicFormStructureRepository.GetAllFormStructure();
         }
 
         public async Task<DynamicFormStructure> GetDynamicFormStructure(int Id)

@@ -10,7 +10,7 @@ namespace Business_Core.IServices
     public interface IDynamicFormStructureService
     {
         Task<DynamicFormStructure> InsertDynamicFormStructure(DynamicFormStructure dynamicFormStructure);
-        Task<IEnumerable<DynamicFormStructure>> GetDynamicFormAllStructures();
+        Task<IEnumerable<GetDynamicFormStructure>> GetDynamicFormAllStructures();
         Task<DynamicFormStructure> GetDynamicFormStructure(int Id);
         Task<DynamicFormStructure> DeleteDynamicFormStructure(DynamicFormStructure dynamicFormStructure);
         Task<DynamicFormStructure> UpdateDynamicFormStructure(DynamicFormStructure OldData, DynamicFormStructure UpdateData);

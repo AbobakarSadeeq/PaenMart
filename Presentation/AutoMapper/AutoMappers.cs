@@ -19,6 +19,7 @@ namespace Presentation.AutoMapper
             CreateMap<ProductBrand, ProductBrandViewModel>().ReverseMap();
             CreateMap<DynamicFormStructure, DynamicFormStructureViewModel>().ReverseMap();
             CreateMap<NestSubCategoryProductBrand, NestSubCategoryProductBrandViewModel>().ReverseMap();
+            CreateMap<GetDynamicFormStructure, GetDynamicFormStructureViewModel>().ReverseMap();
 
         }
     }

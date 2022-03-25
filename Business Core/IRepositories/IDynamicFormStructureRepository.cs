@@ -9,6 +9,6 @@ namespace Business_Core.IRepositories
 {
     public interface IDynamicFormStructureRepository : IRepository<int, DynamicFormStructure>
     {
-
+        Task<IEnumerable<GetDynamicFormStructure>> GetAllFormStructure();
     }
 }
