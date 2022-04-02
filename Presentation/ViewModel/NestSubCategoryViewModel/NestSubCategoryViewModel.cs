@@ -13,9 +13,6 @@ namespace Presentation.ViewModel
         public string? NestSubCategoryName { get; set; }
         public int SubCategoryId { get; set; }
         public DateTime? Created_At { get; set; }
-        public NestSubCategoryViewModel()
-        {
-
-        }
+ 
     }
 }

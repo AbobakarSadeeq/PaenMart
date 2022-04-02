@@ -11,6 +11,8 @@ namespace Business_Core.IServices
     {
         Task<SubCategory> InsertSubCategory(SubCategory subCategory);
         Task<IEnumerable<SubCategory>> GetSubCategories(int singleCategoryId);
+        Task<IEnumerable<SubCategory>> GetSubCategoriesForTable();
+
         Task<SubCategory> GetSubCategory(int Id);
 
         Task<SubCategory> DeleteSubCategory(SubCategory subCategory);

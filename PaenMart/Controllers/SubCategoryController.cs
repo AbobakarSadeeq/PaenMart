@@ -19,6 +19,24 @@ namespace PaenMart.Controllers
             _subCategoryService = subCategoryService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllSubCategoryForTable()
+        {
+            var fullDetails = await _subCategoryService.GetSubCategoriesForTable();
+            var convertingData = _mapper.Map<List<GetSubCategoriesViewModel>>(fullDetails);
+            return Ok(convertingData);
+        }
+
+        [HttpGet("GetSingleSubCategory/{singleSubCategoryId}")]
+
+        public async Task<IActionResult> GetSingleSubCategory(int singleSubCategoryId)
+        {
+            var getSubCategoryData = await _subCategoryService.GetSubCategory(singleSubCategoryId);
+            var convertData = _mapper.Map<SubCategoryViewModel>(getSubCategoryData);
+            return Ok(convertData);
+        }
+
+
         [HttpGet("{singleCategoryId}")]
         public async Task<IActionResult> GetAllSubCategory(int singleCategoryId)
         {
@@ -31,7 +49,7 @@ namespace PaenMart.Controllers
         {
             var convertingModel = _mapper.Map<SubCategory>(viewModel);
             await _subCategoryService.InsertSubCategory(convertingModel);
-            return Ok("Done Inserting!");
+            return Ok();
         }
 
         [HttpDelete("{Id}")]
@@ -39,7 +57,7 @@ namespace PaenMart.Controllers
         {
             var findingData = await _subCategoryService.GetSubCategory(Id);
             await _subCategoryService.DeleteSubCategory(findingData);
-            return Ok("Done Deleting!");
+            return Ok();
         }
 
         [HttpPut]
@@ -48,7 +66,7 @@ namespace PaenMart.Controllers
             var newData = _mapper.Map<SubCategory>(viewModel);
             var oldData = await _subCategoryService.GetSubCategory(newData.SubCategoryID);
             await _subCategoryService.UpdateSubCategory(oldData, newData);
-            return Ok("Done Updating!");
+            return Ok();
         }
     }
 }

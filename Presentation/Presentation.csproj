@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Business Core\Business Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModel\NestSubCategoryViewModel\" />
+  </ItemGroup>
+
 </Project>

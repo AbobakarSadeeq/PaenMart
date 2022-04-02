@@ -24,5 +24,11 @@ namespace Data_Access.Repositories_Implement
                 .Where(a => a.SubCategoryId == subCategoryId)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<NestSubCategory>> GetNestSubCategory()
+        {
+            return await _DataContext.NestSubCategories.Include(a => a.SubCategory)
+               .ToListAsync();
+        }
     }
 }

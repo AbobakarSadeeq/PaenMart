@@ -38,7 +38,7 @@ namespace PaenMart.Controllers
         {
             var convertingModel = _mapper.Map<ProductBrand>(viewModel);
             await _productBrandService.InsertProductBrand(convertingModel);
-            return Ok("Done Inserting!");
+            return Ok();
         }
 
         [HttpDelete("{Id}")]
@@ -46,7 +46,7 @@ namespace PaenMart.Controllers
         {
             var findingData = await _productBrandService.GetProductBrand(Id);
             await _productBrandService.DeleteProductBrand(findingData);
-            return Ok("Done Deleting!");
+            return Ok();
         }
 
         [HttpPut]
@@ -55,7 +55,7 @@ namespace PaenMart.Controllers
             var newData = _mapper.Map<ProductBrand>(viewModel);
             var oldData = await _productBrandService.GetProductBrand(newData.ProductBrandID);
             await _productBrandService.UpdateProductBrand(oldData, newData);
-            return Ok("Done Updating!");
+            return Ok();
         }
 
         // NestSubCategoryProductBrand Table Crud
@@ -65,7 +65,7 @@ namespace PaenMart.Controllers
         {
             var convertingModel = _mapper.Map<NestSubCategoryProductBrand>(viewModel);
             await _productBrandService.AddNestSubCategoryProductBrand(convertingModel);
-            return Ok("Done Inserting!");
+            return Ok();
         }
 
         [HttpGet("GetAllProductsWithNestSubCategory")]
@@ -80,7 +80,7 @@ namespace PaenMart.Controllers
         public async Task<IActionResult> DeleteNestSubAndProductBrand(NestSubCategoryProductBrandViewModel viewModelForIds)
         {
            await _productBrandService.DeleteDataFromNestAndBrand(viewModelForIds.NestSubCategoryId, viewModelForIds.ProductBrandId);
-            return Ok("Done Deleting");
+            return Ok();
         }
 
 

@@ -10,7 +10,9 @@ namespace Business_Core.IServices
     public interface INestSubCategoryService
     {
         Task<NestSubCategory> InsertNestSubCategory(NestSubCategory nestSubCategory);
-        Task<IEnumerable<NestSubCategory>> GetNestSubCategories(int singleSubCategoryId);
+        Task<IEnumerable<NestSubCategory>> GetNestSubCategoriesBySubCategoryId(int singleSubCategoryId);
+        Task<IEnumerable<NestSubCategory>> GetNestSubCategories();
+
         Task<NestSubCategory> GetNestSubCategory(int Id);
         Task<NestSubCategory> DeleteNestSubCategory(NestSubCategory nestSubCategory);
         Task<NestSubCategory> UpdateNestSubCategory(NestSubCategory OldData, NestSubCategory UpdateData);

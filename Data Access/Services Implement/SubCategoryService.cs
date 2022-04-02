@@ -32,6 +32,12 @@ namespace Data_Access.Services_Implement
 
         }
 
+        public async Task<IEnumerable<SubCategory>> GetSubCategoriesForTable()
+        {
+            return await _unitofWork._SubCategoryRepository.GetAllSubCategories(); 
+
+        }
+
         public async Task<SubCategory> GetSubCategory(int Id)
         {
 

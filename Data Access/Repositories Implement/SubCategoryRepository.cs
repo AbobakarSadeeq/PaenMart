@@ -19,6 +19,12 @@ namespace Data_Access.Repositories_Implement
         _DataContext = DataContext;
     }
 
+        public async Task<IEnumerable<SubCategory>> GetAllSubCategories()
+        {
+            return await _DataContext.SubCategories.Include(a => a.Category)
+                .ToListAsync();
+        }
+
         // Relationship
         public async Task<IEnumerable<SubCategory>> GetAllSubCategoryByCategory(int categoryId)
         {

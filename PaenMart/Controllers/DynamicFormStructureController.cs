@@ -43,7 +43,7 @@ namespace PaenMart.Controllers
         {
             var convertingModel = _mapper.Map<DynamicFormStructure>(viewModel);
             await _formStructureService.InsertDynamicFormStructure(convertingModel);
-            return Ok("Done Inserting!");
+            return Ok();
         }
 
         [HttpDelete("{Id}")]
@@ -51,7 +51,7 @@ namespace PaenMart.Controllers
         {
             var findingData = await _formStructureService.GetDynamicFormStructure(Id);
             await _formStructureService.DeleteDynamicFormStructure(findingData);
-            return Ok("Done Deleting!");
+            return Ok();
         }
 
         [HttpPut]
@@ -60,7 +60,7 @@ namespace PaenMart.Controllers
             var newData = _mapper.Map<DynamicFormStructure>(viewModel);
             var oldData = await _formStructureService.GetDynamicFormStructure(newData.DynamicFormStructureID);
             await _formStructureService.UpdateDynamicFormStructure(oldData, newData);
-            return Ok("Done Updating!");
+            return Ok();
         }
     }
 }

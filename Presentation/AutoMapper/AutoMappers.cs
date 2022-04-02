@@ -14,12 +14,25 @@ namespace Presentation.AutoMapper
         public AutoMappers()
         {
             CreateMap<Category, CategoryViewModel>().ReverseMap();
+
             CreateMap<SubCategory, SubCategoryViewModel>().ReverseMap();
+            CreateMap<SubCategory, GetSubCategoriesViewModel>()
+               .ForMember(a => a.CategoryName,
+ opts => opts.MapFrom(src => src.Category.CategoryName));
+
             CreateMap<NestSubCategory, NestSubCategoryViewModel>().ReverseMap();
+            CreateMap<NestSubCategoryProductBrand, NestSubCategoryProductBrandViewModel>().ReverseMap();
+            CreateMap<NestSubCategory, GetNestSubCategoryViewModel>()
+               .ForMember(a => a.SubCategoryName,
+ opts => opts.MapFrom(src => src.SubCategory.SubCategoryName));
+
+
             CreateMap<ProductBrand, ProductBrandViewModel>().ReverseMap();
             CreateMap<DynamicFormStructure, DynamicFormStructureViewModel>().ReverseMap();
-            CreateMap<NestSubCategoryProductBrand, NestSubCategoryProductBrandViewModel>().ReverseMap();
+
+
             CreateMap<GetDynamicFormStructure, GetDynamicFormStructureViewModel>().ReverseMap();
+            
 
         }
     }

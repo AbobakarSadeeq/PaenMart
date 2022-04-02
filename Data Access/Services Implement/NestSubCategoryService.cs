@@ -24,7 +24,12 @@ namespace Data_Access.Services_Implement
             return nestSubCategory;
         }
 
-        public async Task<IEnumerable<NestSubCategory>> GetNestSubCategories(int singleSubCategoryId)
+        public async Task<IEnumerable<NestSubCategory>> GetNestSubCategories()
+        {
+            return await _unitofWork._NestSubCategoryRepository.GetNestSubCategory();
+        }
+
+        public async Task<IEnumerable<NestSubCategory>> GetNestSubCategoriesBySubCategoryId(int singleSubCategoryId)
         {
             return await _unitofWork._NestSubCategoryRepository
                  .GetAllNestSubCategoryBySubCategory(singleSubCategoryId);

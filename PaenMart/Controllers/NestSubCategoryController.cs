@@ -19,6 +19,15 @@ namespace PaenMart.Controllers
             _nestSubCategoryService = subCategoryService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetNestSubCategories()
+        {
+            var gettingListOfNestSubCategory = await _nestSubCategoryService.GetNestSubCategories();
+            var convertingData = _mapper.Map<List<NestSubCategoryViewModel>>(gettingListOfNestSubCategory);
+            return Ok(convertingData);
+        }
+
+
         [HttpGet("{singleNestSubCategoryId}")]
         public async Task<IActionResult> GetSingleNestSubCategory(int singleNestSubCategoryId)
         {
@@ -31,7 +40,7 @@ namespace PaenMart.Controllers
         {
             var convertingModel = _mapper.Map<NestSubCategory>(viewModel);
             await _nestSubCategoryService.InsertNestSubCategory(convertingModel);
-            return Ok("Done Inserting!");
+            return Ok();
         }
 
         [HttpDelete("{Id}")]
@@ -39,7 +48,7 @@ namespace PaenMart.Controllers
         {
             var findingData = await _nestSubCategoryService.GetNestSubCategory(Id);
             await _nestSubCategoryService.DeleteNestSubCategory(findingData);
-            return Ok("Done Deleting!");
+            return Ok();
         }
 
         [HttpPut]
@@ -48,7 +57,7 @@ namespace PaenMart.Controllers
             var newData = _mapper.Map<NestSubCategory>(viewModel);
             var oldData = await _nestSubCategoryService.GetNestSubCategory(newData.NestSubCategoryID);
             await _nestSubCategoryService.UpdateNestSubCategory(oldData, newData);
-            return Ok("Done Updating!");
+            return Ok();
         }
     }
 }

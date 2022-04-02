@@ -10,6 +10,7 @@ namespace Business_Core.IRepositories
     public interface INestSubCategoryRepository : IRepository<int, NestSubCategory>
     {
         Task<IEnumerable<NestSubCategory>> GetAllNestSubCategoryBySubCategory(int subCategoryId);
+        Task<IEnumerable<NestSubCategory>> GetNestSubCategory();
 
     }
 }
