@@ -2,11 +2,6 @@
 using Business_Core.IRepositories;
 using Data_Access.DataContext_Class;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Data_Access.Repositories_Implement
 {
@@ -18,7 +13,7 @@ namespace Data_Access.Repositories_Implement
             _DataContext = DataContext;
         }
 
-        
+
 
         public async Task<IEnumerable<Object>> GetAllBrandByNestSubCategory(int nestSubCategoryId)
         {
@@ -37,6 +32,12 @@ namespace Data_Access.Repositories_Implement
             return gettingDataByNesSubCategoryIdOfBrand;
         }
 
+
+        public async Task<IEnumerable<ProductBrand>> GetListOfBrands()
+        {
+            return await _DataContext.ProductBrands.ToListAsync();
+        }
+
         // NestSubCategoryProductBrand Crud
 
         public async Task AddDataToNestSubProductBrand(NestSubCategoryProductBrand nestSubCategoryProductBrand)
@@ -44,8 +45,9 @@ namespace Data_Access.Repositories_Implement
             await _DataContext.NestSubCategoryProductBrands.AddAsync(nestSubCategoryProductBrand);
         }
 
-        public IQueryable<NestSubCategoryProductBrandJoining> GetAllNestSubAndProductBrands()
+        public async Task<IList<ConvertFilterNestCategoryAndBrandData>> GetAllNestSubAndProductBrands()
         {
+
             var joiningMultipleTables = from np in _DataContext.NestSubCategoryProductBrands
                                         join pb in _DataContext.ProductBrands on np.ProductBrandId equals pb.ProductBrandID
                                         join nsc in _DataContext.NestSubCategories on np.NestSubCategoryId equals nsc.NestSubCategoryID
@@ -57,7 +59,40 @@ namespace Data_Access.Repositories_Implement
                                             ProductBrandId = np.ProductBrandId,
                                             NestSubCategoryProductBrandCreated_At = np.Created_At
                                         };
-            return joiningMultipleTables;
+
+            var myDict = new Dictionary<string, List<FilterNestSubCategoryWithBrand>>();
+            var list = await joiningMultipleTables.ToListAsync();
+            var temp = new List<FilterNestSubCategoryWithBrand>();
+
+            foreach (var item in list)
+            {
+                if (myDict.ContainsKey(item.BrandName))
+                {
+                    var oldValue = myDict[item.BrandName];
+                    oldValue.Add(new FilterNestSubCategoryWithBrand { BrandName = item.BrandName, BrandId = item.ProductBrandId, NestCategoryId = item.NestSubCategoryId, NestCategoryName = item.NestSubCategoryName });
+                    myDict[item.BrandName] = oldValue; // old value replaced with new now
+
+                }
+                else
+                {
+                    temp.Add(new FilterNestSubCategoryWithBrand { BrandName = item.BrandName, BrandId = item.ProductBrandId, NestCategoryId = item.NestSubCategoryId, NestCategoryName = item.NestSubCategoryName });
+                    myDict.Add(item.BrandName, temp);
+
+                }
+                temp = new List<FilterNestSubCategoryWithBrand>();
+
+            }
+
+            var convertingToList = new List<ConvertFilterNestCategoryAndBrandData>();
+
+            foreach (var item in myDict)
+            {
+                convertingToList.Add(new ConvertFilterNestCategoryAndBrandData { BrandName = item.Key, NestSubCategoryWithBrands = item.Value });
+            }
+
+
+
+            return convertingToList;
 
         }
 
@@ -67,5 +102,11 @@ namespace Data_Access.Repositories_Implement
                 .FirstOrDefaultAsync(a => a.NestSubCategoryId == nestSubId && a.ProductBrandId == brandId);
             _DataContext.NestSubCategoryProductBrands.Remove(findingDataForDeletion);
         }
+
+
+
+
     }
+
+
 }

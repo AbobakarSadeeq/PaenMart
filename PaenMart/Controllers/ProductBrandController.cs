@@ -27,6 +27,14 @@ namespace PaenMart.Controllers
             return Ok(convertingData);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GeBrands()
+        {
+            var getDataFromServer = await _productBrandService.GetAllBrands();
+            var convertingData = _mapper.Map<List<ProductBrandViewModel>>(getDataFromServer);
+            return Ok(convertingData);
+        }
+
         [HttpGet("GetAllProductBrandByNestSubCategory/{nestSubCategoryId}")]
         public async Task<IActionResult> GetAllProductBrandByNestSubCategory(int nestSubCategoryId)
         {
@@ -70,13 +78,13 @@ namespace PaenMart.Controllers
 
         [HttpGet("GetAllProductsWithNestSubCategory")]
 
-        public IActionResult GetAllProductsWithNestSubCategory()
+        public async Task<IActionResult> GetAllProductsWithNestSubCategory()
         {
-            var gettingData =  _productBrandService.GetAllNestSubAndProductBrands();
+            var gettingData = await  _productBrandService.GetAllNestSubAndProductBrands();
             return Ok(gettingData);
         }
 
-        [HttpDelete("DeleteNestSubAndProductBrand")]
+        [HttpPut("DeleteNestSubAndProductBrand")]
         public async Task<IActionResult> DeleteNestSubAndProductBrand(NestSubCategoryProductBrandViewModel viewModelForIds)
         {
            await _productBrandService.DeleteDataFromNestAndBrand(viewModelForIds.NestSubCategoryId, viewModelForIds.ProductBrandId);

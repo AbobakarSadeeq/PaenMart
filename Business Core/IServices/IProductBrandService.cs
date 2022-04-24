@@ -11,6 +11,7 @@ namespace Business_Core.IServices
     {
         Task<ProductBrand> InsertProductBrand(ProductBrand  productBrand);
         Task<IEnumerable<Object>> GetProductBrands(int singleNestSubCategoryId);
+        Task<IEnumerable<ProductBrand>> GetAllBrands();
         Task<ProductBrand> GetProductBrand(int Id);
         Task<ProductBrand> DeleteProductBrand(ProductBrand productBrand);
         Task<ProductBrand> UpdateProductBrand(ProductBrand OldData, ProductBrand UpdateData);
@@ -18,7 +19,7 @@ namespace Business_Core.IServices
         // NestSubCategoryProductBrand Crud
         Task AddNestSubCategoryProductBrand(NestSubCategoryProductBrand data);
 
-        IQueryable<NestSubCategoryProductBrandJoining> GetAllNestSubAndProductBrands();
+        Task<IList<ConvertFilterNestCategoryAndBrandData>> GetAllNestSubAndProductBrands();
 
         Task DeleteDataFromNestAndBrand(int nestSubCategoryId, int productBrandId);
 

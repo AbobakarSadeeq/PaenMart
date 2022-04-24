@@ -23,7 +23,7 @@ namespace PaenMart.Controllers
         public async Task<IActionResult> GetNestSubCategories()
         {
             var gettingListOfNestSubCategory = await _nestSubCategoryService.GetNestSubCategories();
-            var convertingData = _mapper.Map<List<NestSubCategoryViewModel>>(gettingListOfNestSubCategory);
+            var convertingData = _mapper.Map<List<GetNestSubCategoryViewModel>>(gettingListOfNestSubCategory);
             return Ok(convertingData);
         }
 

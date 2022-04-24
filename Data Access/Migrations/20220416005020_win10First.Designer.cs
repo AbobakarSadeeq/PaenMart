@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220324180506_addedManyToManyRelationship12")]
-    partial class addedManyToManyRelationship12
+    [Migration("20220416005020_win10First")]
+    partial class win10First
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

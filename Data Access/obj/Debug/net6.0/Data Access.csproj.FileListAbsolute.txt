@@ -15,3 +15,20 @@ C:\Users\Abobakar\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\ref\Dat
 C:\Users\Abobakar\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Business Core.dll
 C:\Users\Abobakar\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Business Core.pdb
 C:\Users\Abobakar\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.csproj.CopyComplete
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Data Access.deps.json
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Data Access.runtimeconfig.json
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Data Access.dll
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Data Access.pdb
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Business Core.dll
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Business Core.pdb
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.csproj.AssemblyReference.cache
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.AssemblyInfoInputs.cache
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.AssemblyInfo.cs
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.csproj.CoreCompileInputs.cache
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.csproj.CopyComplete
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.dll
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\refint\Data Access.dll
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.pdb
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.genruntimeconfig.cache
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\ref\Data Access.dll

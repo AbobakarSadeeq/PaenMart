@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Data_Access.Migrations
 {
-    public partial class addedManyToManyRelationship12 : Migration
+    public partial class win10First : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

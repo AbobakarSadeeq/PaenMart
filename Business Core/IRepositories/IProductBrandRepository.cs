@@ -10,12 +10,13 @@ namespace Business_Core.IRepositories
     public interface IProductBrandRepository : IRepository<int, ProductBrand>
     {
         Task<IEnumerable<Object>> GetAllBrandByNestSubCategory(int categoryId);
+        Task<IEnumerable<ProductBrand>> GetListOfBrands();
 
         // NestSubCategoryProductBrand Crud
 
         Task AddDataToNestSubProductBrand(NestSubCategoryProductBrand nestSubCategoryProductBrand);
 
-        IQueryable<NestSubCategoryProductBrandJoining> GetAllNestSubAndProductBrands();
+        Task<IList<ConvertFilterNestCategoryAndBrandData>> GetAllNestSubAndProductBrands();
 
         Task DeleteSingleNestSubCategoryProductBrand(int nestSubId, int brandId);
 

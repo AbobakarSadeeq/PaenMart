@@ -13,3 +13,18 @@ C:\Users\Abobakar\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\ref\Pr
 C:\Users\Abobakar\Documents\GitHub\PaenMart\Presentation\bin\Debug\net6.0\Business Core.dll
 C:\Users\Abobakar\Documents\GitHub\PaenMart\Presentation\bin\Debug\net6.0\Business Core.pdb
 C:\Users\Abobakar\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\Presentation.csproj.CopyComplete
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\bin\Debug\net6.0\Presentation.deps.json
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\bin\Debug\net6.0\Presentation.dll
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\bin\Debug\net6.0\Presentation.pdb
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\bin\Debug\net6.0\Business Core.dll
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\bin\Debug\net6.0\Business Core.pdb
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\Presentation.csproj.AssemblyReference.cache
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\Presentation.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\Presentation.AssemblyInfoInputs.cache
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\Presentation.AssemblyInfo.cs
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\Presentation.csproj.CoreCompileInputs.cache
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\Presentation.csproj.CopyComplete
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\Presentation.dll
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\refint\Presentation.dll
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\Presentation.pdb
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\ref\Presentation.dll

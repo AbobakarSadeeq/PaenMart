@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Abobakar\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj": {}
+    "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Abobakar\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj": {
+    "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Abobakar\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj",
+        "projectUniqueName": "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj",
         "projectName": "Business Core",
-        "projectPath": "C:\\Users\\Abobakar\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj",
-        "packagesPath": "C:\\Users\\Abobakar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Abobakar\\Documents\\GitHub\\PaenMart\\Business Core\\obj\\",
+        "projectPath": "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj",
+        "packagesPath": "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Business Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Abobakar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Abobakar Sadeeq\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -72,7 +72,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }

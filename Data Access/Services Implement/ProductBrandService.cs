@@ -62,15 +62,20 @@ namespace Data_Access.Services_Implement
            await _unitofWork.CommitAsync();
         }
 
-        public IQueryable<NestSubCategoryProductBrandJoining> GetAllNestSubAndProductBrands()
+        public async Task<IList<ConvertFilterNestCategoryAndBrandData>> GetAllNestSubAndProductBrands()
         {
-            return  _unitofWork._ProductBrandRepository.GetAllNestSubAndProductBrands();
+            return await  _unitofWork._ProductBrandRepository.GetAllNestSubAndProductBrands();
         }
 
         public async Task DeleteDataFromNestAndBrand(int nestSubCategoryId, int productBrandId)
         {
             await _unitofWork._ProductBrandRepository.DeleteSingleNestSubCategoryProductBrand(nestSubCategoryId, productBrandId);
             await _unitofWork.CommitAsync();
+        }
+
+        public async Task<IEnumerable<ProductBrand>> GetAllBrands()
+        {
+            return await _unitofWork._ProductBrandRepository.GetListOfBrands();
         }
     }
 }
