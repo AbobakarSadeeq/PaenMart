@@ -21,6 +21,8 @@ namespace Data_Access.UnitOfWork
         public INestSubCategoryRepository _NestSubCategoryRepository { get; init; }
 
         public IProductBrandRepository _ProductBrandRepository { get; init; }
+        public IProductRepository _ProductRepository { get; init; }
+
 
         public IDynamicFormStructureRepository _DynamicFormStructureRepository { get; init; }
         public UnitofWork(DataContext DataContext)
@@ -32,6 +34,8 @@ namespace Data_Access.UnitOfWork
             _NestSubCategoryRepository = new NestSubCategoryRepository(_DataContext);
             _ProductBrandRepository = new ProductBrandRepository(_DataContext);
             _DynamicFormStructureRepository = new DynamicFormStructureRepository(_DataContext);
+            _ProductRepository = new ProductRepository(_DataContext);
+
 
         }
 

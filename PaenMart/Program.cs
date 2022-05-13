@@ -33,7 +33,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Injecting AppSetting
 
-    // database connection
+// database connection
  builder.Services.AddDbContextPool<DataContext>(options =>
  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

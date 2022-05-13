@@ -14,6 +14,8 @@ namespace Business_Core.IUnitOfWork
         INestSubCategoryRepository _NestSubCategoryRepository { get; }
         IProductBrandRepository _ProductBrandRepository { get; }
         IDynamicFormStructureRepository _DynamicFormStructureRepository { get; }
+        IProductRepository  _ProductRepository { get; }
+
 
         Task<int> CommitAsync();
         void Dispose();

@@ -18,6 +18,8 @@ namespace Data_Access.Extensions
             services.AddTransient<INestSubCategoryService, NestSubCategoryService>();
             services.AddTransient<IProductBrandService, ProductBrandService>();
             services.AddTransient<IDynamicFormStructureService, DynamicFormStructureService>();
+            services.AddTransient<IProductService, ProductService>();
+
         }
 
     }

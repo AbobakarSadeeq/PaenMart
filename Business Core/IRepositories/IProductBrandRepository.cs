@@ -1,4 +1,5 @@
 ﻿using Business_Core.Entities;
+using Business_Core.Entities.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -111,7 +111,83 @@ namespace Data_Access.Migrations
                     b.ToTable("NestSubCategoryProductBrands");
                 });
 
-            modelBuilder.Entity("Business_Core.Entities.ProductBrand", b =>
+            modelBuilder.Entity("Business_Core.Entities.Product.Product", b =>
+                {
+                    b.Property<int>("ProductID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductID"), 1L, 1);
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Created_At")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Modified_at")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NestSubCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductBrandId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SellUnits")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("StockAvailiability")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ProductID");
+
+                    b.HasIndex("NestSubCategoryId");
+
+                    b.HasIndex("ProductBrandId");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Product.Product_Images.ProductImages", b =>
+                {
+                    b.Property<int>("ProductImageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductImageID"), 1L, 1);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("URL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProductImageID");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Product.ProductBrand", b =>
                 {
                     b.Property<int>("ProductBrandID")
                         .ValueGeneratedOnAdd()
@@ -186,7 +262,7 @@ namespace Data_Access.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Business_Core.Entities.ProductBrand", "ProductBrand")
+                    b.HasOne("Business_Core.Entities.Product.ProductBrand", "ProductBrand")
                         .WithMany("NestSubCategoryProductBrand")
                         .HasForeignKey("ProductBrandId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -195,6 +271,36 @@ namespace Data_Access.Migrations
                     b.Navigation("NestSubCategory");
 
                     b.Navigation("ProductBrand");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Product.Product", b =>
+                {
+                    b.HasOne("Business_Core.Entities.NestSubCategory", "NestSubCategory")
+                        .WithMany()
+                        .HasForeignKey("NestSubCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Business_Core.Entities.Product.ProductBrand", "ProductBrand")
+                        .WithMany("Products")
+                        .HasForeignKey("ProductBrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NestSubCategory");
+
+                    b.Navigation("ProductBrand");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Product.Product_Images.ProductImages", b =>
+                {
+                    b.HasOne("Business_Core.Entities.Product.Product", "Product")
+                        .WithMany("ProductImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.SubCategory", b =>
@@ -220,9 +326,16 @@ namespace Data_Access.Migrations
                     b.Navigation("NestSubCategoryProductBrand");
                 });
 
-            modelBuilder.Entity("Business_Core.Entities.ProductBrand", b =>
+            modelBuilder.Entity("Business_Core.Entities.Product.Product", b =>
+                {
+                    b.Navigation("ProductImages");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Product.ProductBrand", b =>
                 {
                     b.Navigation("NestSubCategoryProductBrand");
+
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.SubCategory", b =>

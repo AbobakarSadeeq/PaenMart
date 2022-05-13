@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Business_Core.Entities;
 
 namespace Business_Core.Entities
 {
@@ -14,11 +15,12 @@ namespace Business_Core.Entities
         public int NestSubCategoryID { get; set; }
         public string? NestSubCategoryName { get; set; }
         public int SubCategoryId { get; set; }
-        public virtual SubCategory?  SubCategory { get; set; }
-        public virtual DynamicFormStructure?  DynamicFormStructure{ get; set; }
+        public virtual SubCategory? SubCategory { get; set; }
+        public virtual DynamicFormStructure? DynamicFormStructure { get; set; }
         public virtual ICollection<NestSubCategoryProductBrand>? NestSubCategoryProductBrand { get; set; }
+
         public DateTime? Created_At { get; set; }
-      
+
     }
 
     public class NestSubCategoryConfiguration : IEntityTypeConfiguration<NestSubCategory>
@@ -34,8 +36,8 @@ namespace Business_Core.Entities
                 .HasForeignKey(a => a.SubCategoryId)
                 .IsRequired(true);
 
-             
-       
+
+
 
             // Columns that required value to be inserted
             builder.Property(p => p.NestSubCategoryName).IsRequired(true);

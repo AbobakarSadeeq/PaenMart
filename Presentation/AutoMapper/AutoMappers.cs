@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Business_Core.Entities;
+using Business_Core.Entities.Product;
 using Presentation.ViewModel;
+using Presentation.ViewModel.ProductViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +34,10 @@ namespace Presentation.AutoMapper
 
 
             CreateMap<GetDynamicFormStructure, GetDynamicFormStructureViewModel>().ReverseMap();
-            
+            CreateMap<Product, ProductViewModel>().ReverseMap();
+            CreateMap<GetProduct, GetProductViewModel>().ReverseMap();
+
+         
 
         }
     }

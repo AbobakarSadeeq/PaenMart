@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business_Core.Entities;
+using Business_Core.Entities.Product;
 using Business_Core.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

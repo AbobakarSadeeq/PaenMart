@@ -1,4 +1,5 @@
 ﻿using Business_Core.Entities;
+using Business_Core.Entities.Product;
 using Business_Core.IRepositories;
 using Data_Access.DataContext_Class;
 using Microsoft.EntityFrameworkCore;

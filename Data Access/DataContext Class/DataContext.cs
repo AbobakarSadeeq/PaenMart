@@ -1,4 +1,6 @@
 ﻿using Business_Core.Entities;
+using Business_Core.Entities.Product;
+using Business_Core.Entities.Product.Product_Images;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,7 +24,8 @@ namespace Data_Access.DataContext_Class
         public DbSet<DynamicFormStructure>  DynamicFormStructures { get; set; }
         public DbSet<ProductBrand>  ProductBrands{ get; set; }
         public DbSet<NestSubCategoryProductBrand> NestSubCategoryProductBrands { get; set; }
-
+        public DbSet<Product>  Products { get; set; }
+        public DbSet<ProductImages>  ProductImages { get; set; }
 
 
 
@@ -36,6 +39,9 @@ namespace Data_Access.DataContext_Class
             modelBuilder.ApplyConfiguration(new NestSubCategoryProductBrandConfiguration());
             modelBuilder.ApplyConfiguration(new ProductBrandConfiguration());
             modelBuilder.ApplyConfiguration(new SubCategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductImagesConfiguration());
+
 
         }
 

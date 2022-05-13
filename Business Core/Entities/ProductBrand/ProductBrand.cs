@@ -5,17 +5,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Business_Core.Entities;
 
-namespace Business_Core.Entities
+namespace Business_Core.Entities.Product
 {
     public class ProductBrand
     {
         public int ProductBrandID { get; set; }
-        public string? BrandName{ get; set; }
-        public virtual ICollection<NestSubCategoryProductBrand>? NestSubCategoryProductBrand  { get; set; }
+        public string? BrandName { get; set; }
+        public virtual ICollection<NestSubCategoryProductBrand>? NestSubCategoryProductBrand { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
+
+
         public DateTime? Created_At { get; set; }
 
-        
+
     }
 
     public class ProductBrandConfiguration : IEntityTypeConfiguration<ProductBrand>
