@@ -18,6 +18,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Presentation.AppSettingClasses;
 using Presentation.AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -32,9 +33,10 @@ using System.Threading.Tasks;
 var builder = WebApplication.CreateBuilder(args);
 
 // Injecting AppSetting
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 // database connection
- builder.Services.AddDbContextPool<DataContext>(options =>
+builder.Services.AddDbContextPool<DataContext>(options =>
  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // AutoMapper

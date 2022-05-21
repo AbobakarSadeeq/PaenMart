@@ -15,6 +15,8 @@ namespace Business_Core.Entities
         public int NestSubCategoryId { get; set; }
         public virtual NestSubCategory?  NestSubCategory { get; set; }
         public DateTime? Created_At { get; set; }
+        public bool ProductSize { get; set; }
+
     }
 
     public class DynamicFormStructureConfiguration : IEntityTypeConfiguration<DynamicFormStructure>

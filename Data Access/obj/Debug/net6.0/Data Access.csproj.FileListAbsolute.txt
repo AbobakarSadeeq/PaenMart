@@ -32,3 +32,5 @@ C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\
 C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.pdb
 C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\Data Access.genruntimeconfig.cache
 C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\ref\Data Access.dll
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Presentation.dll
+C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Presentation.pdb

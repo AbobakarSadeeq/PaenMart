@@ -19,6 +19,7 @@ namespace Business_Core.Entities.Product
         public bool StockAvailiability { get; set; }
         public int Quantity { get; set; }
         public int SellUnits { get; set; }
+
         public int ProductBrandId { get; set; }
         public virtual ProductBrand?  ProductBrand { get; set; }
         public int NestSubCategoryId { get; set; }

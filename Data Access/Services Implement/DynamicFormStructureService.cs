@@ -46,6 +46,7 @@ namespace Data_Access.Services_Implement
         public async Task<DynamicFormStructure> UpdateDynamicFormStructure(DynamicFormStructure OldData, DynamicFormStructure UpdateData)
         {
             OldData.FormStructure = UpdateData.FormStructure;
+            OldData.ProductSize = UpdateData.ProductSize;
             await _unitofWork.CommitAsync();
             return OldData;
         }

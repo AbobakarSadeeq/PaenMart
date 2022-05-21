@@ -1,4 +1,5 @@
 ﻿using Business_Core.Entities.Product;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +10,15 @@ namespace Business_Core.IServices
 {
     public interface IProductService
     {
-        Task<Product> InsertProduct(Product product);
+        Task<Product> InsertProduct(Product product, List<IFormFile> File);
         Task<IEnumerable<Product>> GetProduct();
         Task<Product> GetProduct(int Id);
-        Task<Product> DeleteProduct(Product product);
+        void DeleteProductData(int Id);
         Task<Product> UpdateProduct(Product OldData, Product UpdateData);
 
         Task<GetProduct> GetSingleProduct(int Id);
 
-        Task<IEnumerable<GetProduct>> GetProducts();
+        Task<IEnumerable<Product>> GetProducts(PageSelectedAndNestCategoryId pageSelectedAndNestCategoryId);
         Task<IEnumerable<GetProduct>> GetProductsByBrandId(int brandId);
         Task<IEnumerable<GetProduct>> GetProductsByNestSubCategoryId(int NestCategoryId);
 

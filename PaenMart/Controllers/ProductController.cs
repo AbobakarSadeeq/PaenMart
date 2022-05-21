@@ -21,10 +21,10 @@ namespace PaenMart.Controllers
 
         [HttpPost]
         
-        public async Task<IActionResult> AddProduct(ProductViewModel viewModel)
+        public async Task<IActionResult> AddProduct([FromForm] AddProductViewModel viewModel)
         {
             var convertingModel = _mapper.Map<Product>(viewModel);
-            await _productService.InsertProduct(convertingModel);
+            await _productService.InsertProduct(convertingModel, viewModel.File);
             return Ok();
         }
 
@@ -40,8 +40,7 @@ namespace PaenMart.Controllers
         [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteProduct(int Id)
         {
-            var findingData = await _productService.GetProduct(Id);
-            await _productService.DeleteProduct(findingData);
+            _productService.DeleteProductData(Id);
             return Ok();
         }
 
@@ -52,12 +51,15 @@ namespace PaenMart.Controllers
             return Ok(detailData);
         }
 
+
         // getAll products with its brand and with its nest-sub-category to show in list and show that data only in admin getproducts table.
-        [HttpGet]
-        public async Task<IActionResult> GetProducts()
-        {
-            var productList = await _productService.GetProducts();
-            return Ok(productList);
+        [HttpGet("GetSelectedCategoryProducts")]
+        public async Task<IActionResult> GetSelectedCategoryProducts([FromQuery] PageSelectedAndNestCategoryId nestCategoryIdAndPageSelected)
+        {  
+            var productList = await _productService.GetProducts(nestCategoryIdAndPageSelected);
+            var convertProductData = _mapper.Map<List<GetProductForAdminViewModel>>(productList);
+            int countProductsRows = nestCategoryIdAndPageSelected.singleCategoryTotalProductsCount;
+            return Ok(new {productData = convertProductData, countProducts = countProductsRows });
         }
 
         // get the products by brand, when clicked on brand then get those whose are related.
@@ -66,7 +68,6 @@ namespace PaenMart.Controllers
         {
             var detailData = await _productService.GetProductsByBrandId(brandId);
             var convertProductData = _mapper.Map<List<GetProductViewModel>>(detailData);
-
             return Ok(convertProductData);
         }
 

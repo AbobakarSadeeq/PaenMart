@@ -1,6 +1,7 @@
 ﻿using Business_Core.Entities.Product;
 using Business_Core.IServices;
 using Business_Core.IUnitOfWork;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,10 @@ namespace Data_Access.Services_Implement
         {
             _unitofWork = unitOfWork;
         }
-        public async Task<Product> DeleteProduct(Product product)
+        public void DeleteProductData(int Id)
         {
-            _unitofWork._ProductRepository.DeleteAsync(product);
-            await _unitofWork.CommitAsync();
-            return product;
+            _unitofWork._ProductRepository.DeleteProduct(Id);
+             _unitofWork.CommitAsync();
         }
 
         public async Task<IEnumerable<Product>> GetProduct()
@@ -33,11 +33,14 @@ namespace Data_Access.Services_Implement
             return await _unitofWork._ProductRepository.GetByKeyAsync(Id);
         }
 
-        public async Task<Product> InsertProduct(Product product)
+        public async Task<Product> InsertProduct(Product product, List<IFormFile> File)
         {
             product.Created_At = DateTime.Now;
+            var getImagesForAdding = _unitofWork._ProductRepository.AddProductImage(File);
+            product.ProductImages = getImagesForAdding;
             await _unitofWork._ProductRepository.AddAsync(product);
             await _unitofWork.CommitAsync();
+            
             return product;
         }
 
@@ -63,9 +66,11 @@ namespace Data_Access.Services_Implement
             return await _unitofWork._ProductRepository.GetProductById(Id);
         }
 
-        public async Task<IEnumerable<GetProduct>> GetProducts()
+
+
+        public async Task<IEnumerable<Product>> GetProducts(PageSelectedAndNestCategoryId pageSelectedAndNestCategoryId)
         {
-            return await _unitofWork._ProductRepository.GetAll();
+            return await _unitofWork._ProductRepository.GetAll(pageSelectedAndNestCategoryId);
         }
 
         public async Task<IEnumerable<GetProduct>> GetProductsByBrandId(int brandId)

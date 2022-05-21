@@ -24,7 +24,6 @@ namespace PaenMart.Controllers
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetSingleFormStructure(int Id)
         {
-            var useThisStringToSendDataToDatabase = "{'userId': 1,'id': 1,'title': 'sunt aut facere repellat provident occaecati excepturi optio reprehenderit','body': 'quia et suscipitnsuscipit recusandae consequuntur expedita et cumnreprehenderit molestiae ut ut quas totamnostrum rerumesautem sunt rem eveniet architecto'}";
             var detailData = await _formStructureService.GetDynamicFormStructure(Id);
             var convertingData = _mapper.Map<DynamicFormStructureViewModel>(detailData);
             return Ok(convertingData);

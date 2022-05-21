@@ -1,8 +1,13 @@
 ﻿using Business_Core.Entities.Product;
 using Business_Core.Entities.Product.Product_Images;
 using Business_Core.IRepositories;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Data_Access.DataContext_Class;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Presentation.AppSettingClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,54 +19,107 @@ namespace Data_Access.Repositories_Implement
     public class ProductRepository : Repository<int, Product>, IProductRepository
     {
         private readonly DataContext _DataContext;
-        public ProductRepository(DataContext DataContext) : base(DataContext)
+        private readonly Cloudinary _cloudinary;
+        private readonly IOptions<CloudinarySettings> _cloudinaryConfig;
+
+
+
+        public ProductRepository(DataContext DataContext, IOptions<CloudinarySettings> cloudinaryConfig) : base(DataContext)
         {
             _DataContext = DataContext;
+            _cloudinaryConfig = cloudinaryConfig;
+
+
+            Account acc = new Account(
+                 _cloudinaryConfig.Value.CloudName,
+                  _cloudinaryConfig.Value.ApiKey,
+                  _cloudinaryConfig.Value.ApiSecret
+                                                      );
+
+            _cloudinary = new Cloudinary(acc);
         }
 
-        // for admin specific table only 
-        public async Task<IEnumerable<GetProduct>> GetAll()
+        // for Admin Side getAll product table
+        public async Task<IEnumerable<Product>> GetAll(PageSelectedAndNestCategoryId pageSelectedAndNestCategoryId)
         {
-            var gettingProducts = await _DataContext.Products.Include(a => a.ProductBrand)
-                .Include(a => a.ProductImages).ToListAsync();
-            // .Include(b=>b.NestSubCategory) not required data
-            List<GetProduct> filterdProducts = new List<GetProduct>();
-            List<GetProductImages> getOnlyOneImage = new List<GetProductImages>();
-            foreach (var item in gettingProducts)
+            int findingSelectedCategoryProductNo = _DataContext.Products
+                .Where(a => a.NestSubCategoryId == pageSelectedAndNestCategoryId.NestCategoryId)
+                .Count();
+            pageSelectedAndNestCategoryId.singleCategoryTotalProductsCount = findingSelectedCategoryProductNo;
+
+            // 12 rows on first page and so on...
+            if (pageSelectedAndNestCategoryId.PageSelectedNo == 1)
             {
-
-                if (item.ProductImages.Count > 0)
-                {
-                    getOnlyOneImage.Add(new GetProductImages
-                    {
-                        ProductId = item.ProductImages[0].ProductId,
-                        ProductImageID = item.ProductImages[0].ProductImageID,
-                        PublicId = item.ProductImages[0].PublicId,
-                        URL = item.ProductImages[0].URL
-                    });
-                }
+                var gettingProducts = await _DataContext.Products.Include(a => a.ProductBrand)
+               .Include(b => b.NestSubCategory)
+               .Where(a => a.NestSubCategoryId == pageSelectedAndNestCategoryId.NestCategoryId)
+               .Take(12).ToListAsync();
+                return gettingProducts;
 
 
-                filterdProducts.Add(new GetProduct
-                {
-                    ProductBrandName = item.ProductBrand.BrandName,
-                    //   NestSubCategoryName = item.NestSubCategory.NestSubCategoryName,
-                    ProductName = item.ProductName,
-                    Color = item.Color,
-                    Price = item.Price,
-                    StockAvailiability = item.StockAvailiability,
-                    Quantity = item.Quantity,
-                    SellUnits = item.SellUnits,
-                    ProductDetails = item.ProductDetails,
-                    ProductID = item.ProductID,
-                    Modified_at = item.Modified_at,
-                    Created_At = item.Created_At,
-                    GetProductImagess = getOnlyOneImage
-                });
-                getOnlyOneImage = new List<GetProductImages>();
             }
-            return filterdProducts;
+            else
+            {
+                var gettingProducts = await _DataContext.Products.Include(a => a.ProductBrand)
+                              .Include(b => b.NestSubCategory)
+                              .Where(a => a.NestSubCategoryId == pageSelectedAndNestCategoryId.NestCategoryId)
+                              .Skip((pageSelectedAndNestCategoryId.PageSelectedNo - 1) * 12).Take(12).ToListAsync();
+                return gettingProducts;
+            }
+
+            
+              
+          
+
+
+            
+             
+
+
+
+
+            //var gettingProducts = await _DataContext.Products.Include(a => a.ProductBrand)
+            //    .Include(a => a.ProductImages).ToListAsync();
+            //// .Include(b=>b.NestSubCategory) not required data
+            //List<GetProduct> filterdProducts = new List<GetProduct>();
+            //List<GetProductImages> getOnlyOneImage = new List<GetProductImages>();
+            //foreach (var item in gettingProducts)
+            //{
+
+            //    if (item.ProductImages.Count > 0)
+            //    {
+            //        getOnlyOneImage.Add(new GetProductImages
+            //        {
+            //            ProductId = item.ProductImages[0].ProductId,
+            //            ProductImageID = item.ProductImages[0].ProductImageID,
+            //            PublicId = item.ProductImages[0].PublicId,
+            //            URL = item.ProductImages[0].URL
+            //        });
+            //    }
+
+
+            //    filterdProducts.Add(new GetProduct
+            //    {
+            //        ProductBrandName = item.ProductBrand.BrandName,
+            //        //   NestSubCategoryName = item.NestSubCategory.NestSubCategoryName,
+            //        ProductName = item.ProductName,
+            //        Color = item.Color,
+            //        Price = item.Price,
+            //        StockAvailiability = item.StockAvailiability,
+            //        Quantity = item.Quantity,
+            //        SellUnits = item.SellUnits,
+            //        ProductDetails = item.ProductDetails,
+            //        ProductID = item.ProductID,
+            //        Modified_at = item.Modified_at,
+            //        Created_At = item.Created_At,
+            //        GetProductImagess = getOnlyOneImage
+            //    });
+            //    getOnlyOneImage = new List<GetProductImages>();
+            //}
+            //return filterdProducts;
         }
+
+ 
 
         // for when specific Nest-Sub-Category is selected 
         public async Task<IEnumerable<GetProduct>> GetAllProductsByNestSubCategory(int NestSubCategoryId)
@@ -188,6 +246,55 @@ namespace Data_Access.Repositories_Implement
                 GetProductImagess = filterdImages
             };
 
+        }
+
+        // Adding Product images
+        public IList<ProductImages> AddProductImage(List<IFormFile> File)
+        {
+            var addingProductPhotos = new List<ProductImages>();
+            foreach (var file in File)
+            {
+                var uploadResult = new ImageUploadResult();
+                if (File.Count > 0)
+                {
+                    using (var stream = file.OpenReadStream())
+                    {
+                        var uploadparams = new ImageUploadParams
+                        {
+                            File = new FileDescription(file.Name, stream),
+                            // we can also crop the image if we want here means when user could upload his large size or big shape of image then crop it all its around thing just focus it on the face only
+                            // it will crop the image automatically for us. 
+                            Transformation = new Transformation()
+                            .Width(824).Height(536)
+
+                        };
+                        // Uploading the image on clodinary server and could take a while
+                        uploadResult = _cloudinary.Upload(uploadparams);
+                    }
+                }
+                addingProductPhotos.
+                Add(new ProductImages
+                {
+                    PublicId = uploadResult.PublicId,
+                    URL = uploadResult.Url.ToString()
+                });
+            }
+
+            return addingProductPhotos;
+ 
+
+        }
+
+        public void DeleteProduct(int productId)
+        {
+            var product = _DataContext.Products.Include(a => a.ProductImages)
+                .FirstOrDefault(a=>a.ProductID == productId);
+            foreach (var item in product.ProductImages)
+            {
+                var deletePrams = new DeletionParams(item.PublicId);
+                var cloudinaryDeletePhoto = _cloudinary.Destroy(deletePrams);
+            }
+            _DataContext.Products.Remove(product);
         }
     }
 }

@@ -102,6 +102,9 @@
             "projectReferences": {
               "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj": {
                 "projectPath": "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Business Core\\Business Core.csproj"
+              },
+              "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Presentation\\Presentation.csproj": {
+                "projectPath": "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Presentation\\Presentation.csproj"
               }
             }
           }

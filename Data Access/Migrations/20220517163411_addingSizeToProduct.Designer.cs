@@ -4,6 +4,7 @@ using Data_Access.DataContext_Class;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220517163411_addingSizeToProduct")]
+    partial class addingSizeToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,9 +61,6 @@ namespace Data_Access.Migrations
 
                     b.Property<int>("NestSubCategoryId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("ProductSize")
-                        .HasColumnType("bit");
 
                     b.HasKey("DynamicFormStructureID");
 
@@ -145,6 +144,9 @@ namespace Data_Access.Migrations
 
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ProductSize")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");

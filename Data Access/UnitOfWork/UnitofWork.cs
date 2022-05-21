@@ -2,6 +2,8 @@
 using Business_Core.IUnitOfWork;
 using Data_Access.DataContext_Class;
 using Data_Access.Repositories_Implement;
+using Microsoft.Extensions.Options;
+using Presentation.AppSettingClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,16 +27,21 @@ namespace Data_Access.UnitOfWork
 
 
         public IDynamicFormStructureRepository _DynamicFormStructureRepository { get; init; }
-        public UnitofWork(DataContext DataContext)
+
+        private readonly IOptions<CloudinarySettings> _cloudinaryConfig;
+
+        public UnitofWork(DataContext DataContext, IOptions<CloudinarySettings> cloudinaryConfig)
         {
             _DataContext = DataContext;
+            _cloudinaryConfig = cloudinaryConfig;
+
 
             _CategoryRepository = new CategoryRepository(_DataContext);
             _SubCategoryRepository = new SubCategoryRepository(_DataContext);
             _NestSubCategoryRepository = new NestSubCategoryRepository(_DataContext);
             _ProductBrandRepository = new ProductBrandRepository(_DataContext);
             _DynamicFormStructureRepository = new DynamicFormStructureRepository(_DataContext);
-            _ProductRepository = new ProductRepository(_DataContext);
+            _ProductRepository = new ProductRepository(_DataContext, _cloudinaryConfig);
 
 
         }

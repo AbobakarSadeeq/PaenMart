@@ -25,7 +25,7 @@ namespace Presentation.ViewModel.ProductViewModel
         public DateTime? Modified_at { get; set; }
 
         // Navigation Properties
-        public virtual IList<ProductImages>? ProductImages { get; set; }
+        public virtual List<ProductImages>? ProductImages { get; set; }
 
         public ProductViewModel()
         {
