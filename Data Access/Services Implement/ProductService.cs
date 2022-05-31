@@ -1,4 +1,5 @@
 ﻿using Business_Core.Entities.Product;
+using Business_Core.Entities.Product.Product_Images;
 using Business_Core.IServices;
 using Business_Core.IUnitOfWork;
 using Microsoft.AspNetCore.Http;
@@ -52,6 +53,7 @@ namespace Data_Access.Services_Implement
             OldData.StockAvailiability = UpdateData.StockAvailiability;
             OldData.SellUnits = OldData.SellUnits;
             OldData.Quantity = UpdateData.Quantity;
+            OldData.ProductDetails = UpdateData.ProductDetails;
             OldData.ProductBrandId = UpdateData.ProductBrandId;
             OldData.NestSubCategoryId = UpdateData.NestSubCategoryId;
             OldData.Modified_at = DateTime.Now;
@@ -81,6 +83,17 @@ namespace Data_Access.Services_Implement
         public async Task<IEnumerable<GetProduct>> GetProductsByNestSubCategoryId(int NestCategoryId)
         {
             return await _unitofWork._ProductRepository.GetAllProductsByNestSubCategory(NestCategoryId);
+        }
+
+        public  void DeletingSingleImageProduct(string publicId)
+        {
+             _unitofWork._ProductRepository.DeleteSingleImageOfProduct(publicId);
+        }
+
+        public void UpdateProductImages(int productId, List<IFormFile> File)
+        {
+            _unitofWork._ProductRepository.UpdateProductImage(productId, File);
+            _unitofWork.CommitAsync();
         }
     }
 }

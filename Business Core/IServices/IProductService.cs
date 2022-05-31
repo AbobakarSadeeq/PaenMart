@@ -1,4 +1,5 @@
 ﻿using Business_Core.Entities.Product;
+using Business_Core.Entities.Product.Product_Images;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,9 @@ namespace Business_Core.IServices
         Task<IEnumerable<GetProduct>> GetProductsByBrandId(int brandId);
         Task<IEnumerable<GetProduct>> GetProductsByNestSubCategoryId(int NestCategoryId);
 
+        void DeletingSingleImageProduct(string imagesId);
+
+        void UpdateProductImages(int productId, List<IFormFile> File);
 
     }
 }

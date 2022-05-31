@@ -1,0 +1,25 @@
+﻿using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Presentation.ViewModel.ProductViewModel
+{
+    public class UpdateProductViewModel
+    {
+        public int ProductID { get; set; }
+        public string? ProductName { get; set; }
+        public string? ProductDetails { get; set; }
+        public int Price { get; set; }
+        public string? Color { get; set; }
+        public bool StockAvailiability { get; set; }
+        public int Quantity { get; set; }
+        public int ProductBrandId { get; set; }
+        public int NestSubCategoryId { get; set; }
+        public DateTime? Modified_at { get; set; }
+        public virtual List<IFormFile>? File { get; set; }
+
+    }
+}

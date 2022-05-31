@@ -46,6 +46,7 @@ namespace Presentation.AutoMapper
                 opts => opts.MapFrom(src=>src.NestSubCategory.NestSubCategoryName));
 
 
+            CreateMap<Product, UpdateProductViewModel>().ReverseMap();
 
 
 

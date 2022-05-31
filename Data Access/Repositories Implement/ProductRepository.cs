@@ -296,5 +296,53 @@ namespace Data_Access.Repositories_Implement
             }
             _DataContext.Products.Remove(product);
         }
+
+        public void DeleteSingleImageOfProduct(string singleImageId)
+        {
+            var findingImageId =  _DataContext.ProductImages
+                .FirstOrDefault(a => a.PublicId == singleImageId);
+            _DataContext.ProductImages.Remove(findingImageId);
+            _DataContext.SaveChanges();
+            var deletePrams = new DeletionParams(singleImageId);
+            var cloudinaryDeletePhoto = _cloudinary.Destroy(deletePrams);
+        }
+
+
+        // adding or updating single product images
+        public void UpdateProductImage(int productId, List<IFormFile> File)
+        {
+            var addingProductPhotos = new List<ProductImages>();
+            foreach (var file in File)
+            {
+                var uploadResult = new ImageUploadResult();
+                if (File.Count > 0)
+                {
+                    using (var stream = file.OpenReadStream())
+                    {
+                        var uploadparams = new ImageUploadParams
+                        {
+                            File = new FileDescription(file.Name, stream),
+                            // we can also crop the image if we want here means when user could upload his large size or big shape of image then crop it all its around thing just focus it on the face only
+                            // it will crop the image automatically for us. 
+                            Transformation = new Transformation()
+                            .Width(824).Height(536)
+
+                        };
+                        // Uploading the image on clodinary server and could take a while
+                        uploadResult = _cloudinary.Upload(uploadparams);
+                    }
+                }
+                addingProductPhotos.
+                 Add(new ProductImages
+                 {
+                     PublicId = uploadResult.PublicId,
+                     URL = uploadResult.Url.ToString(),
+                     ProductId = productId
+                 });
+            }
+            _DataContext.ProductImages.AddRange(addingProductPhotos);
+
+        }
+
     }
 }

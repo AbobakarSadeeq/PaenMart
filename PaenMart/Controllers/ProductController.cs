@@ -29,16 +29,23 @@ namespace PaenMart.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateProduct(ProductViewModel viewModel)
+        public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductViewModel viewModel)
         {
             var newData = _mapper.Map<Product>(viewModel);
             var oldData = await _productService.GetProduct(newData.ProductID);
             await _productService.UpdateProduct(oldData, newData);
+
+            // if addedd more new images then 
+            if(viewModel.File != null)
+            {
+                _productService.UpdateProductImages(viewModel.ProductID, viewModel.File);
+            }
+
             return Ok();
         }
 
         [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeleteProduct(int Id)
+        public IActionResult DeleteProduct(int Id)
         {
             _productService.DeleteProductData(Id);
             return Ok();
@@ -78,6 +85,14 @@ namespace PaenMart.Controllers
             var detailData = await _productService.GetProductsByNestSubCategoryId(NestCategoryId);
             var convertProductData = _mapper.Map<List<GetProductViewModel>>(detailData);
             return Ok(convertProductData);
+        }
+
+
+        [HttpDelete("DeleteSingleProductSingleImage/{ImageId}")]
+        public IActionResult DeleteSingleProductSingleImage(string ImageId)
+        {
+            _productService.DeletingSingleImageProduct(ImageId);
+            return Ok();
         }
 
     }

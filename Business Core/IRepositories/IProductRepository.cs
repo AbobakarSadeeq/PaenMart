@@ -22,8 +22,10 @@ namespace Business_Core.IRepositories
 
         // Delete Product 
         void DeleteProduct(int productId);
+        void DeleteSingleImageOfProduct(string getSingleImageId);
 
-        // counting single category products
+        // updating product
+        void UpdateProductImage(int productId, List<IFormFile> File);
 
     }
 }
