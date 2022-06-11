@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Business_Core.Entities.Product
 {
-    public class PageSelectedAndNestCategoryId
+    public class GetProductByBrands
     {
+        public int brandId { get; set; }
         public int NestCategoryId { get; set; }
-        public int BrandId { get; set; }
-
-        public int PageSelectedNo { get; set; }
-        public int singleCategoryTotalProductsCount { get; set; }
     }
 }

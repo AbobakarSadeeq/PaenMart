@@ -75,14 +75,14 @@ namespace Data_Access.Services_Implement
             return await _unitofWork._ProductRepository.GetAll(pageSelectedAndNestCategoryId);
         }
 
-        public async Task<IEnumerable<GetProduct>> GetProductsByBrandId(int brandId)
+        public async Task<IEnumerable<GetProduct>> GetProductsByBrandId(PageSelectedAndNestCategoryId productByBrands)
         {
-            return await _unitofWork._ProductRepository.GetAllProductsByBrand(brandId);
+            return await _unitofWork._ProductRepository.GetAllProductsByBrand(productByBrands);
         }
 
-        public async Task<IEnumerable<GetProduct>> GetProductsByNestSubCategoryId(int NestCategoryId)
+        public async Task<IEnumerable<GetProduct>> GetProductsByNestSubCategoryId(PageSelectedAndNestCategoryId pageSelectedAndNestCategoryId)
         {
-            return await _unitofWork._ProductRepository.GetAllProductsByNestSubCategory(NestCategoryId);
+            return await _unitofWork._ProductRepository.GetAllProductsByNestSubCategory(pageSelectedAndNestCategoryId);
         }
 
         public  void DeletingSingleImageProduct(string publicId)
@@ -93,7 +93,11 @@ namespace Data_Access.Services_Implement
         public void UpdateProductImages(int productId, List<IFormFile> File)
         {
             _unitofWork._ProductRepository.UpdateProductImage(productId, File);
-            _unitofWork.CommitAsync();
+        }
+
+        public async Task<IEnumerable<GetProduct>> GetFiveMostSelledProducts()
+        {
+            return await _unitofWork._ProductRepository.GetMostSellFiveProducts();
         }
     }
 }

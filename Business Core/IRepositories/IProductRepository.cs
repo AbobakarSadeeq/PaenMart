@@ -15,8 +15,8 @@ namespace Business_Core.IRepositories
         Task<IEnumerable<Product>> GetAll(PageSelectedAndNestCategoryId pageSelectedAndNestCategoryId);
 
         Task<GetProduct> GetProductById(int Id);
-        Task<IEnumerable<GetProduct>> GetAllProductsByBrand(int BrandId);
-        Task<IEnumerable<GetProduct>> GetAllProductsByNestSubCategory(int NestSubCategoryId);
+        Task<IEnumerable<GetProduct>> GetAllProductsByBrand(PageSelectedAndNestCategoryId productByBrands);
+        Task<IEnumerable<GetProduct>> GetAllProductsByNestSubCategory(PageSelectedAndNestCategoryId pageSelectedAndNestCategoryId);
 
         IList<ProductImages> AddProductImage(List<IFormFile> File);
 
@@ -26,6 +26,13 @@ namespace Business_Core.IRepositories
 
         // updating product
         void UpdateProductImage(int productId, List<IFormFile> File);
+
+        // get only five products that most sell-out
+
+        Task<IEnumerable<GetProduct>> GetMostSellFiveProducts();
+
+        // get brands
+      // Task<IEnumerable<ProductBrand>> Get
 
     }
 }

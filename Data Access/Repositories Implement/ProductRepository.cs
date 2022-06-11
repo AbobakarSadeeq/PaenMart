@@ -122,10 +122,40 @@ namespace Data_Access.Repositories_Implement
  
 
         // for when specific Nest-Sub-Category is selected 
-        public async Task<IEnumerable<GetProduct>> GetAllProductsByNestSubCategory(int NestSubCategoryId)
+        public async Task<IEnumerable<GetProduct>> GetAllProductsByNestSubCategory(PageSelectedAndNestCategoryId pageSelectedAndNestCategoryId)
         {
-            var selectedNestCategoryProducts = await _DataContext.Products.Include(a => a.ProductBrand)
-                .Include(a => a.ProductImages).Where(a => a.NestSubCategoryId == NestSubCategoryId).ToListAsync();
+            //var selectedNestCategoryProducts = await _DataContext.Products.Include(a => a.ProductBrand)
+            //    .Include(a => a.ProductImages).Where(a => a.NestSubCategoryId == pageSelectedAndNestCategoryId.NestCategoryId).ToListAsync();
+
+            var selectedNestCategoryProducts = new List<Product>();
+
+
+            int foundedDataCount = await _DataContext
+                .Products
+                .Where(a => a.NestSubCategoryId == pageSelectedAndNestCategoryId.NestCategoryId)
+                .CountAsync();
+            pageSelectedAndNestCategoryId.singleCategoryTotalProductsCount = foundedDataCount;
+            if (pageSelectedAndNestCategoryId.PageSelectedNo == 1)
+            {
+                selectedNestCategoryProducts =    await _DataContext.Products.Include(a => a.ProductBrand)
+                .Include(a => a.ProductImages)
+                .Where(a => a.NestSubCategoryId == pageSelectedAndNestCategoryId.NestCategoryId)
+                .Take(24)
+                .ToListAsync();
+
+            }
+            else
+            {
+                selectedNestCategoryProducts = await _DataContext.Products
+               .Include(a => a.ProductBrand)
+               .Include(a => a.ProductImages)
+               .Where(a => a.NestSubCategoryId == pageSelectedAndNestCategoryId.NestCategoryId)
+               .Skip((pageSelectedAndNestCategoryId.PageSelectedNo - 1) * 24)
+               .Take(24)
+               .ToListAsync();
+         
+            }
+
 
             List<GetProduct> filterdProducts = new List<GetProduct>();
             List<GetProductImages> getOnlyOneImage = new List<GetProductImages>();
@@ -167,10 +197,35 @@ namespace Data_Access.Repositories_Implement
 
         // for when specific brand is selected 
 
-        public async Task<IEnumerable<GetProduct>> GetAllProductsByBrand(int BrandId)
+        public async Task<IEnumerable<GetProduct>> GetAllProductsByBrand(PageSelectedAndNestCategoryId productByBrands)
         {
-            var selectedBrandProducts = await _DataContext.Products.Include(a => a.ProductBrand)
-                .Include(a => a.ProductImages).Where(a => a.ProductBrandId == BrandId).ToListAsync();
+            var selectedBrandProducts = new List<Product>();
+            int foundedDataCount = await _DataContext
+                .Products
+                .Where(a => a.NestSubCategoryId == productByBrands.NestCategoryId && a.ProductBrandId == productByBrands.BrandId)
+                .CountAsync();
+            productByBrands.singleCategoryTotalProductsCount = foundedDataCount;
+
+            if (productByBrands.PageSelectedNo == 1)
+            {
+                selectedBrandProducts = await _DataContext.Products
+                .Include(a => a.ProductBrand)
+                .Include(a => a.ProductImages)
+                .Where(a => a.ProductBrandId == productByBrands.BrandId && a.NestSubCategoryId == productByBrands.NestCategoryId)
+                .Take(24)
+                .ToListAsync();
+
+            }
+            else
+            {
+                selectedBrandProducts = await _DataContext.Products
+               .Include(a => a.ProductBrand)
+               .Include(a => a.ProductImages)
+               .Where(a => a.ProductBrandId == productByBrands.BrandId && a.NestSubCategoryId == productByBrands.NestCategoryId)
+               .Skip((productByBrands.PageSelectedNo - 1) * 24)
+               .Take(24)
+               .ToListAsync();
+            }
 
             List<GetProduct> filterdProducts = new List<GetProduct>();
             List<GetProductImages> getOnlyOneImage = new List<GetProductImages>();
@@ -216,6 +271,10 @@ namespace Data_Access.Repositories_Implement
             var gettingDataById = await _DataContext.Products.Include(a => a.ProductBrand)
                 .Include(a=>a.NestSubCategory).Include(a=>a.ProductImages)
                 .FirstOrDefaultAsync(a => a.ProductID == Id);
+
+ 
+
+
 
             List<GetProductImages> filterdImages = new List<GetProductImages>();
 
@@ -309,7 +368,7 @@ namespace Data_Access.Repositories_Implement
 
 
         // adding or updating single product images
-        public void UpdateProductImage(int productId, List<IFormFile> File)
+        public async void UpdateProductImage(int productId, List<IFormFile> File)
         {
             var addingProductPhotos = new List<ProductImages>();
             foreach (var file in File)
@@ -341,8 +400,53 @@ namespace Data_Access.Repositories_Implement
                  });
             }
             _DataContext.ProductImages.AddRange(addingProductPhotos);
+              _DataContext.SaveChanges();
 
         }
 
+        public async Task<IEnumerable<GetProduct>> GetMostSellFiveProducts()
+        
+        {
+
+            var gettingData = await _DataContext.Products
+                .Include(a => a.ProductBrand)
+                .Include(a => a.NestSubCategory)
+                .Include(a => a.ProductImages)
+                .Take(5)
+                .ToListAsync();
+            // return await  _DataContext.Products.OrderByDescending(a => a.SellUnits).Take(5).ToListAsync();
+
+
+
+            List<GetProduct> filterdProducts = new List<GetProduct>();
+            List<GetProductImages> getOnlyOneImage = new List<GetProductImages>();
+            foreach (var item in gettingData)
+            {
+
+                if (item.ProductImages.Count > 0)
+                {
+                    getOnlyOneImage.Add(new GetProductImages
+                    {
+                        ProductId = item.ProductImages[0].ProductId,
+                        ProductImageID = item.ProductImages[0].ProductImageID,
+                        PublicId = item.ProductImages[0].PublicId,
+                        URL = item.ProductImages[0].URL
+                    });
+                }
+
+
+                filterdProducts.Add(new GetProduct
+                {
+                    ProductBrandName = item.ProductBrand.BrandName,
+                    ProductName = item.ProductName,
+                    Color = item.Color,
+                    Price = item.Price,
+                    ProductID = item.ProductID,
+                    GetProductImagess = getOnlyOneImage
+                });
+                getOnlyOneImage = new List<GetProductImages>();
+            }
+            return filterdProducts;
+        }
     }
 }

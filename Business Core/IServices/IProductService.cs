@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+ 
 
 namespace Business_Core.IServices
 {
@@ -20,12 +21,14 @@ namespace Business_Core.IServices
         Task<GetProduct> GetSingleProduct(int Id);
 
         Task<IEnumerable<Product>> GetProducts(PageSelectedAndNestCategoryId pageSelectedAndNestCategoryId);
-        Task<IEnumerable<GetProduct>> GetProductsByBrandId(int brandId);
-        Task<IEnumerable<GetProduct>> GetProductsByNestSubCategoryId(int NestCategoryId);
+        Task<IEnumerable<GetProduct>> GetProductsByBrandId(PageSelectedAndNestCategoryId productByBrands);
+        Task<IEnumerable<GetProduct>> GetProductsByNestSubCategoryId(PageSelectedAndNestCategoryId pageSelectedAndNestCategoryId);
 
         void DeletingSingleImageProduct(string imagesId);
 
         void UpdateProductImages(int productId, List<IFormFile> File);
+
+        Task<IEnumerable<GetProduct>> GetFiveMostSelledProducts();
 
     }
 }
