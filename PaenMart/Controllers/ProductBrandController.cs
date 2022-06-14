@@ -38,7 +38,7 @@ namespace PaenMart.Controllers
 
         [HttpGet("GetAllProductBrandByNestSubCategory/{nestSubCategoryId}")]
         public async Task<IActionResult> GetAllProductBrandByNestSubCategory(int nestSubCategoryId)
-        {
+       {
             var fullDetails = await _productBrandService.GetProductBrands(nestSubCategoryId);
             return Ok(fullDetails);
         }

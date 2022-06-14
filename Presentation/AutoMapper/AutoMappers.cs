@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Business_Core.Entities;
+using Business_Core.Entities.Carousel;
 using Business_Core.Entities.Product;
 using Presentation.ViewModel;
+using Presentation.ViewModel.CarouselViewModel.cs;
 using Presentation.ViewModel.ProductViewModel;
 using System;
 using System.Collections.Generic;
@@ -49,6 +51,7 @@ namespace Presentation.AutoMapper
             CreateMap<Product, UpdateProductViewModel>().ReverseMap();
 
 
+            CreateMap<Carousel, CarouselViewModel>().ReverseMap();
 
 
 

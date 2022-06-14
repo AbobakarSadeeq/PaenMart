@@ -24,9 +24,11 @@ namespace Data_Access.UnitOfWork
 
         public IProductBrandRepository _ProductBrandRepository { get; init; }
         public IProductRepository _ProductRepository { get; init; }
+        public ICarouselRepository _CarouselRepository { get; init; }
 
 
         public IDynamicFormStructureRepository _DynamicFormStructureRepository { get; init; }
+
 
         private readonly IOptions<CloudinarySettings> _cloudinaryConfig;
 
@@ -42,7 +44,7 @@ namespace Data_Access.UnitOfWork
             _ProductBrandRepository = new ProductBrandRepository(_DataContext);
             _DynamicFormStructureRepository = new DynamicFormStructureRepository(_DataContext);
             _ProductRepository = new ProductRepository(_DataContext, _cloudinaryConfig);
-
+            _CarouselRepository = new CarouselRepository(_DataContext,_cloudinaryConfig);
 
         }
 

@@ -19,6 +19,7 @@ namespace Data_Access.Extensions
             services.AddTransient<IProductBrandService, ProductBrandService>();
             services.AddTransient<IDynamicFormStructureService, DynamicFormStructureService>();
             services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<ICarouselService, CarouselService>();
 
         }
 

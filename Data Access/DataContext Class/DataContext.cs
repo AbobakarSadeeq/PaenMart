@@ -1,4 +1,5 @@
 ﻿using Business_Core.Entities;
+using Business_Core.Entities.Carousel;
 using Business_Core.Entities.Product;
 using Business_Core.Entities.Product.Product_Images;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace Data_Access.DataContext_Class
         public DbSet<NestSubCategoryProductBrand> NestSubCategoryProductBrands { get; set; }
         public DbSet<Product>  Products { get; set; }
         public DbSet<ProductImages>  ProductImages { get; set; }
+        public DbSet<Carousel> Carousels { get; set; }
 
 
 
@@ -41,6 +43,7 @@ namespace Data_Access.DataContext_Class
             modelBuilder.ApplyConfiguration(new SubCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
             modelBuilder.ApplyConfiguration(new ProductImagesConfiguration());
+            modelBuilder.ApplyConfiguration(new CarouselConfiguration());
 
 
         }

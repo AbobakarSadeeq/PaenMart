@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Data_Access.Repositories_Implement
 {
-    public class CategoryRepository : Repository<int, Category> , ICategoryRepository 
+    public class CategoryRepository : Repository<int, Category>, ICategoryRepository 
     {
         private readonly DataContext _DataContext;
         public CategoryRepository(DataContext DataContext) : base(DataContext)

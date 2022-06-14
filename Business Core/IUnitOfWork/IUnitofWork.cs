@@ -15,7 +15,7 @@ namespace Business_Core.IUnitOfWork
         IProductBrandRepository _ProductBrandRepository { get; }
         IDynamicFormStructureRepository _DynamicFormStructureRepository { get; }
         IProductRepository  _ProductRepository { get; }
-
+        ICarouselRepository  _CarouselRepository { get; }
 
         Task<int> CommitAsync();
         void Dispose();
