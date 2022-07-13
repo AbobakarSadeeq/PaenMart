@@ -1,0 +1,23 @@
+﻿using Bussiness_Core.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Business_Core.Entities.Identity
+{
+    public class CustomIdentity : IdentityUser
+    {
+        public string? FullName { get; set; }
+        public virtual ICollection<UserImage>? UserImages { get; set; }
+        public CustomIdentity()
+        {
+            UserImages = new HashSet<UserImage>();
+        }
+    }
+
+}

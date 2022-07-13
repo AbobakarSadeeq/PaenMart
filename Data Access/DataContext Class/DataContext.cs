@@ -1,7 +1,11 @@
 ﻿using Business_Core.Entities;
 using Business_Core.Entities.Carousel;
+using Business_Core.Entities.Identity;
+using Business_Core.Entities.Identity.UserAddress;
 using Business_Core.Entities.Product;
 using Business_Core.Entities.Product.Product_Images;
+using Bussiness_Core.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Data_Access.DataContext_Class
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<CustomIdentity>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -28,6 +32,12 @@ namespace Data_Access.DataContext_Class
         public DbSet<Product>  Products { get; set; }
         public DbSet<ProductImages>  ProductImages { get; set; }
         public DbSet<Carousel> Carousels { get; set; }
+        public DbSet<UserImage> UserImages { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<City> Cities{ get; set; }
+
+
+
 
 
 
@@ -44,6 +54,7 @@ namespace Data_Access.DataContext_Class
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
             modelBuilder.ApplyConfiguration(new ProductImagesConfiguration());
             modelBuilder.ApplyConfiguration(new CarouselConfiguration());
+            modelBuilder.ApplyConfiguration(new CityConfiguration());
 
 
         }

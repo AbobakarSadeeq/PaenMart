@@ -1,5 +1,7 @@
 ﻿using Business_Core.IServices;
+using Bussiness_Core.IServices;
 using Data_Access.Services_Implement;
+using DataAccess.Data.Services_Implementation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -20,6 +22,8 @@ namespace Data_Access.Extensions
             services.AddTransient<IDynamicFormStructureService, DynamicFormStructureService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<ICarouselService, CarouselService>();
+            services.AddTransient<IUserPhotoService, UserPhotoService>();
+
 
         }
 

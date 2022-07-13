@@ -1,3 +1,4 @@
+using Business_Core.Entities.Identity;
 using Business_Core.IServices;
 using Business_Core.IUnitOfWork;
 using Data_Access.DataContext_Class;
@@ -34,10 +35,47 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Injecting AppSetting
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("ApplicationSettings"));
+
+builder.Services.AddIdentity<CustomIdentity, IdentityRole>().AddEntityFrameworkStores<DataContext>();
 
 // database connection
 builder.Services.AddDbContextPool<DataContext>(options =>
  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+// JWT Token
+var key = Encoding.UTF8.GetBytes(builder.Configuration["ApplicationSettings:JWT_Secret"].ToString());
+builder.Services.AddAuthentication(a =>
+{
+    a.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    a.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    a.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x => {
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = false;
+    x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+
+// Validation for Password
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequiredLength = 5;
+    options.Password.RequiredUniqueChars = 3;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireLowercase = false;
+    options.SignIn.RequireConfirmedEmail = false;
+});
+
+
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMappers));
@@ -88,7 +126,8 @@ app.UseCors(a=> {
         .AllowAnyMethod();
 });
 
-
+app.UseAuthentication();
+app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllers();
