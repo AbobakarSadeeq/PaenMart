@@ -14,6 +14,7 @@ namespace Business_Core.Entities.Identity
     {
         public string? FullName { get; set; }
         public virtual ICollection<UserImage>? UserImages { get; set; }
+        public virtual Bussiness_Core.Entities.UserAddress? Address { get; set; }
         public CustomIdentity()
         {
             UserImages = new HashSet<UserImage>();

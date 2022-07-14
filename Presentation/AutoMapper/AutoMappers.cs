@@ -5,6 +5,7 @@ using Business_Core.Entities.Product;
 using Bussiness_Core.Entities;
 using Presentation.ViewModel;
 using Presentation.ViewModel.CarouselViewModel.cs;
+using Presentation.ViewModel.IdentityViewModel.User;
 using Presentation.ViewModel.ProductViewModel;
 using Presentation.ViewModels.Identity;
 using System;
@@ -54,8 +55,12 @@ namespace Presentation.AutoMapper
 
 
             CreateMap<Carousel, CarouselViewModel>().ReverseMap();
+
             CreateMap<UserImage, PhotoForCreationViewModel>().ReverseMap();
             CreateMap<UserImage, PhotoForReturnViewModel>().ReverseMap();
+
+            CreateMap<UserAddress, UserAddressViewModel>().ReverseMap();
+
 
 
         }

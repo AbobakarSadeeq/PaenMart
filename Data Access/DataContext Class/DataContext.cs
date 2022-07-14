@@ -34,8 +34,8 @@ namespace Data_Access.DataContext_Class
         public DbSet<Carousel> Carousels { get; set; }
         public DbSet<UserImage> UserImages { get; set; }
         public DbSet<Country> Countries { get; set; }
-        public DbSet<City> Cities{ get; set; }
-
+        public DbSet<City> Cities { get; set; }
+        public DbSet<UserAddress>  UserAddresses { get; set; }
 
 
 

@@ -14,6 +14,7 @@ namespace Business_Core.Entities.Identity.UserAddress
         public string? CityName { get; set; }
         public int CountryId { get; set; }
         public virtual Country? Country { get; set; }
+        public virtual ICollection<Bussiness_Core.Entities.UserAddress>? UserAddresses { get; set; }
     }
 
     public class CityConfiguration : IEntityTypeConfiguration<City>
