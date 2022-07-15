@@ -56,6 +56,7 @@ namespace PaenMart.Controllers
 
                 }
             }
+
             var findingUser = await userManager.FindByNameAsync(model.FullName.Replace(" ", ""));
             if (findingUser == null)
             {

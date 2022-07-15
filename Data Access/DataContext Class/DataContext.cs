@@ -1,6 +1,8 @@
 ﻿using Business_Core.Entities;
 using Business_Core.Entities.Carousel;
 using Business_Core.Entities.Identity;
+using Business_Core.Entities.Identity.user.Employee;
+using Business_Core.Entities.Identity.user.Shipper;
 using Business_Core.Entities.Identity.UserAddress;
 using Business_Core.Entities.Product;
 using Business_Core.Entities.Product.Product_Images;
@@ -36,6 +38,10 @@ namespace Data_Access.DataContext_Class
         public DbSet<Country> Countries { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<UserAddress>  UserAddresses { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<EmployeePayment>  EmployeePayments { get; set; }
+        public DbSet<Shipper>  Shippers{ get; set; }
+        public DbSet<ShipperPayment> ShipperPayments { get; set; }
 
 
 
@@ -55,6 +61,11 @@ namespace Data_Access.DataContext_Class
             modelBuilder.ApplyConfiguration(new ProductImagesConfiguration());
             modelBuilder.ApplyConfiguration(new CarouselConfiguration());
             modelBuilder.ApplyConfiguration(new CityConfiguration());
+            modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
+            modelBuilder.ApplyConfiguration(new EmployeePaymentConfiguration());
+            modelBuilder.ApplyConfiguration(new ShipperConfiguration());
+            modelBuilder.ApplyConfiguration(new ShipperPaymentConfiguration());
+
 
 
         }

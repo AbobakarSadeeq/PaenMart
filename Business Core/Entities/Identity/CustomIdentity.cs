@@ -1,4 +1,6 @@
-﻿using Bussiness_Core.Entities;
+﻿using Business_Core.Entities.Identity.user.Employee;
+using Business_Core.Entities.Identity.user.Shipper;
+using Bussiness_Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,6 +17,9 @@ namespace Business_Core.Entities.Identity
         public string? FullName { get; set; }
         public virtual ICollection<UserImage>? UserImages { get; set; }
         public virtual Bussiness_Core.Entities.UserAddress? Address { get; set; }
+        public virtual Employee Employee { get; set; }
+        public virtual Shipper  Shipper { get; set; }
+
         public CustomIdentity()
         {
             UserImages = new HashSet<UserImage>();

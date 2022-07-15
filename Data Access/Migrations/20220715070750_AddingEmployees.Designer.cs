@@ -4,6 +4,7 @@ using Data_Access.DataContext_Class;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220715070750_AddingEmployees")]
+    partial class AddingEmployees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,6 +195,9 @@ namespace Data_Access.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("Modified_At")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -233,83 +238,6 @@ namespace Data_Access.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("EmployeePayments");
-                });
-
-            modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.Shipper", b =>
-                {
-                    b.Property<int>("ShipperID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShipperID"), 1L, 1);
-
-                    b.Property<string>("DathOfBirth")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HomeAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NumberOfShipmentsDone")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Salary")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ShipmentVehicleType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShipperHireDate")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("VehiclePlatNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ShipperID");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Shippers");
-                });
-
-            modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.ShipperPayment", b =>
-                {
-                    b.Property<int>("ShipperMonthlyPaymentID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShipperMonthlyPaymentID"), 1L, 1);
-
-                    b.Property<bool>("Payment")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("Payment_At")
-                        .HasColumnType("date");
-
-                    b.Property<int>("ShipperId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ShipperMonthlyPaymentID");
-
-                    b.HasIndex("ShipperId");
-
-                    b.ToTable("ShipperPayments");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.Identity.UserAddress.City", b =>
@@ -744,28 +672,6 @@ namespace Data_Access.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.Shipper", b =>
-                {
-                    b.HasOne("Business_Core.Entities.Identity.CustomIdentity", "User")
-                        .WithOne("Shipper")
-                        .HasForeignKey("Business_Core.Entities.Identity.user.Shipper.Shipper", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.ShipperPayment", b =>
-                {
-                    b.HasOne("Business_Core.Entities.Identity.user.Shipper.Shipper", "Shipper")
-                        .WithMany("ShipperPayments")
-                        .HasForeignKey("ShipperId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Shipper");
-                });
-
             modelBuilder.Entity("Business_Core.Entities.Identity.UserAddress.City", b =>
                 {
                     b.HasOne("Business_Core.Entities.Identity.UserAddress.Country", "Country")
@@ -937,20 +843,12 @@ namespace Data_Access.Migrations
                     b.Navigation("Employee")
                         .IsRequired();
 
-                    b.Navigation("Shipper")
-                        .IsRequired();
-
                     b.Navigation("UserImages");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.Identity.user.Employee.Employee", b =>
                 {
                     b.Navigation("EmployeePayments");
-                });
-
-            modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.Shipper", b =>
-                {
-                    b.Navigation("ShipperPayments");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.Identity.UserAddress.City", b =>
