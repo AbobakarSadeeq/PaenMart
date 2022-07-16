@@ -296,16 +296,61 @@ namespace PaenMart.Controllers
         [HttpGet("GetAllEmployees")]
         public async Task<IActionResult> GetAllEmployees()
         {
-            
-            var EmployeesList = await dataContext.Employees.Include(a => a.User).ToListAsync();
-            return Ok(EmployeesList);
+            var EmployeeUserList = new List<GetEmployeeShipperViewModel>();
+            var EmployeesList = await dataContext.Employees
+                .Include(a => a.User)
+                .ToListAsync();
+
+            foreach (var item in EmployeesList)
+            {
+                EmployeeUserList.Add(new GetEmployeeShipperViewModel
+                {
+                    HomeAddress = item.HomeAddress,
+                    Salary = item.Salary,
+                    DathOfBirth = item.DathOfBirth,
+                    Email = item.User.Email,
+                    HireDate = item.EmployeeHireDate,
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    Gender = item.Gender,
+                    ID = item.EmployeeID,
+                    userId = item.UserId,
+                    RoleName = "Employee",
+                    PhoneNumber = item.PhoneNumber,
+                });
+            }
+
+            return Ok(EmployeeUserList);
         }
 
         [HttpGet("GetAllShipper")]
         public async Task<IActionResult> GetAllShipper()
         {
-            var ShipperList = await dataContext.Shippers.Include(a => a.User).ToListAsync();
-            return Ok(ShipperList);
+            var ShipperUserList = new List<GetEmployeeShipperViewModel>();
+            var ShipperList = await dataContext.Shippers
+                .Include(a => a.User)
+                .ToListAsync();
+            foreach (var item in ShipperList)
+            {
+                ShipperUserList.Add(new GetEmployeeShipperViewModel
+                {
+                    HomeAddress = item.HomeAddress,
+                    Salary = item.Salary,
+                    DathOfBirth = item.DathOfBirth,
+                    Email = item.User.Email,
+                    HireDate = item.ShipperHireDate,
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    Gender = item.Gender,
+                    ID = item.ShipperID,
+                    userId = item.UserId,
+                    RoleName = "Shipper",
+                    PhoneNumber = item.PhoneNumber,
+                    ShipmentVehicleType = item.ShipmentVehicleType,
+                    VehiclePlatNo = item.VehiclePlatNo,
+                });
+            }
+            return Ok(ShipperUserList);
         }
 
         [HttpGet("GetAllUsers/{roleId}")]
@@ -332,16 +377,15 @@ namespace PaenMart.Controllers
         }
 
 
-
         [HttpPut]
         public async Task<IActionResult> UpdateUser(UpdateUserViewModel newData)
         {
             // update Employees data
             var findingEmployeeOldData = await dataContext.Employees
                .FirstOrDefaultAsync(a => a.UserId == newData.UserID);
+
             if (findingEmployeeOldData != null)
             {
-
                 findingEmployeeOldData.DathOfBirth = newData.DathOfBirth;
                 findingEmployeeOldData.PhoneNumber = newData.PhoneNumber;
                 findingEmployeeOldData.HomeAddress = newData.HomeAddress;
@@ -350,7 +394,6 @@ namespace PaenMart.Controllers
                 findingEmployeeOldData.EmployeeHireDate = newData.HireDate;
                 await dataContext.SaveChangesAsync();
                 return Ok();
-
             }
 
             // update Shipper data
@@ -368,12 +411,7 @@ namespace PaenMart.Controllers
                 findingShipperOldData.VehiclePlatNo = newData.VehiclePlatNo;
                 findingShipperOldData.ShipmentVehicleType = newData.ShipmentVehicleType;
                 await dataContext.SaveChangesAsync();
-
-
             }
-
-
-
 
             return Ok();
         }
