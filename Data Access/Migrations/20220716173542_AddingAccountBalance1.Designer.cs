@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220713184803_addingUserAddress1")]
-    partial class addingUserAddress1
+    [Migration("20220716173542_AddingAccountBalance1")]
+    partial class AddingAccountBalance1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -101,6 +101,40 @@ namespace Data_Access.Migrations
                     b.ToTable("DynamicFormStructures");
                 });
 
+            modelBuilder.Entity("Business_Core.Entities.Identity.AdminAccount.AdminAccount", b =>
+                {
+                    b.Property<int>("AdminAccountID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdminAccountID"), 1L, 1);
+
+                    b.Property<string>("BalanceSituation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BeforeBalance")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CurrentBalance")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TransactionDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionPurpose")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("AdminAccountID");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AdminAccounts");
+                });
+
             modelBuilder.Entity("Business_Core.Entities.Identity.CustomIdentity", b =>
                 {
                     b.Property<string>("Id")
@@ -167,6 +201,151 @@ namespace Data_Access.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Identity.user.Employee.Employee", b =>
+                {
+                    b.Property<int>("EmployeeID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeID"), 1L, 1);
+
+                    b.Property<string>("DathOfBirth")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeHireDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HomeAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Salary")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("EmployeeID");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Identity.user.Employee.EmployeePayment", b =>
+                {
+                    b.Property<int>("EmployeeMonthlyPaymentID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeMonthlyPaymentID"), 1L, 1);
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Payment")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("Payment_At")
+                        .HasColumnType("date");
+
+                    b.HasKey("EmployeeMonthlyPaymentID");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmployeePayments");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.Shipper", b =>
+                {
+                    b.Property<int>("ShipperID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShipperID"), 1L, 1);
+
+                    b.Property<string>("DathOfBirth")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HomeAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfShipmentsDone")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Salary")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShipmentVehicleType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShipperHireDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("VehiclePlatNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ShipperID");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Shippers");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.ShipperPayment", b =>
+                {
+                    b.Property<int>("ShipperMonthlyPaymentID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShipperMonthlyPaymentID"), 1L, 1);
+
+                    b.Property<bool>("Payment")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("Payment_At")
+                        .HasColumnType("date");
+
+                    b.Property<int>("ShipperId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ShipperMonthlyPaymentID");
+
+                    b.HasIndex("ShipperId");
+
+                    b.ToTable("ShipperPayments");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.Identity.UserAddress.City", b =>
@@ -579,6 +758,61 @@ namespace Data_Access.Migrations
                     b.Navigation("NestSubCategory");
                 });
 
+            modelBuilder.Entity("Business_Core.Entities.Identity.AdminAccount.AdminAccount", b =>
+                {
+                    b.HasOne("Business_Core.Entities.Identity.CustomIdentity", "CustomIdentity")
+                        .WithMany("AdminAccounts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CustomIdentity");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Identity.user.Employee.Employee", b =>
+                {
+                    b.HasOne("Business_Core.Entities.Identity.CustomIdentity", "User")
+                        .WithOne("Employee")
+                        .HasForeignKey("Business_Core.Entities.Identity.user.Employee.Employee", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Identity.user.Employee.EmployeePayment", b =>
+                {
+                    b.HasOne("Business_Core.Entities.Identity.user.Employee.Employee", "Employee")
+                        .WithMany("EmployeePayments")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.Shipper", b =>
+                {
+                    b.HasOne("Business_Core.Entities.Identity.CustomIdentity", "User")
+                        .WithOne("Shipper")
+                        .HasForeignKey("Business_Core.Entities.Identity.user.Shipper.Shipper", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.ShipperPayment", b =>
+                {
+                    b.HasOne("Business_Core.Entities.Identity.user.Shipper.Shipper", "Shipper")
+                        .WithMany("ShipperPayments")
+                        .HasForeignKey("ShipperId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Shipper");
+                });
+
             modelBuilder.Entity("Business_Core.Entities.Identity.UserAddress.City", b =>
                 {
                     b.HasOne("Business_Core.Entities.Identity.UserAddress.Country", "Country")
@@ -747,7 +981,25 @@ namespace Data_Access.Migrations
                 {
                     b.Navigation("Address");
 
+                    b.Navigation("AdminAccounts");
+
+                    b.Navigation("Employee")
+                        .IsRequired();
+
+                    b.Navigation("Shipper")
+                        .IsRequired();
+
                     b.Navigation("UserImages");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Identity.user.Employee.Employee", b =>
+                {
+                    b.Navigation("EmployeePayments");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.Shipper", b =>
+                {
+                    b.Navigation("ShipperPayments");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.Identity.UserAddress.City", b =>

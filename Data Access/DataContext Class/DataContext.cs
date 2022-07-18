@@ -1,6 +1,7 @@
 ﻿using Business_Core.Entities;
 using Business_Core.Entities.Carousel;
 using Business_Core.Entities.Identity;
+using Business_Core.Entities.Identity.AdminAccount;
 using Business_Core.Entities.Identity.user.Employee;
 using Business_Core.Entities.Identity.user.Shipper;
 using Business_Core.Entities.Identity.UserAddress;
@@ -42,6 +43,7 @@ namespace Data_Access.DataContext_Class
         public DbSet<EmployeePayment>  EmployeePayments { get; set; }
         public DbSet<Shipper>  Shippers{ get; set; }
         public DbSet<ShipperPayment> ShipperPayments { get; set; }
+        public DbSet<AdminAccount>  AdminAccounts { get; set; }
 
 
 
@@ -65,6 +67,7 @@ namespace Data_Access.DataContext_Class
             modelBuilder.ApplyConfiguration(new EmployeePaymentConfiguration());
             modelBuilder.ApplyConfiguration(new ShipperConfiguration());
             modelBuilder.ApplyConfiguration(new ShipperPaymentConfiguration());
+            modelBuilder.ApplyConfiguration(new AdminAccountConfiguration());
 
 
 

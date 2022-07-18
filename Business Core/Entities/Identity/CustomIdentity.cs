@@ -19,6 +19,8 @@ namespace Business_Core.Entities.Identity
         public virtual Bussiness_Core.Entities.UserAddress? Address { get; set; }
         public virtual Employee Employee { get; set; }
         public virtual Shipper  Shipper { get; set; }
+        public virtual ICollection<Business_Core.Entities.Identity.AdminAccount.AdminAccount>?  AdminAccounts{ get; set; }
+
 
         public CustomIdentity()
         {

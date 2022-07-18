@@ -99,6 +99,40 @@ namespace Data_Access.Migrations
                     b.ToTable("DynamicFormStructures");
                 });
 
+            modelBuilder.Entity("Business_Core.Entities.Identity.AdminAccount.AdminAccount", b =>
+                {
+                    b.Property<int>("AdminAccountID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdminAccountID"), 1L, 1);
+
+                    b.Property<string>("BalanceSituation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BeforeBalance")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CurrentBalance")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TransactionDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionPurpose")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("AdminAccountID");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AdminAccounts");
+                });
+
             modelBuilder.Entity("Business_Core.Entities.Identity.CustomIdentity", b =>
                 {
                     b.Property<string>("Id")
@@ -722,6 +756,17 @@ namespace Data_Access.Migrations
                     b.Navigation("NestSubCategory");
                 });
 
+            modelBuilder.Entity("Business_Core.Entities.Identity.AdminAccount.AdminAccount", b =>
+                {
+                    b.HasOne("Business_Core.Entities.Identity.CustomIdentity", "CustomIdentity")
+                        .WithMany("AdminAccounts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CustomIdentity");
+                });
+
             modelBuilder.Entity("Business_Core.Entities.Identity.user.Employee.Employee", b =>
                 {
                     b.HasOne("Business_Core.Entities.Identity.CustomIdentity", "User")
@@ -933,6 +978,8 @@ namespace Data_Access.Migrations
             modelBuilder.Entity("Business_Core.Entities.Identity.CustomIdentity", b =>
                 {
                     b.Navigation("Address");
+
+                    b.Navigation("AdminAccounts");
 
                     b.Navigation("Employee")
                         .IsRequired();

@@ -1,5 +1,7 @@
 ﻿using Business_Core.Entities.Identity;
+using Business_Core.Entities.Identity.AdminAccount;
 using Bussiness_Core.IServices;
+using Data_Access.DataContext_Class;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +27,8 @@ namespace PaenMart.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationSettings _appSettings;
         private readonly IUserPhotoService _UserPhotoService;
+        private readonly DataContext _dataContext;
+
 
 
         public AccountController(
@@ -32,13 +36,15 @@ namespace PaenMart.Controllers
             SignInManager<CustomIdentity> mysignIngManage,
             IOptions<ApplicationSettings> appSettings,
             RoleManager<IdentityRole> roleManager,
-            IUserPhotoService userPhotoService)
+            IUserPhotoService userPhotoService,
+            DataContext dataContext)
         {
             this.userManager = myuserManager;
             this.signInManger = mysignIngManage;
             _roleManager = roleManager;
             _appSettings = appSettings.Value;
             _UserPhotoService = userPhotoService;
+            _dataContext = dataContext;
         }
 
         [HttpPost]
@@ -89,6 +95,22 @@ namespace PaenMart.Controllers
                     {
                         result = await userManager.AddToRoleAsync(user, "Admin");
                     }
+
+                    // entry in account balance table as well 
+
+                    AdminAccount adminAccount = new AdminAccount
+                    {
+                        BalanceSituation = "Add",
+                        BeforeBalance = 0,
+                        CurrentBalance = 0,
+                        TransactionPurpose = "Initial State",
+                        UserId = user.Id,
+                        TransactionDateTime = DateTime.Now
+                    };
+
+                    await _dataContext.AdminAccounts.AddAsync(adminAccount);
+                    await _dataContext.SaveChangesAsync();
+
                 }
                 else
                 {

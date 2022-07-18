@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Business_Core.Entities;
 using Business_Core.Entities.Carousel;
+using Business_Core.Entities.Identity.AdminAccount;
 using Business_Core.Entities.Product;
 using Bussiness_Core.Entities;
 using Presentation.ViewModel;
 using Presentation.ViewModel.CarouselViewModel.cs;
+using Presentation.ViewModel.IdentityViewModel.AdminAccountBalance;
 using Presentation.ViewModel.IdentityViewModel.User;
 using Presentation.ViewModel.ProductViewModel;
 using Presentation.ViewModels.Identity;
@@ -60,6 +62,7 @@ namespace Presentation.AutoMapper
             CreateMap<UserImage, PhotoForReturnViewModel>().ReverseMap();
 
             CreateMap<UserAddress, UserAddressViewModel>().ReverseMap();
+            CreateMap<AdminAccount, AddAdminAccountBalanceViewModel>().ReverseMap();
 
 
 
