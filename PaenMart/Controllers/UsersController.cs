@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presentation.ViewModel.IdentityViewModel.User;
+using Presentation.ViewModel.IdentityViewModel.User.Employee;
 
 namespace PaenMart.Controllers
 {
@@ -101,6 +102,8 @@ namespace PaenMart.Controllers
                 {
                     Payment = false,
                     Payment_At = null,
+                    PaymentStatus = "Pending",
+                    PaymentHistory = false,
                     EmployeeId = convertingData.EmployeeID
                 };
 
@@ -173,6 +176,8 @@ namespace PaenMart.Controllers
                 {
                     Payment = false,
                     Payment_At = null,
+                    PaymentStatus = "Pending",
+                    PaymentHistory = false,
                     ShipperId = convertingData.ShipperID
                 };
 
@@ -415,5 +420,164 @@ namespace PaenMart.Controllers
 
             return Ok();
         }
+
+        // Payment API's of employees
+
+        [HttpPut("PayingEmployeeMonthlyPayment/{employeePaymentId}")]
+        public async Task<IActionResult> PayingEmployeeMonthlyPayment(int employeePaymentId)
+        {
+            var findingEmployeePaymentData = await dataContext.EmployeePayments
+                .FirstOrDefaultAsync(a=>a.EmployeeMonthlyPaymentID == employeePaymentId);
+           
+
+            // getting employees details
+            var findingEmployeeDetailsData = await dataContext.Employees
+                .FirstOrDefaultAsync(a=>a.EmployeeID == findingEmployeePaymentData.EmployeeId);
+
+            // cut the employee salary from admin account
+            var adminAccountDetails = await dataContext.AdminAccounts.ToListAsync();
+            var takeLastAccountTransactionDetails = adminAccountDetails.LastOrDefault();
+
+            if(takeLastAccountTransactionDetails.CurrentBalance >= findingEmployeeDetailsData.Salary)
+            {
+                takeLastAccountTransactionDetails.BeforeBalance = takeLastAccountTransactionDetails.CurrentBalance;
+                takeLastAccountTransactionDetails.TransactionPurpose = "Employee monthly payment cut";
+                takeLastAccountTransactionDetails.TransactionDateTime = DateTime.Now;
+                takeLastAccountTransactionDetails.BalanceSituation = "Subtract";
+                takeLastAccountTransactionDetails.AdminAccountID = 0;
+                takeLastAccountTransactionDetails.CurrentBalance = takeLastAccountTransactionDetails.CurrentBalance - findingEmployeeDetailsData.Salary;
+
+                findingEmployeePaymentData.Payment = true;
+                findingEmployeePaymentData.Payment_At = DateTime.Now;
+                findingEmployeePaymentData.PaymentStatus = "Employee-Paid";
+                findingEmployeePaymentData.PaymentHistory = true;
+
+
+                await dataContext.AdminAccounts.AddAsync(takeLastAccountTransactionDetails);
+                await dataContext.SaveChangesAsync();
+            }else
+            {
+                return BadRequest("Sorry account does not have a required balance to pay employee salary, Please recharge");
+            }
+
+  
+            return Ok( );
+        }
+
+        [HttpPut("PayingEmployeeMonthlyPaymentAgainApplying/{employeePaymentId}")]
+        public async Task<IActionResult> PayingEmployeeMonthlyPaymentAgainApplying(int employeePaymentId)
+        {
+            var findingEmployeeData = await dataContext.EmployeePayments
+              .FirstOrDefaultAsync(a => a.EmployeeMonthlyPaymentID == employeePaymentId);
+            findingEmployeeData.PaymentStatus = "Payment-Done";
+
+            EmployeePayment newEmployeePaymentEntry = new EmployeePayment
+            {
+                EmployeeMonthlyPaymentID = 0,
+                PaymentStatus = "Pending",
+                Payment_At = null,
+                Payment = false,
+                EmployeeId = findingEmployeeData.EmployeeId
+            };
+            await dataContext.EmployeePayments.AddAsync(newEmployeePaymentEntry);
+            //findingEmployeeData.Payment_At = DateTime.Now; when paying the employee payment then show the live dateTime in front-end
+            await dataContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpGet("GetEmployeesPendingPayment")]
+        public async Task<IActionResult> GetEmployeesPendingPayment()
+        {
+            var convertViewModelEmployeePayment = new List<GetEmployeesPayment>();
+
+            var gettingUnPaidEmployeeList = await dataContext.EmployeePayments.Include(a=>a.Employee)
+                .Where(a => a.PaymentStatus == "Pending")
+                .ToListAsync();
+            foreach(var empData in gettingUnPaidEmployeeList)
+            {
+                convertViewModelEmployeePayment.Add(new GetEmployeesPayment
+                {
+                    FullName = empData.Employee.FirstName + " " + empData.Employee.LastName,
+                    PhoneNumber = empData.Employee.PhoneNumber,
+                    Payment_At = empData.Payment_At,
+                    Salary = empData.Employee.Salary,
+                    EmployeePaymentId = empData.EmployeeMonthlyPaymentID,
+                    PaymentStatus = empData.PaymentStatus
+
+                });
+            }
+
+            return Ok(convertViewModelEmployeePayment);
+        }
+
+        [HttpGet("PaidEmployeesList")]
+        public async Task<IActionResult> PaidEmployeesList()
+        {
+            var convertViewModelEmployeePayment = new List<GetEmployeesPayment>();
+
+            var gettingPaidEmployeesList = await dataContext.EmployeePayments
+                .Include(a => a.Employee)
+                .Where(a => a.PaymentStatus == "Employee-Paid")
+                .ToListAsync();
+            foreach (var empData in gettingPaidEmployeesList)
+            {
+                convertViewModelEmployeePayment.Add(new GetEmployeesPayment
+                {
+                    FullName = empData.Employee.FirstName + " " + empData.Employee.LastName,
+                    PhoneNumber = empData.Employee.PhoneNumber,
+                    Payment_At = empData.Payment_At,
+                    Salary = empData.Employee.Salary,
+                    EmployeePaymentId = empData.EmployeeMonthlyPaymentID,
+                    PaymentStatus = empData.PaymentStatus
+                });
+            }
+
+            return Ok(convertViewModelEmployeePayment);
+        }
+
+        [HttpGet("EmployeePaymentHistory/{pageNo}")]
+        public async Task<IActionResult> EmployeePaymentHistory(int pageNo)
+        {
+            var convertViewModelEmployeePayment = new List<GetEmployeesPayment>();
+            var gettingPaidEmployeesList = await dataContext.EmployeePayments
+                .Include(a => a.Employee)
+                .Where(a => a.PaymentHistory == true)
+                .ToListAsync();
+            foreach (var empPayments in gettingPaidEmployeesList)
+            {
+                convertViewModelEmployeePayment.Add(new GetEmployeesPayment
+                {
+                    EmployeeID = empPayments.EmployeeId,
+                    FullName = empPayments.Employee.FirstName + " " + empPayments.Employee.LastName,
+                    PaymentStatus = empPayments.PaymentStatus,
+                    Payment_At = empPayments.Payment_At,
+                    PhoneNumber = empPayments.Employee.PhoneNumber,
+                    Salary = empPayments.Employee.Salary
+                });
+            }
+
+            if (pageNo == 1)
+            {
+
+                var firstPage = convertViewModelEmployeePayment.Take(12);
+                return Ok(new
+                {
+                    employeePaymentData = firstPage,
+                   Count =  convertViewModelEmployeePayment.Count
+                });
+
+            }
+
+            int skipPageSize = (pageNo - 1) * 12;
+            var otherPages = convertViewModelEmployeePayment.Skip(skipPageSize).Take(12);
+            return Ok(new
+            {
+                employeePaymentData = otherPages,
+                Count = convertViewModelEmployeePayment.Count
+            });
+        }
+
+
     }
 }

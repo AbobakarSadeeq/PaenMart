@@ -4,6 +4,7 @@ using Data_Access.DataContext_Class;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220719115630_PaymentTableUpdate")]
+    partial class PaymentTableUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,14 +261,11 @@ namespace Data_Access.Migrations
                     b.Property<bool>("Payment")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("PaymentHistory")
-                        .HasColumnType("bit");
-
                     b.Property<string>("PaymentStatus")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Payment_At")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.HasKey("EmployeeMonthlyPaymentID");
 
@@ -339,14 +338,11 @@ namespace Data_Access.Migrations
                     b.Property<bool>("Payment")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("PaymentHistory")
-                        .HasColumnType("bit");
-
                     b.Property<string>("PaymentStatus")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Payment_At")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<int>("ShipperId")
                         .HasColumnType("int");

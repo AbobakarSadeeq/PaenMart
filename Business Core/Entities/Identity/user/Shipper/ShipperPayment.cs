@@ -13,8 +13,10 @@ namespace Business_Core.Entities.Identity.user.Shipper
     {
         public int ShipperMonthlyPaymentID { get; set; }
         public bool Payment { get; set; }
-        [Column(TypeName = "date")]
+        public bool PaymentHistory { get; set; }
         public DateTime? Payment_At { get; set; }
+        public string? PaymentStatus { get; set; }
+
         public int ShipperId { get; set; }
         public virtual Shipper? Shipper { get; set; }
     }

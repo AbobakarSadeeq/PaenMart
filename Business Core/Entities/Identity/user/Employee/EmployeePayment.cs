@@ -13,8 +13,9 @@ namespace Business_Core.Entities.Identity.user.Employee
     {
         public int EmployeeMonthlyPaymentID { get; set; }
         public bool Payment { get; set; }
-        [Column(TypeName = "date")]
+        public bool PaymentHistory { get; set; }
         public DateTime? Payment_At { get; set; }
+        public string? PaymentStatus { get; set; }
         public int EmployeeId { get; set; }
         public virtual Employee? Employee { get; set; }
     }
