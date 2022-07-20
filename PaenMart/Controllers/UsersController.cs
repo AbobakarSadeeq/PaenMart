@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presentation.ViewModel.IdentityViewModel.User;
 using Presentation.ViewModel.IdentityViewModel.User.Employee;
+using Presentation.ViewModel.IdentityViewModel.User.Shipper;
 
 namespace PaenMart.Controllers
 {
@@ -575,6 +576,163 @@ namespace PaenMart.Controllers
             {
                 employeePaymentData = otherPages,
                 Count = convertViewModelEmployeePayment.Count
+            });
+        }
+
+
+        // --------------------- Shipper Payment ----------------------------
+
+        [HttpPut("PayingShipperMonthlyPayment/{shipperPaymentId}")]
+        public async Task<IActionResult> PayingShipperMonthlyPayment(int shipperPaymentId)
+        {
+            var findingShipperPaymentData = await dataContext.ShipperPayments
+                .FirstOrDefaultAsync(a => a.ShipperMonthlyPaymentID == shipperPaymentId);
+
+
+            // getting shipper details
+            var findingShipperDetailsData = await dataContext.Shippers
+                .FirstOrDefaultAsync(a => a.ShipperID == findingShipperPaymentData.ShipperId);
+
+            // cut the shipper salary from admin account
+            var adminAccountDetails = await dataContext.AdminAccounts.ToListAsync();
+            var takeLastAccountTransactionDetails = adminAccountDetails.LastOrDefault();
+
+            if (takeLastAccountTransactionDetails.CurrentBalance >= findingShipperDetailsData.Salary)
+            {
+                takeLastAccountTransactionDetails.BeforeBalance = takeLastAccountTransactionDetails.CurrentBalance;
+                takeLastAccountTransactionDetails.TransactionPurpose = "Shipper monthly payment cut";
+                takeLastAccountTransactionDetails.TransactionDateTime = DateTime.Now;
+                takeLastAccountTransactionDetails.BalanceSituation = "Subtract";
+                takeLastAccountTransactionDetails.AdminAccountID = 0;
+                takeLastAccountTransactionDetails.CurrentBalance = takeLastAccountTransactionDetails.CurrentBalance - findingShipperDetailsData.Salary;
+
+                findingShipperPaymentData.Payment = true;
+                findingShipperPaymentData.Payment_At = DateTime.Now;
+                findingShipperPaymentData.PaymentStatus = "Shipper-Paid";
+                findingShipperPaymentData.PaymentHistory = true;
+
+
+                await dataContext.AdminAccounts.AddAsync(takeLastAccountTransactionDetails);
+                await dataContext.SaveChangesAsync();
+            }
+            else
+            {
+                return BadRequest("Sorry account does not have a required balance to pay shipper salary, Please recharge");
+            }
+
+
+            return Ok();
+        }
+
+        [HttpPut("PayingShipperMonthlyPaymentAgainApplying/{shipperPaymentId}")]
+        public async Task<IActionResult> PayingShipperMonthlyPaymentAgainApplying(int shipperPaymentId)
+        {
+            var findingShipperData = await dataContext.ShipperPayments
+              .FirstOrDefaultAsync(a => a.ShipperMonthlyPaymentID == shipperPaymentId);
+            findingShipperData.PaymentStatus = "Payment-Done";
+
+            ShipperPayment newShipperPaymentEntry = new ShipperPayment
+            {
+                ShipperMonthlyPaymentID = 0,
+                PaymentStatus = "Pending",
+                Payment_At = null,
+                Payment = false,
+                ShipperId = findingShipperData.ShipperId
+            };
+            await dataContext.ShipperPayments.AddAsync(newShipperPaymentEntry);
+            await dataContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpGet("GetShipperPendingPayment")]
+        public async Task<IActionResult> GetShipperPendingPayment()
+        {
+            var convertViewModelShipperPayment = new List<GetShipperPaymentViewModel>();
+
+            var gettingUnPaidShipperList = await dataContext.ShipperPayments.Include(a => a.Shipper)
+                .Where(a => a.PaymentStatus == "Pending")
+                .ToListAsync();
+            foreach (var shipperData in gettingUnPaidShipperList)
+            {
+                convertViewModelShipperPayment.Add(new GetShipperPaymentViewModel
+                {
+                    FullName = shipperData.Shipper.FirstName + " " + shipperData.Shipper.LastName,
+                    PhoneNumber = shipperData.Shipper.PhoneNumber,
+                    Payment_At = shipperData.Payment_At,
+                    Salary = shipperData.Shipper.Salary,
+                    ShipperPaymentId = shipperData.ShipperMonthlyPaymentID,
+                    PaymentStatus = shipperData.PaymentStatus
+
+                });
+            }
+
+            return Ok(convertViewModelShipperPayment);
+        }
+
+        [HttpGet("PaidShipperList")]
+        public async Task<IActionResult> PaidShipperList()
+        {
+            var convertViewModelShipperPayment = new List<GetShipperPaymentViewModel>();
+
+            var gettingPaidShipperList = await dataContext.ShipperPayments
+                .Include(a => a.Shipper)
+                .Where(a => a.PaymentStatus == "Shipper-Paid")
+                .ToListAsync();
+            foreach (var shipperData in gettingPaidShipperList)
+            {
+                convertViewModelShipperPayment.Add(new GetShipperPaymentViewModel
+                {
+                    FullName = shipperData.Shipper.FirstName + " " + shipperData.Shipper.LastName,
+                    PhoneNumber = shipperData.Shipper.PhoneNumber,
+                    Payment_At = shipperData.Payment_At,
+                    Salary = shipperData.Shipper.Salary,
+                    ShipperPaymentId = shipperData.ShipperMonthlyPaymentID,
+                    PaymentStatus = shipperData.PaymentStatus
+                });
+            }
+
+            return Ok(convertViewModelShipperPayment);
+        }
+
+        [HttpGet("ShipperPaymentHistory/{pageNo}")]
+        public async Task<IActionResult> ShipperPaymentHistory(int pageNo)
+        {
+            var convertViewModelShipperPayment = new List<GetShipperPaymentViewModel>();
+            var gettingPaidShipperList = await dataContext.ShipperPayments
+                .Include(a => a.Shipper)
+                .Where(a => a.PaymentHistory == true)
+                .ToListAsync();
+            foreach (var shipperPayments in gettingPaidShipperList)
+            {
+                convertViewModelShipperPayment.Add(new GetShipperPaymentViewModel
+                {
+                    ShipperID = shipperPayments.ShipperId,
+                    FullName = shipperPayments.Shipper.FirstName + " " + shipperPayments.Shipper.LastName,
+                    PaymentStatus = shipperPayments.PaymentStatus,
+                    Payment_At = shipperPayments.Payment_At,
+                    PhoneNumber = shipperPayments.Shipper.PhoneNumber,
+                    Salary = shipperPayments.Shipper.Salary
+                });
+            }
+
+            if (pageNo == 1)
+            {
+
+                var firstPage = convertViewModelShipperPayment.Take(12);
+                return Ok(new
+                {
+                    shipperPaymentData = firstPage,
+                    Count = convertViewModelShipperPayment.Count
+                });
+
+            }
+
+            int skipPageSize = (pageNo - 1) * 12;
+            var otherPages = convertViewModelShipperPayment.Skip(skipPageSize).Take(12);
+            return Ok(new
+            {
+                shipperPaymentData = otherPages,
+                Count = convertViewModelShipperPayment.Count
             });
         }
 
