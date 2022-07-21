@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Presentation.ViewModel.IdentityViewModel.User;
 using Presentation.ViewModel.IdentityViewModel.User.Employee;
 using Presentation.ViewModel.IdentityViewModel.User.Shipper;
+using System.Net;
+using System.Net.Mail;
 
 namespace PaenMart.Controllers
 {
@@ -461,8 +463,30 @@ namespace PaenMart.Controllers
                 return BadRequest("Sorry account does not have a required balance to pay employee salary, Please recharge");
             }
 
-  
-            return Ok( );
+            // sending email
+
+            var findUserData = await _userManager.FindByIdAsync(findingEmployeeDetailsData.UserId);
+            var getEmailSendEmailData = await dataContext.SendingEmails.FirstOrDefaultAsync();
+
+            var msgObj = new MailMessage(getEmailSendEmailData.OwnerEmail, findUserData.Email);
+            msgObj.Subject = "Monthly Salary Payment";
+            msgObj.IsBodyHtml = true;
+            msgObj.Body = @$"
+                        <h2>Monthly Salary Payment</h2>
+                        <p>Dear, <strong>{findingEmployeeDetailsData.FirstName + " " + findingEmployeeDetailsData.LastName}</strong></p>
+                        <p> Your monthly salary has been paid by your client <strong> PKR{findingEmployeeDetailsData.Salary},</strong> at  <strong> {findingEmployeePaymentData.Payment_At.Value.ToString("F")} </strong> </p>
+                        <p>Thank you</p><hr>"
+                        ;
+
+            SmtpClient clientData = new SmtpClient("smtp.gmail.com", 587);
+            clientData.EnableSsl = true;
+            clientData.DeliveryMethod = SmtpDeliveryMethod.Network;
+            clientData.UseDefaultCredentials = false;
+            clientData.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword }; // write that email which is store in database
+            clientData.Send(msgObj);
+
+
+            return Ok();
         }
 
         [HttpPut("PayingEmployeeMonthlyPaymentAgainApplying/{employeePaymentId}")]
@@ -619,6 +643,26 @@ namespace PaenMart.Controllers
             {
                 return BadRequest("Sorry account does not have a required balance to pay shipper salary, Please recharge");
             }
+
+            var findUserData = await _userManager.FindByIdAsync(findingShipperDetailsData.UserId);
+            var getEmailSendEmailData = await dataContext.SendingEmails.FirstOrDefaultAsync();
+
+            var msgObj = new MailMessage(getEmailSendEmailData.OwnerEmail, findUserData.Email);
+            msgObj.Subject = "Monthly Salary Payment";
+            msgObj.IsBodyHtml = true;
+            msgObj.Body = @$"
+                        <h2>Monthly Salary Payment</h2>
+                        <p>Dear, <strong>{findingShipperDetailsData.FirstName + " " + findingShipperDetailsData.LastName}</strong></p>
+                        <p> Your monthly salary has been paid by your client <strong> PKR{findingShipperDetailsData.Salary},</strong> at  <strong> {findingShipperPaymentData.Payment_At.Value.ToString("F")} </strong> </p>
+                        <p><strong>Thank you</strong></p><hr>"
+                        ;
+
+            SmtpClient clientData = new SmtpClient("smtp.gmail.com", 587);
+            clientData.EnableSsl = true;
+            clientData.DeliveryMethod = SmtpDeliveryMethod.Network;
+            clientData.UseDefaultCredentials = false;
+            clientData.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword }; // write that email which is store in database
+            clientData.Send(msgObj);
 
 
             return Ok();
