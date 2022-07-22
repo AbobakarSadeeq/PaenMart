@@ -6,14 +6,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Presentation.AppSettingClasses;
 using Presentation.ViewModel.IdentityViewModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
+using System.Web;
 
 namespace PaenMart.Controllers
 {
@@ -212,5 +216,84 @@ namespace PaenMart.Controllers
             });
 
         }
+
+        [HttpPost("ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel model)
+        {
+            var findingUserByEmail = await userManager.FindByEmailAsync(model.Email);
+            if(findingUserByEmail != null)
+            {
+                var tokenGeneratreForForgetPassword = await userManager.GeneratePasswordResetTokenAsync(findingUserByEmail);
+                // sending email
+                var getEmailSendEmailData = await _dataContext.SendingEmails.FirstOrDefaultAsync();
+
+                var msgObj = new MailMessage(getEmailSendEmailData.OwnerEmail, model.Email);
+                msgObj.Subject = "Password Reset";
+                msgObj.IsBodyHtml = true;
+                msgObj.Body = @$"
+                        <p>Dear, <strong>{findingUserByEmail.FullName}</strong></p>
+                        <p>  We received a request to reset your Email password. </p>
+                        <p>  Alternatively, you can directly change your password. </p>
+
+                        <a href = ' {_appSettings.Client_URL}/Auth/ResetPassword?email={model.Email}&token={HttpUtility.UrlEncode(tokenGeneratreForForgetPassword)}' 
+                           style='display: block;
+                           width: 115px;
+                           text-decoration: none;
+                           height: 25px;
+                           background: #4E9CAF;
+                           padding: 10px;
+                           text-align: center;
+                           border-radius: 5px;
+                           color: white;
+                           font-weight: bold;
+                           line-height: 25px;
+                           cursor: pointer;'
+                           name='abc' > Change password </a>
+                        <p>  Thank You! </p>
+                         </hr>"
+                        ;
+
+                SmtpClient clientData = new SmtpClient("smtp.gmail.com", 587);
+                clientData.EnableSsl = true;
+                clientData.DeliveryMethod = SmtpDeliveryMethod.Network;
+                clientData.UseDefaultCredentials = false;
+                clientData.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword }; // write that email which is store in database
+                clientData.Send(msgObj);
+
+
+                return Ok();
+
+            }else
+            {
+                return BadRequest("Your search by email did not return any results. Please try again with correct information.");
+            }
+        }
+
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (model.Token == null || model.Email == null)
+            {
+                return BadRequest("Invalid password reset token");
+            }
+            var passwordResetToken = HttpUtility.UrlDecode(model.Token);
+            passwordResetToken = passwordResetToken.Replace(" ", "+");
+
+            var findingUserByEmail = await userManager.FindByEmailAsync(model.Email);
+            if(findingUserByEmail != null)
+            {
+                var result = await userManager.ResetPasswordAsync(findingUserByEmail, passwordResetToken, model.Password);
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Something is going wrong");
+                }
+            }
+            return BadRequest("Invalid password reset token");
+        }
+
     }
 }

@@ -37,7 +37,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection("ApplicationSettings"));
 
-builder.Services.AddIdentity<CustomIdentity, IdentityRole>().AddEntityFrameworkStores<DataContext>();
+builder.Services.AddIdentity<CustomIdentity, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<DataContext>()
+    .AddTokenProvider<DataProtectorTokenProvider<CustomIdentity>>(TokenOptions.DefaultProvider);
+
+ 
+
+
+
 
 // database connection
 builder.Services.AddDbContextPool<DataContext>(options =>
