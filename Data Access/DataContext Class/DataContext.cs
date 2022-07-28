@@ -6,6 +6,8 @@ using Business_Core.Entities.Identity.Email;
 using Business_Core.Entities.Identity.user.Employee;
 using Business_Core.Entities.Identity.user.Shipper;
 using Business_Core.Entities.Identity.UserAddress;
+using Business_Core.Entities.Order;
+using Business_Core.Entities.Order.OrderDetail;
 using Business_Core.Entities.Product;
 using Business_Core.Entities.Product.Product_Images;
 using Bussiness_Core.Entities;
@@ -46,6 +48,8 @@ namespace Data_Access.DataContext_Class
         public DbSet<ShipperPayment> ShipperPayments { get; set; }
         public DbSet<AdminAccount>  AdminAccounts { get; set; }
         public DbSet<SendingEmail>  SendingEmails { get; set; }
+        public DbSet<Order>  Orders { get; set; }
+        public DbSet<OrderDetail>  OrderDetails { get; set; }
 
 
 
@@ -71,6 +75,8 @@ namespace Data_Access.DataContext_Class
             modelBuilder.ApplyConfiguration(new ShipperPaymentConfiguration());
             modelBuilder.ApplyConfiguration(new AdminAccountConfiguration());
             modelBuilder.ApplyConfiguration(new SendingEmailConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderDetailConfiguration());
 
 
 

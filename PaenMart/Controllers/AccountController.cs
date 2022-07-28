@@ -54,6 +54,7 @@ namespace PaenMart.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUp(RegisterViewModel model)
         {
+     
             var user = new CustomIdentity();
             var findingUserEntryCount = userManager.Users.Count();
             string[] addDefaultRoles = { "Admin", "User", "Employee", "Shipper" };
@@ -173,16 +174,11 @@ namespace PaenMart.Controllers
                     }
 
                     //  return Ok(new { token,  user.FullName, user.Email, user.Id, findUrlWhoseIsMainTrue?.URL });
-                    return Ok(new {token = token, photoUrl = findUrlWhoseIsMainTrueUrl.URL }); // here we only pass token and it is a valid way and good practice to do and when token is passed then send the request to getUserProfile data
+                    return Ok(new { token = token, photoUrl = findUrlWhoseIsMainTrueUrl.URL }); // here we only pass token and it is a valid way and good practice to do and when token is passed then send the request to getUserProfile data
                 }
-                else
-                {
-                    return BadRequest(new { message = "Username or password is incorrect. please try again" });
-                }
-
 
             }
-            return BadRequest("Something going fishy!");
+                return BadRequest(new { message = "Username or password is incorrect. please try again" });
         }
 
         [HttpPost("GetUserProfile")]

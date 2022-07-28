@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Data_Access.Migrations
 {
-    public partial class AddingAccountBalance1 : Migration
+    public partial class addOrder : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -105,6 +105,20 @@ namespace Data_Access.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProductBrands", x => x.ProductBrandID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SendingEmails",
+                columns: table => new
+                {
+                    SendingEmailID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AppPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OwnerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SendingEmails", x => x.SendingEmailID);
                 });
 
             migrationBuilder.CreateTable(
@@ -366,7 +380,9 @@ namespace Data_Access.Migrations
                     EmployeeMonthlyPaymentID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Payment = table.Column<bool>(type: "bit", nullable: false),
-                    Payment_At = table.Column<DateTime>(type: "date", nullable: true),
+                    PaymentHistory = table.Column<bool>(type: "bit", nullable: false),
+                    Payment_At = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmployeeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -381,13 +397,44 @@ namespace Data_Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    OrderID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ShippedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShipperId = table.Column<int>(type: "int", nullable: false),
+                    CustomIdentityId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.OrderID);
+                    table.ForeignKey(
+                        name: "FK_Orders_AspNetUsers_CustomIdentityId",
+                        column: x => x.CustomIdentityId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_Shippers_ShipperId",
+                        column: x => x.ShipperId,
+                        principalTable: "Shippers",
+                        principalColumn: "ShipperID");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ShipperPayments",
                 columns: table => new
                 {
                     ShipperMonthlyPaymentID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Payment = table.Column<bool>(type: "bit", nullable: false),
-                    Payment_At = table.Column<DateTime>(type: "date", nullable: true),
+                    PaymentHistory = table.Column<bool>(type: "bit", nullable: false),
+                    Payment_At = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ShipperId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -532,6 +579,34 @@ namespace Data_Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OrderDetails",
+                columns: table => new
+                {
+                    OrderDetailID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDetails", x => x.OrderDetailID);
+                    table.ForeignKey(
+                        name: "FK_OrderDetails_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "OrderID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderDetails_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProductImages",
                 columns: table => new
                 {
@@ -629,6 +704,26 @@ namespace Data_Access.Migrations
                 column: "ProductBrandId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderDetails_OrderId",
+                table: "OrderDetails",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDetails_ProductId",
+                table: "OrderDetails",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_CustomIdentityId",
+                table: "Orders",
+                column: "CustomIdentityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_ShipperId",
+                table: "Orders",
+                column: "ShipperId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductImages_ProductId",
                 table: "ProductImages",
                 column: "ProductId");
@@ -710,7 +805,13 @@ namespace Data_Access.Migrations
                 name: "NestSubCategoryProductBrands");
 
             migrationBuilder.DropTable(
+                name: "OrderDetails");
+
+            migrationBuilder.DropTable(
                 name: "ProductImages");
+
+            migrationBuilder.DropTable(
+                name: "SendingEmails");
 
             migrationBuilder.DropTable(
                 name: "ShipperPayments");
@@ -728,13 +829,16 @@ namespace Data_Access.Migrations
                 name: "Employees");
 
             migrationBuilder.DropTable(
+                name: "Orders");
+
+            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Shippers");
+                name: "Cities");
 
             migrationBuilder.DropTable(
-                name: "Cities");
+                name: "Shippers");
 
             migrationBuilder.DropTable(
                 name: "NestSubCategories");
@@ -743,10 +847,10 @@ namespace Data_Access.Migrations
                 name: "ProductBrands");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Countries");
 
             migrationBuilder.DropTable(
-                name: "Countries");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "SubCategories");

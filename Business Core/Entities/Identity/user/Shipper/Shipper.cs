@@ -25,6 +25,8 @@ namespace Business_Core.Entities.Identity.user.Shipper
         public string? UserId { get; set; }
         public virtual CustomIdentity? User { get; set; }
         public virtual ICollection<ShipperPayment>? ShipperPayments { get; set; }
+        public virtual ICollection<Business_Core.Entities.Order.Order>?  Orders { get; set; }
+
     }
     public class ShipperConfiguration : IEntityTypeConfiguration<Shipper>
     {

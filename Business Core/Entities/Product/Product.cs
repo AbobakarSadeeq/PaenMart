@@ -29,6 +29,8 @@ namespace Business_Core.Entities.Product
 
         // Navigation Properties
         public virtual IList<ProductImages>?  ProductImages { get; set; }
+        public virtual ICollection<Business_Core.Entities.Order.OrderDetail.OrderDetail> OrderDetails { get; set; }
+
 
         public Product()
         {

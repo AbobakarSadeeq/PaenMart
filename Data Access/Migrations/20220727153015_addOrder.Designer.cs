@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220716173542_AddingAccountBalance1")]
-    partial class AddingAccountBalance1
+    [Migration("20220727153015_addOrder")]
+    partial class addOrder
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -203,6 +203,27 @@ namespace Data_Access.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Business_Core.Entities.Identity.Email.SendingEmail", b =>
+                {
+                    b.Property<int>("SendingEmailID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SendingEmailID"), 1L, 1);
+
+                    b.Property<string>("AppPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OwnerEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SendingEmailID");
+
+                    b.ToTable("SendingEmails");
+                });
+
             modelBuilder.Entity("Business_Core.Entities.Identity.user.Employee.Employee", b =>
                 {
                     b.Property<int>("EmployeeID")
@@ -261,8 +282,14 @@ namespace Data_Access.Migrations
                     b.Property<bool>("Payment")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("PaymentHistory")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PaymentStatus")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("Payment_At")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("EmployeeMonthlyPaymentID");
 
@@ -335,8 +362,14 @@ namespace Data_Access.Migrations
                     b.Property<bool>("Payment")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("PaymentHistory")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PaymentStatus")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("Payment_At")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ShipperId")
                         .HasColumnType("int");
@@ -426,6 +459,72 @@ namespace Data_Access.Migrations
                     b.HasIndex("ProductBrandId");
 
                     b.ToTable("NestSubCategoryProductBrands");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Order.Order", b =>
+                {
+                    b.Property<int>("OrderID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"), 1L, 1);
+
+                    b.Property<string>("CustomIdentityId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethod")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ShippedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ShipperId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderID");
+
+                    b.HasIndex("CustomIdentityId");
+
+                    b.HasIndex("ShipperId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Order.OrderDetail.OrderDetail", b =>
+                {
+                    b.Property<int>("OrderDetailID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailID"), 1L, 1);
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderDetailID");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.Product.Product", b =>
@@ -854,6 +953,42 @@ namespace Data_Access.Migrations
                     b.Navigation("ProductBrand");
                 });
 
+            modelBuilder.Entity("Business_Core.Entities.Order.Order", b =>
+                {
+                    b.HasOne("Business_Core.Entities.Identity.CustomIdentity", "CustomIdentity")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomIdentityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Business_Core.Entities.Identity.user.Shipper.Shipper", "Shipper")
+                        .WithMany("Orders")
+                        .HasForeignKey("ShipperId");
+
+                    b.Navigation("CustomIdentity");
+
+                    b.Navigation("Shipper");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.Order.OrderDetail.OrderDetail", b =>
+                {
+                    b.HasOne("Business_Core.Entities.Order.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Business_Core.Entities.Product.Product", "Product")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Business_Core.Entities.Product.Product", b =>
                 {
                     b.HasOne("Business_Core.Entities.NestSubCategory", "NestSubCategory")
@@ -986,6 +1121,8 @@ namespace Data_Access.Migrations
                     b.Navigation("Employee")
                         .IsRequired();
 
+                    b.Navigation("Orders");
+
                     b.Navigation("Shipper")
                         .IsRequired();
 
@@ -999,6 +1136,8 @@ namespace Data_Access.Migrations
 
             modelBuilder.Entity("Business_Core.Entities.Identity.user.Shipper.Shipper", b =>
                 {
+                    b.Navigation("Orders");
+
                     b.Navigation("ShipperPayments");
                 });
 
@@ -1019,8 +1158,15 @@ namespace Data_Access.Migrations
                     b.Navigation("NestSubCategoryProductBrand");
                 });
 
+            modelBuilder.Entity("Business_Core.Entities.Order.Order", b =>
+                {
+                    b.Navigation("OrderDetails");
+                });
+
             modelBuilder.Entity("Business_Core.Entities.Product.Product", b =>
                 {
+                    b.Navigation("OrderDetails");
+
                     b.Navigation("ProductImages");
                 });
 

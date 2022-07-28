@@ -20,6 +20,7 @@ namespace Business_Core.Entities.Identity
         public virtual Employee Employee { get; set; }
         public virtual Shipper  Shipper { get; set; }
         public virtual ICollection<Business_Core.Entities.Identity.AdminAccount.AdminAccount>?  AdminAccounts{ get; set; }
+        public virtual ICollection<Business_Core.Entities.Order.Order>?  Orders{ get; set; }
 
 
         public CustomIdentity()
