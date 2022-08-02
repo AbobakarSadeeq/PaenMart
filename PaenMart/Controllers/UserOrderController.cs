@@ -51,7 +51,7 @@ namespace PaenMart.Controllers
             var getEmailSendEmailData = await _dataContext.SendingEmails.FirstOrDefaultAsync();
 
             string adminName = "";
-            for (var a = 0; a < 10; a++)
+            for (var a = 0; a < getEmailSendEmailData.OwnerEmail.Length; a++)
             {
                 if (getEmailSendEmailData.OwnerEmail[a].ToString() != "@")
                 {
@@ -59,6 +59,7 @@ namespace PaenMart.Controllers
                 }
                 else
                 {
+                    adminName[0].ToString().ToUpper();
                     break;
                 }
             }
@@ -117,7 +118,7 @@ namespace PaenMart.Controllers
                 {
                     // send email as well here to user and skip this product
                     string adminName = "";
-                    for (var a = 0; a < 10; a++)
+                    for (var a = 0; a < getEmailSendEmailData.OwnerEmail.Length; a++)
                     {
                         if (getEmailSendEmailData.OwnerEmail[a].ToString() != "@")
                         {
@@ -167,10 +168,10 @@ namespace PaenMart.Controllers
                 totalPrice = totalPrice + (data.Quantity * data.Price);
                 var newData = @$"<h3 style='text-decoration: underline;'>{viewModel.FullName},</h3><h3 style='text-decoration: underline;'>Product No: {noProduct},</h3><p>Your Order Has been Succeussfully Done!</p>  
                                  <p>Your Address is {viewModel.CompleteAddress},</p><p>Your Email Is: {viewModel.Email}</p>
-                                  <p>Your Product Name is {data.ProductName} and Quantity is {data.Quantity}</p>
+                                  <p>Your Product Name is: {data.ProductName} and Quantity is {data.Quantity}</p>
                                   <p>Your Mobile Number Is: {viewModel.PhoneNumber}</p><p>Your Order Date Was: {viewModel.OrderDate}</p><hr>
                                    <p><strong>Your Total Amount of this Products Rs{data.Price * data.Quantity}</strong></p>
-                                   <h3>Thank You For Order and your Order Has been Succeussfully done and delivering tommarow!</h3><p>Regards From <strong>New Mobiles Home Delivery</strong></p><hr><br>";
+                                   <h3>Thank You For Order and your Order Has been Succeussfully done and delivering tommarow!</h3><p>Regards From <strong>Paen Mart Shop</strong></p><hr><br>";
                 multipleProductDataConcatinating = multipleProductDataConcatinating + newData;
                 if (noProduct == viewModel.OrderDetail.Count)
                 {
