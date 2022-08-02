@@ -565,10 +565,27 @@ namespace PaenMart.Controllers
         public async Task<IActionResult> EmployeePaymentHistory(int pageNo)
         {
             var convertViewModelEmployeePayment = new List<GetEmployeesPayment>();
-            var gettingPaidEmployeesList = await dataContext.EmployeePayments
+            var gettingPaidEmployeesList = new List<EmployeePayment>();
+     
+            if (pageNo == 1)
+            {
+                gettingPaidEmployeesList = await dataContext.EmployeePayments
                 .Include(a => a.Employee)
                 .Where(a => a.PaymentHistory == true)
+                .Take(12)
                 .ToListAsync();
+
+            }else
+            {
+                gettingPaidEmployeesList = await dataContext.EmployeePayments
+             .Include(a => a.Employee)
+             .Where(a => a.PaymentHistory == true)
+             .Skip((pageNo - 1) * 12)
+             .Take(12)
+             .ToListAsync();
+
+            }
+
             foreach (var empPayments in gettingPaidEmployeesList)
             {
                 convertViewModelEmployeePayment.Add(new GetEmployeesPayment
@@ -582,23 +599,9 @@ namespace PaenMart.Controllers
                 });
             }
 
-            if (pageNo == 1)
-            {
-
-                var firstPage = convertViewModelEmployeePayment.Take(12);
-                return Ok(new
-                {
-                    employeePaymentData = firstPage,
-                   Count =  convertViewModelEmployeePayment.Count
-                });
-
-            }
-
-            int skipPageSize = (pageNo - 1) * 12;
-            var otherPages = convertViewModelEmployeePayment.Skip(skipPageSize).Take(12);
             return Ok(new
             {
-                employeePaymentData = otherPages,
+                employeePaymentData = convertViewModelEmployeePayment,
                 Count = convertViewModelEmployeePayment.Count
             });
         }
@@ -742,10 +745,27 @@ namespace PaenMart.Controllers
         public async Task<IActionResult> ShipperPaymentHistory(int pageNo)
         {
             var convertViewModelShipperPayment = new List<GetShipperPaymentViewModel>();
-            var gettingPaidShipperList = await dataContext.ShipperPayments
-                .Include(a => a.Shipper)
-                .Where(a => a.PaymentHistory == true)
+            var gettingPaidShipperList = new List<ShipperPayment>();
+
+            if (pageNo == 1)
+            {
+                gettingPaidShipperList = await dataContext.ShipperPayments
+               .Include(a => a.Shipper)
+                   .Where(a => a.PaymentHistory == true)
+                   .Take(12)
                 .ToListAsync();
+              
+
+            }else
+            {
+                gettingPaidShipperList = await dataContext.ShipperPayments
+                .Include(a => a.Shipper)
+                    .Where(a => a.PaymentHistory == true)
+                       .Skip((pageNo - 1) * 12)
+                    .Take(12)
+                 .ToListAsync();
+            }
+
             foreach (var shipperPayments in gettingPaidShipperList)
             {
                 convertViewModelShipperPayment.Add(new GetShipperPaymentViewModel
@@ -759,23 +779,9 @@ namespace PaenMart.Controllers
                 });
             }
 
-            if (pageNo == 1)
-            {
-
-                var firstPage = convertViewModelShipperPayment.Take(12);
-                return Ok(new
-                {
-                    shipperPaymentData = firstPage,
-                    Count = convertViewModelShipperPayment.Count
-                });
-
-            }
-
-            int skipPageSize = (pageNo - 1) * 12;
-            var otherPages = convertViewModelShipperPayment.Skip(skipPageSize).Take(12);
             return Ok(new
             {
-                shipperPaymentData = otherPages,
+                shipperPaymentData = convertViewModelShipperPayment,
                 Count = convertViewModelShipperPayment.Count
             });
         }

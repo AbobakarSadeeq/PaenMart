@@ -24,7 +24,8 @@ namespace Data_Access.Repositories_Implement
 
 
 
-        public ProductRepository(DataContext DataContext, IOptions<CloudinarySettings> cloudinaryConfig) : base(DataContext)
+        public ProductRepository(DataContext DataContext,
+            IOptions<CloudinarySettings> cloudinaryConfig) : base(DataContext)
         {
             _DataContext = DataContext;
             _cloudinaryConfig = cloudinaryConfig;
@@ -412,6 +413,7 @@ namespace Data_Access.Repositories_Implement
                 .Include(a => a.ProductBrand)
                 .Include(a => a.NestSubCategory)
                 .Include(a => a.ProductImages)
+                .OrderByDescending(a=>a.SellUnits)
                 .Take(5)
                 .ToListAsync();
             // return await  _DataContext.Products.OrderByDescending(a => a.SellUnits).Take(5).ToListAsync();

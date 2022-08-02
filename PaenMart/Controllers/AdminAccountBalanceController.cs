@@ -48,27 +48,27 @@ namespace PaenMart.Controllers
         {
             //var myStopWatch = new Stopwatch();
             //myStopWatch.Start();
-            //var transactionList = await _dataContext.AdminAccounts
-            //    .OrderByDescending(a => a.AdminAccountID)
-            //    .Take(NumberTransaction)
-            //    .ToListAsync();
+            var transactionList = await _dataContext.AdminAccounts
+                .OrderByDescending(a => a.AdminAccountID)
+                .Take(NumberTransaction)
+                .ToListAsync();
             //myStopWatch.Stop();
             //var msOfWatchExecutionWithOrdering = myStopWatch.ElapsedMilliseconds;
 
-    //        var myStopWatch2 = new Stopwatch();
-     //       myStopWatch2.Start();
-            var transactionListConvert = await _dataContext.AdminAccounts
-                .ToListAsync();
-            var takeLastNumberTransaction = transactionListConvert
-                .TakeLast(NumberTransaction)
-                .OrderByDescending(a => a.AdminAccountID);
-       //     myStopWatch2.Stop();
-       //     var msOfWatchExecutionWithList = myStopWatch2.ElapsedMilliseconds;
+            //        var myStopWatch2 = new Stopwatch();
+            //       myStopWatch2.Start();
+            //var transactionListConvert = await _dataContext.AdminAccounts
+            //    .ToListAsync();
+            //var takeLastNumberTransaction = transactionListConvert
+            //    .TakeLast(NumberTransaction)
+            //    .OrderByDescending(a => a.AdminAccountID);
+            //     myStopWatch2.Stop();
+            //     var msOfWatchExecutionWithList = myStopWatch2.ElapsedMilliseconds;
 
 
 
 
-            return Ok(takeLastNumberTransaction);
+            return Ok(transactionList);
         }
 
         [HttpPost]

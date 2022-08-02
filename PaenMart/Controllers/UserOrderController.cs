@@ -106,6 +106,7 @@ namespace PaenMart.Controllers
             int totalPrice = 0;
 
 
+
             foreach (var data in viewModel.OrderDetail)
             {
 
@@ -218,24 +219,28 @@ namespace PaenMart.Controllers
             client.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword };
             client.Send(msgObj);
 
-            return Created($"{Request.Scheme://request.host}{Request.Path}/{viewModel.OrderId}", viewModel);
+            return Ok();
         }
 
         // getting the orders all for admin
 
-        [HttpGet("GetOrderList/{pageNo}")]
-        public async Task<IActionResult> GetOrderList(int pageNo)
+        [HttpGet("GetPendingOrderList/{pageNo}")]
+        public async Task<IActionResult> GetPendingOrderList(int pageNo)
         {
             var gettingOrdersData = new List<Order>();
-
+            var countList = await _dataContext.Orders
+                    .Where(a => a.OrderStatus == "Pending")
+                    .CountAsync();
             if (pageNo == 1)
             {
+                 
                 gettingOrdersData = await _dataContext.Orders
                 .Include(a => a.CustomIdentity)
                 .ThenInclude(a => a.Address)
                 .ThenInclude(a => a.City)
                 .ThenInclude(a => a.Country)
                 .Include(a => a.OrderDetails)
+                .Where(a=>a.OrderStatus == "Pending")
                 .Take(12).ToListAsync();
             }else
             {
@@ -246,6 +251,7 @@ namespace PaenMart.Controllers
                 .ThenInclude(a => a.City)
                 .ThenInclude(a => a.Country)
                 .Include(a => a.OrderDetails)
+                .Where(a => a.OrderStatus == "Pending")
                 .Skip(skipPageSize).Take(12).ToListAsync();
             }
 
@@ -256,7 +262,61 @@ namespace PaenMart.Controllers
                 convertDataToViewModel.Add(new OrderListViewModel
                 {
                     OrderId = listData.OrderID,
-                    FullName = listData.CustomIdentity.UserName,
+                    FullName = listData.CustomIdentity.FullName,
+                    OrderStatus = listData.OrderStatus,
+                    OrderDate = listData.OrderDate.ToString(),
+                    CountryName = listData.CustomIdentity.Address.City.Country.CountryName,
+                    OrderItemsCount = listData.OrderDetails.Count,
+                    PaymentMethod = listData.PaymentMethod,
+                });
+            }
+            return Ok(new
+            {
+                dataCount = countList,
+                orderList = convertDataToViewModel
+            });
+
+        }
+
+        [HttpGet("GetShippedOrderList/{pageNo}")]
+        public async Task<IActionResult> GetShippedOrderList(int pageNo)
+        {
+            var gettingOrdersData = new List<Order>();
+            var countList = await _dataContext.Orders
+              .Where(a => a.OrderStatus == "Shipped")
+              .CountAsync();
+            if (pageNo == 1)
+            {
+                gettingOrdersData = await _dataContext.Orders
+                .Include(a => a.CustomIdentity)
+                .ThenInclude(a => a.Address)
+                .ThenInclude(a => a.City)
+                .ThenInclude(a => a.Country)
+                .Include(a => a.OrderDetails)
+                .Where(a => a.OrderStatus == "Shipped")
+                .Take(12).ToListAsync();
+            }
+            else
+            {
+                int skipPageSize = (pageNo - 1) * 12;
+                gettingOrdersData = await _dataContext.Orders
+                .Include(a => a.CustomIdentity)
+                .ThenInclude(a => a.Address)
+                .ThenInclude(a => a.City)
+                .ThenInclude(a => a.Country)
+                .Include(a => a.OrderDetails)
+                .Where(a => a.OrderStatus == "Shipped")
+                .Skip(skipPageSize).Take(12).ToListAsync();
+            }
+
+            var convertDataToViewModel = new List<OrderListViewModel>();
+
+            foreach (var listData in gettingOrdersData)
+            {
+                convertDataToViewModel.Add(new OrderListViewModel
+                {
+                    OrderId = listData.OrderID,
+                    FullName = listData.CustomIdentity.FullName,
                     OrderStatus = listData.OrderStatus,
                     OrderDate = listData.OrderDate.ToString(),
                     CountryName = listData.CustomIdentity.Address.City.Country.CountryName,
@@ -265,10 +325,121 @@ namespace PaenMart.Controllers
                     ShipperId = listData.ShipperId
                 });
             }
-            return Ok(convertDataToViewModel);
+            return Ok(new
+            {
+                dataCount = countList,
+                orderList = convertDataToViewModel
+            });
 
         }
 
+        [HttpGet("GetCancelOrderList/{pageNo}")]
+        public async Task<IActionResult> GetCancelOrderList(int pageNo)
+        {
+            var gettingOrdersData = new List<Order>();
+            var countList = await _dataContext.Orders
+            .Where(a => a.OrderStatus == "Cancel")
+            .CountAsync();
+            if (pageNo == 1)
+            {
+                gettingOrdersData = await _dataContext.Orders
+                .Include(a => a.CustomIdentity)
+                .ThenInclude(a => a.Address)
+                .ThenInclude(a => a.City)
+                .ThenInclude(a => a.Country)
+                .Include(a => a.OrderDetails)
+                .Where(a => a.OrderStatus == "Cancel")
+                .Take(12).ToListAsync();
+            }
+            else
+            {
+                int skipPageSize = (pageNo - 1) * 12;
+                gettingOrdersData = await _dataContext.Orders
+                .Include(a => a.CustomIdentity)
+                .ThenInclude(a => a.Address)
+                .ThenInclude(a => a.City)
+                .ThenInclude(a => a.Country)
+                .Include(a => a.OrderDetails)
+                .Where(a => a.OrderStatus == "Cancel")
+                .Skip(skipPageSize).Take(12).ToListAsync();
+            }
+
+            var convertDataToViewModel = new List<OrderListViewModel>();
+
+            foreach (var listData in gettingOrdersData)
+            {
+                convertDataToViewModel.Add(new OrderListViewModel
+                {
+                    OrderId = listData.OrderID,
+                    FullName = listData.CustomIdentity.FullName,
+                    OrderStatus = listData.OrderStatus,
+                    OrderDate = listData.OrderDate.ToString(),
+                    CountryName = listData.CustomIdentity.Address.City.Country.CountryName,
+                    OrderItemsCount = listData.OrderDetails.Count,
+                    PaymentMethod = listData.PaymentMethod
+                });
+            }
+            return Ok(new
+            {
+                dataCount = countList,
+                orderList = convertDataToViewModel
+            });
+
+        }
+
+        [HttpGet("GetShippingPendingList/{pageNo}")]
+        public async Task<IActionResult> GetShippingPendingList(int pageNo)
+        {
+            var gettingOrdersData = new List<Order>();
+            var countList = await _dataContext.Orders
+            .Where(a => a.OrderStatus == "Shipping pending")
+            .CountAsync();
+            if (pageNo == 1)
+            {
+                gettingOrdersData = await _dataContext.Orders
+                .Include(a => a.CustomIdentity)
+                .ThenInclude(a => a.Address)
+                .ThenInclude(a => a.City)
+                .ThenInclude(a => a.Country)
+                .Include(a => a.OrderDetails)
+                .Where(a => a.OrderStatus == "Shipping pending")
+                .Take(12).ToListAsync();
+            }
+            else
+            {
+                int skipPageSize = (pageNo - 1) * 12;
+                gettingOrdersData = await _dataContext.Orders
+                .Include(a => a.CustomIdentity)
+                .ThenInclude(a => a.Address)
+                .ThenInclude(a => a.City)
+                .ThenInclude(a => a.Country)
+                .Include(a => a.OrderDetails)
+                .Where(a => a.OrderStatus == "Shipping pending")
+                .Skip(skipPageSize).Take(12).ToListAsync();
+            }
+
+            var convertDataToViewModel = new List<OrderListViewModel>();
+
+            foreach (var listData in gettingOrdersData)
+            {
+                convertDataToViewModel.Add(new OrderListViewModel
+                {
+                    OrderId = listData.OrderID,
+                    FullName = listData.CustomIdentity.FullName,
+                    OrderStatus = listData.OrderStatus,
+                    OrderDate = listData.OrderDate.ToString(),
+                    CountryName = listData.CustomIdentity.Address.City.Country.CountryName,
+                    OrderItemsCount = listData.OrderDetails.Count,
+                    PaymentMethod = listData.PaymentMethod
+                });
+            }
+            return Ok(new
+            {
+                dataCount = countList,
+                orderList = convertDataToViewModel
+            });
+
+        }
 
         // getting single order detail and its order-details
         [HttpGet("OrderDetails/{Id}")]
@@ -281,8 +452,13 @@ namespace PaenMart.Controllers
               .ThenInclude(a => a.Country)
               .Include(a => a.OrderDetails)
               .ThenInclude(a => a.Product)
+              .ThenInclude(a=>a.ProductImages)
               .FirstOrDefaultAsync(a => a.OrderID == Id);
 
+            if(gettingOrdersData == null)
+            {
+                return BadRequest("No data found");
+            }
 
             var convertDataToViewModel = new
             {
@@ -304,12 +480,15 @@ namespace PaenMart.Controllers
             // Adding Its OrderDetails
             foreach (var item in gettingOrdersData.OrderDetails)
             {
+                
                 convertDataToViewModel.OrderDetail.Add(new GetOrderDetail
                 {
                     ProductId = item.ProductId,
+                    ProductImageUrl = item.Product.ProductImages[0].URL,
                     ProductName = item.Product.ProductName + " " + item.Product.Color,
                     Quantity = item.Quantity,
-                    Price = item.Price
+                    Price = item.Price,
+                    QuantityAvailability = item.Product.Quantity > item.Quantity ? true : false,
                 });
             }
             return Ok(convertDataToViewModel);
