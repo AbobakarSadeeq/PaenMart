@@ -67,7 +67,7 @@ namespace PaenMart.Controllers
             MailMessage msgObj = new MailMessage(getEmailSendEmailData.OwnerEmail, findingOrderId.CustomIdentity.Email);
             msgObj.Subject = "Paen mart order";
             msgObj.IsBodyHtml = true;
-            msgObj.Body = @$"<h1>Dear {findingOrderId.CustomIdentity.UserName},</h1>
+            msgObj.Body = @$"<h1>Dear {findingOrderId.CustomIdentity.FullName},</h1>
             <p>We would like to cancel your order, purchase order number is <strong>{findingOrderId.OrderID}</strong> dated <strong>{findingOrderId.OrderDate}</strong> and number of product order <strong>{findingOrderId.OrderDetails.Count}</strong> We apologize for it.</p>
             <p>Our warehouse manager, who was on leave for a long time, has joined back this week. He has informed us that we have sufficient stock of the ordered goods in our warehouse,
             which would last for next months. Therefore, we have to cancel the order immediately and also the given product in short as well.</p>
@@ -134,7 +134,7 @@ namespace PaenMart.Controllers
                     cancelMsgObj.Subject = "Paen mart order";
                     cancelMsgObj.IsBodyHtml = true;
                     cancelMsgObj.Body = @$"<h1>Dear {viewModel.FullName},</h1>
-                    <p>We would like to cancel your order, purchase order number is <strong>{viewModel.OrderId}</strong> dated <strong>{viewModel.OrderDate}</strong> We apologize for it.</p>
+                    <p>We would like to cancel your order product name <strong>{updateProductData.ProductName}</strong>, purchase order number is <strong>{viewModel.OrderId}</strong> dated <strong>{viewModel.OrderDate}</strong> We apologize for it.</p>
                     <p>Our warehouse manager, who was on leave for a long time, has joined back this week. He has informed us that we have sufficient stock of the ordered goods in our warehouse,
                     which would last for next months. Therefore, we have to cancel the order immediately and also the given product in short as well.</p>
                     <p>I hope this does not cause too much of an inconvenience to you.</p>
@@ -149,6 +149,17 @@ namespace PaenMart.Controllers
                     clientt.UseDefaultCredentials = false;
                     clientt.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword };
                     clientt.Send(cancelMsgObj);
+
+                    if (updateProductData.Quantity == 0)
+                    {
+                        updateProductData.StockAvailiability = false;
+                    }
+                    await _dataContext.SaveChangesAsync();
+
+                    if(viewModel.OrderDetail.Count == 1)
+                    {
+                        return Ok();
+                    }
                     continue;
                 }
 
@@ -339,7 +350,7 @@ namespace PaenMart.Controllers
         {
             var gettingOrdersData = new List<Order>();
             var countList = await _dataContext.Orders
-            .Where(a => a.OrderStatus == "Cancel")
+            .Where(a => a.OrderStatus == "Canceled")
             .CountAsync();
             if (pageNo == 1)
             {
@@ -349,7 +360,7 @@ namespace PaenMart.Controllers
                 .ThenInclude(a => a.City)
                 .ThenInclude(a => a.Country)
                 .Include(a => a.OrderDetails)
-                .Where(a => a.OrderStatus == "Cancel")
+                .Where(a => a.OrderStatus == "Canceled")
                 .Take(12).ToListAsync();
             }
             else
@@ -361,7 +372,7 @@ namespace PaenMart.Controllers
                 .ThenInclude(a => a.City)
                 .ThenInclude(a => a.Country)
                 .Include(a => a.OrderDetails)
-                .Where(a => a.OrderStatus == "Cancel")
+                .Where(a => a.OrderStatus == "Canceled")
                 .Skip(skipPageSize).Take(12).ToListAsync();
             }
 
@@ -500,24 +511,44 @@ namespace PaenMart.Controllers
 
 
         // ------------------------- Shipper section -------------------------
-        public void shippmentOrderDone()
-        {
-            // Add the Account Balance Or Modifing balance
+        [HttpGet("ShippmentOrderDone")]
 
-            //var getAccountData = await _dataContext.AdminAccounts.OrderByDescending(a => a.AdminAccountID).
-            //    FirstOrDefaultAsync();
-            //var convertAccountData = new AdminAccount();
-            //convertAccountData.BeforeBalance = getAccountData.CurrentBalance;
-            //convertAccountData.CurrentBalance = totalPrice;
-            //convertAccountData.UserId = getAccountData.UserId;
-            //convertAccountData.TransactionDateTime = DateTime.Now;
-            //convertAccountData.TransactionPurpose = "Order Payment";
-            //convertAccountData.BalanceSituation = "Add";
-            //await _dataContext.AdminAccounts.AddAsync(convertAccountData);
-            //await _dataContext.SaveChangesAsync();
+        public async Task<IActionResult> ShippmentOrderDone(ShippmentOrderDoneViewModel viewModel)
+        {
+            var getOrderData = await _dataContext.Orders.FirstOrDefaultAsync(a => a.OrderID == viewModel.OrderId);
+            getOrderData.ShipperId = viewModel.ShipperId;
+            getOrderData.OrderStatus = "Shipped";
+            getOrderData.ShippedDate = DateTime.Now;
+
+
+            // Add the Account Balance Or Modifing balance
+            var getAccountData = await _dataContext.AdminAccounts
+                .OrderByDescending(a => a.AdminAccountID)
+                .FirstOrDefaultAsync();
+
+            var convertAccountData = new AdminAccount();
+            convertAccountData.BeforeBalance = getAccountData.CurrentBalance;
+            convertAccountData.CurrentBalance = viewModel.OrderTotalPrice;
+            convertAccountData.UserId = getAccountData.UserId;
+            convertAccountData.TransactionDateTime = DateTime.Now;
+            convertAccountData.TransactionPurpose = "Order Payment";
+            convertAccountData.BalanceSituation = "Add";
+            await _dataContext.AdminAccounts.AddAsync(convertAccountData);
+            await _dataContext.SaveChangesAsync();
+            return Ok();
         }
 
-
+        [HttpGet("ShipperDetail/{Id}")]
+        public async Task<IActionResult> ShipperDetail(int Id)
+        {
+           var gettingShipperDetailById = await _dataContext.Shippers.FirstOrDefaultAsync(a=>a.ShipperID == Id);
+            return Ok(new
+            {
+                ShipperId = gettingShipperDetailById.ShipperID,
+                FullName = gettingShipperDetailById.FirstName + " " + gettingShipperDetailById.LastName,
+                PhoneNumber = gettingShipperDetailById.PhoneNumber
+            });
+        }
 
 
 
