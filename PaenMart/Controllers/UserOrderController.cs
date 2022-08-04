@@ -511,12 +511,14 @@ namespace PaenMart.Controllers
 
 
         // ------------------------- Shipper section -------------------------
-        [HttpGet("ShippmentOrderDone")]
+
+        [HttpPost("ShippmentOrderDone")]
 
         public async Task<IActionResult> ShippmentOrderDone(ShippmentOrderDoneViewModel viewModel)
         {
             var getOrderData = await _dataContext.Orders.FirstOrDefaultAsync(a => a.OrderID == viewModel.OrderId);
-            getOrderData.ShipperId = viewModel.ShipperId;
+            var getShipperIdFind = await _dataContext.Shippers.FirstOrDefaultAsync(a => a.UserId == viewModel.ShipperUserId);
+            getOrderData.ShipperId = getShipperIdFind.ShipperID;
             getOrderData.OrderStatus = "Shipped";
             getOrderData.ShippedDate = DateTime.Now;
 
@@ -528,7 +530,7 @@ namespace PaenMart.Controllers
 
             var convertAccountData = new AdminAccount();
             convertAccountData.BeforeBalance = getAccountData.CurrentBalance;
-            convertAccountData.CurrentBalance = viewModel.OrderTotalPrice;
+            convertAccountData.CurrentBalance = getAccountData.CurrentBalance + viewModel.OrderTotalPrice;
             convertAccountData.UserId = getAccountData.UserId;
             convertAccountData.TransactionDateTime = DateTime.Now;
             convertAccountData.TransactionPurpose = "Order Payment";
@@ -550,7 +552,65 @@ namespace PaenMart.Controllers
             });
         }
 
+        [HttpPost("ShipperShipmentsDone")]
+        public async Task<IActionResult> ShipperShipmentsDone(GetShipperShipmentsDone viewModel)
+        {
+            var gettingShipperDetailByUserId = await _dataContext.Shippers
+                .FirstOrDefaultAsync(a => a.UserId == viewModel.shipperUserId);
 
+            var countList = await _dataContext.Orders
+             .Where(a => a.ShipperId == gettingShipperDetailByUserId.ShipperID)
+                .CountAsync();
+
+            var findingShipperShipmentsDone = new List<Order>();
+
+            if (viewModel.pageNo == 1)
+            {
+
+                findingShipperShipmentsDone = await _dataContext.Orders
+                .Include(a => a.CustomIdentity)
+                .ThenInclude(a => a.Address)
+                .ThenInclude(a => a.City)
+                .ThenInclude(a => a.Country)
+                .Include(a => a.OrderDetails)
+                .Where(a => a.ShipperId == gettingShipperDetailByUserId.ShipperID)
+                .Take(12).ToListAsync();
+            }
+            else
+            {
+                int skipPageSize = (viewModel.pageNo - 1) * 12;
+                findingShipperShipmentsDone = await _dataContext.Orders
+                .Include(a => a.CustomIdentity)
+                .ThenInclude(a => a.Address)
+                .ThenInclude(a => a.City)
+                .ThenInclude(a => a.Country)
+                .Include(a => a.OrderDetails)
+                .Where(a => a.ShipperId == gettingShipperDetailByUserId.ShipperID)
+                .Skip(skipPageSize).Take(12).ToListAsync();
+            }
+
+            var convertDataToViewModel = new List<OrderListViewModel>();
+
+            foreach (var listData in findingShipperShipmentsDone)
+            {
+                convertDataToViewModel.Add(new OrderListViewModel
+                {
+                    OrderId = listData.OrderID,
+                    FullName = listData.CustomIdentity.FullName,
+                    OrderStatus = listData.OrderStatus,
+                    OrderDate = listData.OrderDate.ToString(),
+                    CountryName = listData.CustomIdentity.Address.City.Country.CountryName,
+                    OrderItemsCount = listData.OrderDetails.Count,
+                    PaymentMethod = listData.PaymentMethod,
+                    ShipperId = listData.ShipperId
+                });
+            }
+            return Ok(new
+            {
+                dataCount = countList,
+                orderList = convertDataToViewModel
+            });
+        }
 
 
 

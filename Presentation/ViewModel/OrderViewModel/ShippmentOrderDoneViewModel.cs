@@ -9,7 +9,7 @@ namespace Presentation.ViewModel.OrderViewModel
     public class ShippmentOrderDoneViewModel
     {
         public int OrderId { get; set; }
-        public int ShipperId { get; set; }
+        public string ShipperUserId { get; set; }
         public int OrderTotalPrice { get; set; }
     }
 }
