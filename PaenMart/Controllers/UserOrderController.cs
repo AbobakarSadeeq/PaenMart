@@ -613,12 +613,6 @@ namespace PaenMart.Controllers
         }
 
 
-
-
-
-
-
-
         // ------------------------- extra featuers -------------------------
 
         // Orders Chart Graph Data
@@ -640,10 +634,7 @@ namespace PaenMart.Controllers
                 {
                     monthtOrders.Add(shippedData.Count);
                 }
-
             }
-
-
             return Ok(monthtOrders);
         }
 
@@ -653,8 +644,8 @@ namespace PaenMart.Controllers
         // ------------------------- user order section -------------------------
 
         // Getting sinle user all his order 
-        [HttpGet("GetSingleUserOrder/{userId}")]
-        public async Task<IActionResult> GetSingleUserOrder(string userId)
+        [HttpGet("GetSingleUserOrders/{userId}")]
+        public async Task<IActionResult> GetSingleUserOrders(string userId)
         {
             var getSingleUserOrders = await _dataContext.Orders
               .Include(a => a.CustomIdentity)
