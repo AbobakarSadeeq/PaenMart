@@ -40,5 +40,81 @@ namespace PaenMart.Controllers
             await _dataContext.SaveChangesAsync();
             return Ok();
         }
+
+        // ------------------------- Dashboard -------------------------
+
+        [HttpGet("DashboardData")]
+        public async Task<IActionResult> DashboardData()
+        {
+            var getProductsAndSumTotalWorth = await _dataContext.Products
+                .SumAsync(a => a.Price);
+
+            var totalUsers = _dataContext.Users.CountAsync();
+
+            var totalOrdersShipped = await _dataContext.Orders
+                .Where(a=>a.OrderStatus == "Shipped")
+                .CountAsync();
+
+            var totalOrdersPending = await _dataContext.Orders
+                .Where(a => a.OrderStatus == "Pending")
+                .CountAsync();
+
+            var getAccountTransaction = await _dataContext.AdminAccounts
+                .OrderByDescending(a => a.AdminAccountID).FirstOrDefaultAsync();
+
+            var numberOfProductsOnStock = await _dataContext.Products
+                .Where(a => a.StockAvailiability == true)
+                .CountAsync();
+
+            return Ok(
+                new
+                {
+                    ProductsWorth = getProductsAndSumTotalWorth,
+                    totalUsersRegistered = totalUsers.Result,
+                    ShippedOrdersCount = totalOrdersShipped,
+                    OrdersPendingCount = totalOrdersPending,
+                    CurrentAccountBalanceOfAdmin = getAccountTransaction.CurrentBalance,
+                    ProductInStockCount = numberOfProductsOnStock
+                }
+                        );
+        }
+
+        // Orders Chart Graph Data
+        [HttpGet("OrdersChart")]
+        public async Task<IActionResult> OrdersChart()
+        {
+
+            var monthtOrders = new List<int>();
+
+            for (int month = 1; month <= 12; month++)
+            {
+                var shippedDataCount = await _dataContext.Orders
+                    .Where(a => a.ShippedDate.Value.Date.Month == month).CountAsync();
+                if (shippedDataCount == 0)
+                {
+                    monthtOrders.Add(0);
+                }
+                else
+                {
+                    monthtOrders.Add(shippedDataCount);
+                }
+            }
+
+            return Ok(monthtOrders);
+        }
+
+        [HttpGet("GetLastFiveShippedOrders")]
+        public async Task<IActionResult> GetLastFiveShippedOrders()
+        {
+            var getFiveOrdersShippedList = await _dataContext.Orders
+                .OrderByDescending(a=>a.OrderID)
+                .Where(a => a.OrderStatus == "Shipped")
+                .Take(5)
+                .ToListAsync();
+            return Ok(getFiveOrdersShippedList);
+        }
+
+
     }
+
 }

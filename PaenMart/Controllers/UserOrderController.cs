@@ -612,36 +612,8 @@ namespace PaenMart.Controllers
             });
         }
 
-
-        // ------------------------- extra featuers -------------------------
-
-        // Orders Chart Graph Data
-        [HttpGet("OrdersChart")]
-        public async Task<IActionResult> OrdersChart()
-        {
-
-            var monthtOrders = new List<int>();
-
-
-            for (int month = 1; month <= 12; month++)
-            {
-                var shippedData = await _dataContext.Orders.Where(a => a.ShippedDate.Value.Date.Month == month).ToListAsync();
-                if (shippedData.Count == 0)
-                {
-                    monthtOrders.Add(0);
-                }
-                else
-                {
-                    monthtOrders.Add(shippedData.Count);
-                }
-            }
-            return Ok(monthtOrders);
-        }
-
-
-
-
-        // ------------------------- user order section -------------------------
+     
+       // ------------------------- user order section -------------------------
 
         // Getting sinle user all his order 
         [HttpGet("GetSingleUserOrders/{userId}")]
