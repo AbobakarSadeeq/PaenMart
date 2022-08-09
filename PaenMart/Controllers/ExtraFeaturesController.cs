@@ -49,7 +49,7 @@ namespace PaenMart.Controllers
             var getProductsAndSumTotalWorth = await _dataContext.Products
                 .SumAsync(a => a.Price);
 
-            var totalUsers = _dataContext.Users.CountAsync();
+            var totalUsers = await _dataContext.Users.CountAsync();
 
             var totalOrdersShipped = await _dataContext.Orders
                 .Where(a=>a.OrderStatus == "Shipped")
@@ -69,14 +69,13 @@ namespace PaenMart.Controllers
             return Ok(
                 new
                 {
-                    ProductsWorth = getProductsAndSumTotalWorth,
-                    totalUsersRegistered = totalUsers.Result,
-                    ShippedOrdersCount = totalOrdersShipped,
-                    OrdersPendingCount = totalOrdersPending,
-                    CurrentAccountBalanceOfAdmin = getAccountTransaction.CurrentBalance,
+                    ProductsWorth = getProductsAndSumTotalWorth, // done
+                    totalUsersRegistered = totalUsers, // done
+                    ShippedOrdersCount = totalOrdersShipped, // done
+                    OrdersPendingCount = totalOrdersPending, // done
+                    CurrentAccountBalanceOfAdmin = getAccountTransaction.CurrentBalance, // done
                     ProductInStockCount = numberOfProductsOnStock
-                }
-                        );
+                });
         }
 
         // Orders Chart Graph Data
@@ -111,6 +110,12 @@ namespace PaenMart.Controllers
                 .Where(a => a.OrderStatus == "Shipped")
                 .Take(5)
                 .ToListAsync();
+
+            if (getFiveOrdersShippedList == null)
+            {
+                return Ok();
+            }
+
             return Ok(getFiveOrdersShippedList);
         }
 
