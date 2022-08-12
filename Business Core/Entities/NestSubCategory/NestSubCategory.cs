@@ -18,6 +18,7 @@ namespace Business_Core.Entities
         public virtual SubCategory? SubCategory { get; set; }
         public virtual DynamicFormStructure? DynamicFormStructure { get; set; }
         public virtual ICollection<NestSubCategoryProductBrand>? NestSubCategoryProductBrand { get; set; }
+        public virtual ICollection<Business_Core.Entities.Product.Product>? Products { get; set; }
 
         public DateTime? Created_At { get; set; }
 

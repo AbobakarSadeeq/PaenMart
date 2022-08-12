@@ -3,6 +3,8 @@ using Data_Access.DataContext_Class;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Presentation.ViewModel.ProductViewModel;
+using Presentation.ViewModel.SearchProductsViewModel;
 
 namespace PaenMart.Controllers
 {
@@ -119,6 +121,197 @@ namespace PaenMart.Controllers
             return Ok(getFiveOrdersShippedList);
         }
 
+        [HttpPost("SearchItems")]
+        public async Task<IActionResult> SearchItems(SearchProductViewModel viewModel)
+        {
+            var foundProductList = new List<Business_Core.Entities.Product.Product>();
+            var productsFoundList = new List<GetProductViewModel>();
+            string toUpperCaseSearchStringFirstLetter = string.Concat(viewModel.SearchText[0]
+                .ToString().ToUpper(), viewModel.SearchText.AsSpan(1));
+            string upperCaseLettersSearchString = viewModel.SearchText.ToUpper();
+            int countFoundProductByNestCategory = 0;
+            int countFoundProductByBrand = 0;
+            int countFoundProductByProductName = 0;
+
+
+
+            // founding products by nest category 
+            var findingSearchItemByNestCategory = await _dataContext
+                .NestSubCategories.Where(a => a.NestSubCategoryName == viewModel.SearchText ||
+                a.NestSubCategoryName == toUpperCaseSearchStringFirstLetter ||
+                a.NestSubCategoryName == upperCaseLettersSearchString)
+                .FirstOrDefaultAsync();
+
+            if (findingSearchItemByNestCategory != null)
+            {
+                countFoundProductByNestCategory = await _dataContext.Products
+                    .Where(a => a.NestSubCategoryId == findingSearchItemByNestCategory.NestSubCategoryID)
+                    .CountAsync();
+                    
+                // pagination
+                if (viewModel.PageNo == 1)
+                {
+                    foundProductList = await _dataContext
+                              .Products.Include(a => a.ProductBrand)
+                              .Include(a => a.ProductImages)
+                              .Where(a => a.NestSubCategoryId == findingSearchItemByNestCategory.NestSubCategoryID)
+                              .Take(12)
+                              .ToListAsync();
+                }
+                else
+                {
+                    foundProductList = await _dataContext
+                      .Products.Include(a => a.ProductBrand)
+                      .Include(a => a.ProductImages)
+                      .Where(a => a.NestSubCategoryId == findingSearchItemByNestCategory.NestSubCategoryID)
+                      .Skip((viewModel.PageNo - 1) * 12)
+                      .Take(12)
+                      .ToListAsync();
+
+                }
+
+                foreach (var singleProduct in foundProductList)
+                {
+                    productsFoundList.Add(new GetProductViewModel
+                    {
+                        ProductID = singleProduct.ProductID,
+                        ProductBrandId = singleProduct.ProductBrandId,
+                        ProductBrandName = singleProduct.ProductBrand.BrandName,
+                        Color = singleProduct.Color,
+                        GetProductImagess = null,
+                        Price = singleProduct.Price,
+                        ProductName = singleProduct.ProductName,
+                        ImageUrl = singleProduct.ProductImages[0].URL
+                    });
+                }
+
+                return Ok(new
+                {
+                    productsFoundData = productsFoundList,
+                    productsFoundDataCount = countFoundProductByNestCategory
+                });
+
+            }
+
+            // founding products by brands
+
+            var findingSearchItemBrand = await _dataContext
+                .ProductBrands.Where(a => a.BrandName == viewModel.SearchText || 
+                a.BrandName == toUpperCaseSearchStringFirstLetter ||
+                a.BrandName == upperCaseLettersSearchString)
+                .FirstOrDefaultAsync();
+
+            if (findingSearchItemBrand != null)
+            {
+
+                countFoundProductByBrand = await _dataContext.Products
+                    .Where(a => a.ProductBrandId == findingSearchItemBrand.ProductBrandID)
+                    .CountAsync();
+
+
+
+                if (viewModel.PageNo == 1)
+                {
+                    foundProductList = await _dataContext.Products.Include(a => a.ProductBrand)
+                                                  .Include(a => a.ProductImages)
+                                                  .Where(a => a.ProductBrandId == findingSearchItemBrand.ProductBrandID)
+                                                  .Take(12)
+                                                  .ToListAsync();
+                }
+                else
+                {
+                    foundProductList = await _dataContext.Products
+                        .Include(a => a.ProductBrand)
+                                                 .Include(a => a.ProductImages)
+                                                 .Where(a => a.ProductBrandId == findingSearchItemBrand.ProductBrandID)
+                                                 .Skip((viewModel.PageNo - 1) * 12)
+                                                 .Take(12)
+                                                 .ToListAsync();
+                }
+
+
+
+                foreach (var singleProduct in foundProductList)
+                {
+                    productsFoundList.Add(new GetProductViewModel
+                    {
+                        ProductID = singleProduct.ProductID,
+                        ProductBrandId = singleProduct.ProductBrandId,
+                        ProductBrandName = singleProduct.ProductBrand.BrandName,
+                        Color = singleProduct.Color,
+                        GetProductImagess = null,
+                        Price = singleProduct.Price,
+                        ProductName = singleProduct.ProductName,
+                        ImageUrl = singleProduct.ProductImages[0].URL
+                    });
+                }
+                return Ok(new
+                {
+                    productsFoundData = productsFoundList,
+                    productsFoundDataCount = countFoundProductByBrand
+                });
+            }
+
+
+                // search data by product name
+
+            if(viewModel.PageNo == 1)
+            {
+                foundProductList = await _dataContext.Products
+                .Include(a => a.ProductBrand)
+                .Include(a => a.ProductImages)
+                .Where(a => a.ProductName.Contains(viewModel.SearchText) ||  
+                 a.ProductName.Contains(upperCaseLettersSearchString) ||  
+                 a.ProductName.Contains(toUpperCaseSearchStringFirstLetter))
+                .Take(12)
+                .ToListAsync();
+            }
+            else
+            {
+                foundProductList =  await _dataContext.Products
+                .Include(a => a.ProductBrand)
+                .Include(a => a.ProductImages)
+                .Where(a => a.ProductName
+                .Contains(viewModel.SearchText) || // small case
+                 a.ProductName.Contains(upperCaseLettersSearchString) || // upper case 
+                 a.ProductName.Contains(toUpperCaseSearchStringFirstLetter)) // first letter upper case
+                .Skip((viewModel.PageNo - 1) * 12)
+                .Take(12)
+                .ToListAsync();
+            }
+
+            if(foundProductList.Count > 0)
+            {
+
+                countFoundProductByProductName = await _dataContext
+                .Products.Where(a => a.ProductName.Contains(viewModel.SearchText) ||  
+                a.ProductName.Contains(upperCaseLettersSearchString) ||  
+                a.ProductName.Contains(toUpperCaseSearchStringFirstLetter))
+                .CountAsync();  
+
+                foreach (var singleProduct in foundProductList)
+                 {
+                    productsFoundList.Add(new GetProductViewModel
+                    {
+                        ProductID = singleProduct.ProductID,
+                        ProductBrandId = singleProduct.ProductBrandId,
+                        ProductBrandName = singleProduct.ProductBrand.BrandName,
+                        Color = singleProduct.Color,
+                        GetProductImagess = null,
+                        Price = singleProduct.Price,
+                        ProductName = singleProduct.ProductName,
+                        ImageUrl = singleProduct.ProductImages[0].URL
+                    });
+                }
+                return Ok(new
+                {
+                    productsFoundData = productsFoundList,
+                    productsFoundDataCount = countFoundProductByProductName
+                });
+            }
+
+            return BadRequest("Sorry your result is not found " + viewModel.SearchText);
+        }
 
     }
 

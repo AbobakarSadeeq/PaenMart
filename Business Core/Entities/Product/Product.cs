@@ -56,7 +56,7 @@ namespace Business_Core.Entities.Product
 
             // Relationship with NestSubCategory
             builder.HasOne<NestSubCategory>(s => s.NestSubCategory)
-                .WithMany()
+                .WithMany(a=>a.Products)
                 .HasForeignKey(a => a.NestSubCategoryId)
                 .IsRequired(true);
         }

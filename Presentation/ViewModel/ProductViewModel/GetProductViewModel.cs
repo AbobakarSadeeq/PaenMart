@@ -15,6 +15,7 @@ namespace Presentation.ViewModel.ProductViewModel
         public string? Color { get; set; }
         public int ProductBrandId { get; set; }
         public string? ProductBrandName { get; set; }
+        public string? ImageUrl { get; set; }
 
         public virtual IList<GetProductImages> GetProductImagess { get; set; }
         public GetProductViewModel()
