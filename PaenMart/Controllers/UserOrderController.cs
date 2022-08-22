@@ -516,7 +516,9 @@ namespace PaenMart.Controllers
 
         public async Task<IActionResult> ShippmentOrderDone(ShippmentOrderDoneViewModel viewModel)
         {
-            var getOrderData = await _dataContext.Orders.FirstOrDefaultAsync(a => a.OrderID == viewModel.OrderId);
+            var getOrderData = await _dataContext.Orders
+                .FirstOrDefaultAsync(a => a.OrderID == viewModel.OrderId);
+
             var getShipperIdFind = await _dataContext.Shippers.FirstOrDefaultAsync(a => a.UserId == viewModel.ShipperUserId);
             getOrderData.ShipperId = getShipperIdFind.ShipperID;
             getOrderData.OrderStatus = "Shipped";
@@ -537,6 +539,103 @@ namespace PaenMart.Controllers
             convertAccountData.BalanceSituation = "Add";
             await _dataContext.AdminAccounts.AddAsync(convertAccountData);
             await _dataContext.SaveChangesAsync();
+
+
+            // Sending email to the user that whose order is and tell to give us the reviews about the all products that you have purchased
+            StringBuilder orderDetailsProduct = new StringBuilder();
+            var url = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetValue<string>("Client_URL");
+
+            orderDetailsProduct.Append($@"
+
+                <div>
+                  <h1 style='color: #0f146d;'
+                >Your package has been delivered!</h1>
+                  <h3>Hi {viewModel.FullName},</h3>
+                  <h3>We are pleased to inform that your order #{getOrderData.OrderID} has been delivered.</h3>
+                  <h3>We hope you are enjoying your recent purchase! Once you have a chance, we would love to hear your shopping
+                    experience
+                    to keep us constantly improving.</h3>
+                  <a href='{url + "/Client/Reviews"}' style='    text-decoration: none;
+                background: #ff6b00;
+                color: #ffffff;
+                font-weight: bold;
+                font-size: 16px;
+                width: 2080px;
+                padding: 12px;'>
+                    WRITE A REVIEW</a>
+                </div>
+                <br>
+                <hr>
+                <div style='font-size:1rem'>
+
+                  <span style='font-weight:bold; color: #0f146d;'>Name: </span>
+                  <span>{viewModel.FullName}</span><br>
+                  <span style='font-weight:bold; color: #0f146d;'>Address: </span>
+                  <span>{viewModel.CompleteAddress}</span><br>
+                  <span style='font-weight:bold; color: #0f146d;'>Phone: </span>
+                  <span>{viewModel.PhoneNumber}</span><br>
+                  <span style='font-weight:bold; color: #0f146d;'>Email: </span>
+                  <span>{viewModel.Email}</span>
+                </div>
+
+                <hr>
+
+                <div>
+                  <h1 style='color: #0f146d;'>Order Details</h1>
+
+                  <p>Estimated delivery between {getOrderData.OrderDate.Value.ToString("D")} to {getOrderData.ShippedDate.Value.ToString("D")} </p>
+
+                            <table style='border-collapse:collapse;'>
+                            <thead>
+                            <tr style ='   border-bottom: thick solid #03b1ca; '>   
+                            <th style='padding-right: 200px;' >Product Name</th>
+                            <th style='padding-right: 200px;' >Quantity</th>
+                            <th style='padding-right: 200px;' > Price</th>
+                            <th style='padding-right: 200px;' >TotalPriceWithQuantity</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                ");
+
+
+            int totalPrice = 0;
+            foreach (var OrderData in viewModel.OrderDetails)
+            {
+
+                orderDetailsProduct.Append($@"
+                <tr style='   border-bottom: 1pt solid black; '> 
+                <td style='padding-right: 200px;' > {OrderData.ProductName} </td>
+                <td style='padding-right: 200px;' > {OrderData.Quantity} </td>
+                <td style='padding-right: 200px;' >Rs {OrderData.Price}</td>
+                <td style='padding-right: 200px;' >Rs {OrderData.Price * OrderData.Quantity}</td>
+                </tr>
+                ");
+
+                totalPrice = totalPrice + (OrderData.Price * OrderData.Quantity);
+
+            }
+
+            orderDetailsProduct.Append($@"
+            </tbody>
+            </table>
+            <h2 style='text-align: right; padding-right: 270px;'>TOTAL = Rs {totalPrice} </h2>
+            <hr>
+            </div>");
+
+            var getEmailSendEmailData = await _dataContext.SendingEmails.FirstOrDefaultAsync();
+            MailMessage msgObj = new MailMessage(getEmailSendEmailData.OwnerEmail, viewModel.Email);
+            msgObj.Subject = "Paen mart order";
+            msgObj.IsBodyHtml = true;
+            msgObj.Body = orderDetailsProduct.ToString();
+
+
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+            client.EnableSsl = true;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.UseDefaultCredentials = false;
+            client.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword };
+            client.Send(msgObj);
+
             return Ok();
         }
 

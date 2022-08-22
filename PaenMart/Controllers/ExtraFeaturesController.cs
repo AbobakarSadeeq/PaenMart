@@ -137,9 +137,7 @@ namespace PaenMart.Controllers
 
             // founding products by nest category 
             var findingSearchItemByNestCategory = await _dataContext
-                .NestSubCategories.Where(a => a.NestSubCategoryName == viewModel.SearchText ||
-                a.NestSubCategoryName == toUpperCaseSearchStringFirstLetter ||
-                a.NestSubCategoryName == upperCaseLettersSearchString)
+                .NestSubCategories.Where(a => a.NestSubCategoryName == viewModel.SearchText)
                 .FirstOrDefaultAsync();
 
             if (findingSearchItemByNestCategory != null)
@@ -196,9 +194,7 @@ namespace PaenMart.Controllers
             // founding products by brands
 
             var findingSearchItemBrand = await _dataContext
-                .ProductBrands.Where(a => a.BrandName == viewModel.SearchText || 
-                a.BrandName == toUpperCaseSearchStringFirstLetter ||
-                a.BrandName == upperCaseLettersSearchString)
+                .ProductBrands.Where(a => a.BrandName == viewModel.SearchText)
                 .FirstOrDefaultAsync();
 
             if (findingSearchItemBrand != null)
@@ -260,21 +256,21 @@ namespace PaenMart.Controllers
                 foundProductList = await _dataContext.Products
                 .Include(a => a.ProductBrand)
                 .Include(a => a.ProductImages)
-                .Where(a => a.ProductName.Contains(viewModel.SearchText) ||  
-                 a.ProductName.Contains(upperCaseLettersSearchString) ||  
-                 a.ProductName.Contains(toUpperCaseSearchStringFirstLetter))
+                .Where(a => a.ProductName.Contains(viewModel.SearchText)) 
                 .Take(12)
                 .ToListAsync();
+
+                //||
+                // a.ProductName.Contains(upperCaseLettersSearchString) ||
+                // a.ProductName.Contains(toUpperCaseSearchStringFirstLetter))
             }
             else
             {
-                foundProductList =  await _dataContext.Products
+                 foundProductList =  await _dataContext.Products
                 .Include(a => a.ProductBrand)
                 .Include(a => a.ProductImages)
                 .Where(a => a.ProductName
-                .Contains(viewModel.SearchText) || // small case
-                 a.ProductName.Contains(upperCaseLettersSearchString) || // upper case 
-                 a.ProductName.Contains(toUpperCaseSearchStringFirstLetter)) // first letter upper case
+                .Contains(viewModel.SearchText))
                 .Skip((viewModel.PageNo - 1) * 12)
                 .Take(12)
                 .ToListAsync();
@@ -282,11 +278,11 @@ namespace PaenMart.Controllers
 
             if(foundProductList.Count > 0)
             {
+                //a.ProductName.Contains(upperCaseLettersSearchString) ||
+                //a.ProductName.Contains(toUpperCaseSearchStringFirstLetter))
 
                 countFoundProductByProductName = await _dataContext
-                .Products.Where(a => a.ProductName.Contains(viewModel.SearchText) ||  
-                a.ProductName.Contains(upperCaseLettersSearchString) ||  
-                a.ProductName.Contains(toUpperCaseSearchStringFirstLetter))
+                .Products.Where(a => a.ProductName.Contains(viewModel.SearchText))
                 .CountAsync();  
 
                 foreach (var singleProduct in foundProductList)
@@ -312,6 +308,7 @@ namespace PaenMart.Controllers
 
             return BadRequest("Sorry your result is not found " + viewModel.SearchText);
         }
+
 
     }
 
