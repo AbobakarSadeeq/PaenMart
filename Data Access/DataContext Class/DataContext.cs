@@ -8,6 +8,8 @@ using Business_Core.Entities.Identity.user.Shipper;
 using Business_Core.Entities.Identity.UserAddress;
 using Business_Core.Entities.Order;
 using Business_Core.Entities.Order.OrderDetail;
+using Business_Core.Entities.OrderProductReviews;
+using Business_Core.Entities.OrderProductReviews.OrderProductReviewsPhoto;
 using Business_Core.Entities.Product;
 using Business_Core.Entities.Product.Product_Images;
 using Bussiness_Core.Entities;
@@ -51,6 +53,8 @@ namespace Data_Access.DataContext_Class
         public DbSet<Order>  Orders { get; set; }
         public DbSet<OrderDetail>  OrderDetails { get; set; }
 
+        public DbSet<Business_Core.Entities.OrderProductReviews.OrderProductReview>  OrderProductReviews { get; set; }
+        public DbSet<Business_Core.Entities.OrderProductReviews.OrderProductReviewsPhoto.OrderProductReviewsPhoto> OrderProductReviewsPhotos { get; set; }
 
 
 
@@ -77,6 +81,10 @@ namespace Data_Access.DataContext_Class
             modelBuilder.ApplyConfiguration(new SendingEmailConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderDetailConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderDetailConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderProductReviewConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderProductReviewsPhotoConfiguration());
+
 
 
 

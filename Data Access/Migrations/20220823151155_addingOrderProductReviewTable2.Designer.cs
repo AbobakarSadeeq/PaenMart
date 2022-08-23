@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220728211251_addorder5")]
-    partial class addorder5
+    [Migration("20220823151155_addingOrderProductReviewTable2")]
+    partial class addingOrderProductReviewTable2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.3")
+                .HasAnnotation("ProductVersion", "6.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -527,6 +527,66 @@ namespace Data_Access.Migrations
                     b.ToTable("OrderDetails");
                 });
 
+            modelBuilder.Entity("Business_Core.Entities.OrderProductReviews.OrderProductReview", b =>
+                {
+                    b.Property<int>("OrderProductReviewID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderProductReviewID"), 1L, 1);
+
+                    b.Property<DateTime?>("Add_Review_Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("RaitingStars")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ReviewStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("OrderProductReviewID");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OrderProductReviews");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.OrderProductReviews.OrderProductReviewsPhoto.OrderProductReviewsPhoto", b =>
+                {
+                    b.Property<int>("OrderProductReviewsPhotoID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderProductReviewsPhotoID"), 1L, 1);
+
+                    b.Property<int>("OrderProductReviewId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PublicId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("URL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("OrderProductReviewsPhotoID");
+
+                    b.HasIndex("OrderProductReviewId");
+
+                    b.ToTable("OrderProductReviewsPhotos");
+                });
+
             modelBuilder.Entity("Business_Core.Entities.Product.Product", b =>
                 {
                     b.Property<int>("ProductID")
@@ -559,7 +619,13 @@ namespace Data_Access.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ProductTotalStars")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Raitings")
                         .HasColumnType("int");
 
                     b.Property<int>("SellUnits")
@@ -989,10 +1055,40 @@ namespace Data_Access.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Business_Core.Entities.OrderProductReviews.OrderProductReview", b =>
+                {
+                    b.HasOne("Business_Core.Entities.Product.Product", "Product")
+                        .WithMany("OrderProductReview")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Business_Core.Entities.Identity.CustomIdentity", "CustomIdentity")
+                        .WithMany("OrderProductReview")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CustomIdentity");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Business_Core.Entities.OrderProductReviews.OrderProductReviewsPhoto.OrderProductReviewsPhoto", b =>
+                {
+                    b.HasOne("Business_Core.Entities.OrderProductReviews.OrderProductReview", "OrderProductReview")
+                        .WithMany("Photos")
+                        .HasForeignKey("OrderProductReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderProductReview");
+                });
+
             modelBuilder.Entity("Business_Core.Entities.Product.Product", b =>
                 {
                     b.HasOne("Business_Core.Entities.NestSubCategory", "NestSubCategory")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("NestSubCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1121,6 +1217,8 @@ namespace Data_Access.Migrations
                     b.Navigation("Employee")
                         .IsRequired();
 
+                    b.Navigation("OrderProductReview");
+
                     b.Navigation("Orders");
 
                     b.Navigation("Shipper")
@@ -1156,6 +1254,8 @@ namespace Data_Access.Migrations
                     b.Navigation("DynamicFormStructure");
 
                     b.Navigation("NestSubCategoryProductBrand");
+
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.Order.Order", b =>
@@ -1163,9 +1263,16 @@ namespace Data_Access.Migrations
                     b.Navigation("OrderDetails");
                 });
 
+            modelBuilder.Entity("Business_Core.Entities.OrderProductReviews.OrderProductReview", b =>
+                {
+                    b.Navigation("Photos");
+                });
+
             modelBuilder.Entity("Business_Core.Entities.Product.Product", b =>
                 {
                     b.Navigation("OrderDetails");
+
+                    b.Navigation("OrderProductReview");
 
                     b.Navigation("ProductImages");
                 });

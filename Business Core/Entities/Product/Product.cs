@@ -1,4 +1,5 @@
-﻿using Business_Core.Entities.Product.Product_Images;
+﻿using Business_Core.Entities.OrderProductReviews;
+using Business_Core.Entities.Product.Product_Images;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -26,10 +27,14 @@ namespace Business_Core.Entities.Product
         public virtual NestSubCategory?  NestSubCategory { get; set; }
         public DateTime? Created_At { get; set; }
         public DateTime? Modified_at { get; set; }
+        public int ProductTotalStars { get; set; }
+        public int Raitings { get; set; }
+
 
         // Navigation Properties
         public virtual IList<ProductImages>?  ProductImages { get; set; }
         public virtual ICollection<Business_Core.Entities.Order.OrderDetail.OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<OrderProductReview> OrderProductReview { get; set; }
 
 
         public Product()

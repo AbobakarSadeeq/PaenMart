@@ -1,5 +1,6 @@
 ﻿using Business_Core.Entities.Identity.user.Employee;
 using Business_Core.Entities.Identity.user.Shipper;
+using Business_Core.Entities.OrderProductReviews;
 using Bussiness_Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace Business_Core.Entities.Identity
         public virtual ICollection<Business_Core.Entities.Identity.AdminAccount.AdminAccount>?  AdminAccounts{ get; set; }
         public virtual ICollection<Business_Core.Entities.Order.Order>?  Orders{ get; set; }
 
+        public virtual ICollection<OrderProductReview>? OrderProductReview { get; set; }
 
         public CustomIdentity()
         {

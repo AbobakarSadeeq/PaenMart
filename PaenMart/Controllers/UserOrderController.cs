@@ -3,6 +3,7 @@ using Business_Core.Entities.Identity.AdminAccount;
 using Business_Core.Entities.Identity.Email;
 using Business_Core.Entities.Order;
 using Business_Core.Entities.Order.OrderDetail;
+using Business_Core.Entities.OrderProductReviews;
 using Business_Core.IServices;
 using Data_Access.DataContext_Class;
 using Microsoft.AspNetCore.Http;
@@ -538,7 +539,6 @@ namespace PaenMart.Controllers
             convertAccountData.TransactionPurpose = "Order Payment";
             convertAccountData.BalanceSituation = "Add";
             await _dataContext.AdminAccounts.AddAsync(convertAccountData);
-            await _dataContext.SaveChangesAsync();
 
 
             // Sending email to the user that whose order is and tell to give us the reviews about the all products that you have purchased
@@ -576,6 +576,7 @@ namespace PaenMart.Controllers
                   <span>{viewModel.PhoneNumber}</span><br>
                   <span style='font-weight:bold; color: #0f146d;'>Email: </span>
                   <span>{viewModel.Email}</span>
+
                 </div>
 
                 <hr>
@@ -597,8 +598,8 @@ namespace PaenMart.Controllers
                             <tbody>
                                 ");
 
-
             int totalPrice = 0;
+            var addingProductReviews = new List<OrderProductReview>();
             foreach (var OrderData in viewModel.OrderDetails)
             {
 
@@ -613,6 +614,15 @@ namespace PaenMart.Controllers
 
                 totalPrice = totalPrice + (OrderData.Price * OrderData.Quantity);
 
+                // Adding Reviews for pending
+
+                addingProductReviews.Add(new OrderProductReview()
+                {
+                    ProductId = OrderData.ProductId,
+                    UserId = getOrderData.CustomIdentityId,
+                    ReviewStatus = "Pending"
+                });
+
             }
 
             orderDetailsProduct.Append($@"
@@ -622,12 +632,15 @@ namespace PaenMart.Controllers
             <hr>
             </div>");
 
+
+            await _dataContext.OrderProductReviews.AddRangeAsync(addingProductReviews);
+            await _dataContext.SaveChangesAsync();
+
             var getEmailSendEmailData = await _dataContext.SendingEmails.FirstOrDefaultAsync();
             MailMessage msgObj = new MailMessage(getEmailSendEmailData.OwnerEmail, viewModel.Email);
             msgObj.Subject = "Paen mart order";
             msgObj.IsBodyHtml = true;
             msgObj.Body = orderDetailsProduct.ToString();
-
 
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
             client.EnableSsl = true;

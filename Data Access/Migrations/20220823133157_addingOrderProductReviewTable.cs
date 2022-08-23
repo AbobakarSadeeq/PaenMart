@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Data_Access.Migrations
 {
-    public partial class addOrder : Migration
+    public partial class addingOrderProductReviewTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -406,7 +406,7 @@ namespace Data_Access.Migrations
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ShippedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShipperId = table.Column<int>(type: "int", nullable: false),
+                    ShipperId = table.Column<int>(type: "int", nullable: true),
                     CustomIdentityId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -559,7 +559,9 @@ namespace Data_Access.Migrations
                     ProductBrandId = table.Column<int>(type: "int", nullable: false),
                     NestSubCategoryId = table.Column<int>(type: "int", nullable: false),
                     Created_At = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Modified_at = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Modified_at = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProductTotalStars = table.Column<int>(type: "int", nullable: false),
+                    Raitings = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -607,6 +609,36 @@ namespace Data_Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OrderProductReviews",
+                columns: table => new
+                {
+                    OrderProductReviewID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    RaitingStars = table.Column<double>(type: "float", nullable: false),
+                    ProductComment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Add_Review_Date = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReviewStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderProductReviews", x => x.OrderProductReviewID);
+                    table.ForeignKey(
+                        name: "FK_OrderProductReviews_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderProductReviews_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProductImages",
                 columns: table => new
                 {
@@ -624,6 +656,27 @@ namespace Data_Access.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderProductReviewsPhotos",
+                columns: table => new
+                {
+                    OrderProductReviewsPhotoID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    URL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PublicId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrderProductReviewId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderProductReviewsPhotos", x => x.OrderProductReviewsPhotoID);
+                    table.ForeignKey(
+                        name: "FK_OrderProductReviewsPhotos_OrderProductReviews_OrderProductReviewId",
+                        column: x => x.OrderProductReviewId,
+                        principalTable: "OrderProductReviews",
+                        principalColumn: "OrderProductReviewID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -712,6 +765,21 @@ namespace Data_Access.Migrations
                 name: "IX_OrderDetails_ProductId",
                 table: "OrderDetails",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderProductReviews_ProductId",
+                table: "OrderProductReviews",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderProductReviews_UserId",
+                table: "OrderProductReviews",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderProductReviewsPhotos_OrderProductReviewId",
+                table: "OrderProductReviewsPhotos",
+                column: "OrderProductReviewId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomIdentityId",
@@ -808,6 +876,9 @@ namespace Data_Access.Migrations
                 name: "OrderDetails");
 
             migrationBuilder.DropTable(
+                name: "OrderProductReviewsPhotos");
+
+            migrationBuilder.DropTable(
                 name: "ProductImages");
 
             migrationBuilder.DropTable(
@@ -832,7 +903,7 @@ namespace Data_Access.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "OrderProductReviews");
 
             migrationBuilder.DropTable(
                 name: "Cities");
@@ -841,16 +912,19 @@ namespace Data_Access.Migrations
                 name: "Shippers");
 
             migrationBuilder.DropTable(
-                name: "NestSubCategories");
-
-            migrationBuilder.DropTable(
-                name: "ProductBrands");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Countries");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "NestSubCategories");
+
+            migrationBuilder.DropTable(
+                name: "ProductBrands");
 
             migrationBuilder.DropTable(
                 name: "SubCategories");
