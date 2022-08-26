@@ -19,7 +19,8 @@ namespace Data_Access.Repositories_Implement
         private readonly DataContext _DataContext;
         private readonly IOptions<CloudinarySettings> _cloudinaryConfig;
         private Cloudinary _cloudinary;
-        public CarouselRepository(DataContext DataContext, IOptions<CloudinarySettings> cloudinaryConfig) : base(DataContext)
+        public CarouselRepository(DataContext DataContext,
+            IOptions<CloudinarySettings> cloudinaryConfig) : base(DataContext)
         {
             _DataContext = DataContext;
             _cloudinaryConfig = cloudinaryConfig;

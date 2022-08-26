@@ -873,12 +873,7 @@ namespace PaenMart.Controllers
             client.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword };
             client.Send(msgObj);
 
-
-
             return Ok();
-
-
-
 
         }
 

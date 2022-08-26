@@ -25,7 +25,7 @@ namespace Business_Core.Entities.Identity
 
         public virtual ICollection<OrderProductReview>? OrderProductReview { get; set; }
 
-        public CustomIdentity()
+       public CustomIdentity()
         {
             UserImages = new HashSet<UserImage>();
         }
