@@ -22,6 +22,9 @@ namespace Business_Core.Entities.Product
         public string? ProductBrandName { get; set; }
         public int NestSubCategoryId { get; set; }
         public string? NestSubCategoryName { get; set; }
+        public int Raiting { get; set; }
+        public int TotalProductStars { get; set; }
+        public double ShowStarsByRatings { get; set; } = 0;
         public DateTime? Created_At { get; set; }
         public DateTime? Modified_at { get; set; }
         public virtual IList<GetProductImages> GetProductImagess { get; set; }

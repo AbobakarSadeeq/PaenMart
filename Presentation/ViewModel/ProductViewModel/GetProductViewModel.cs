@@ -16,6 +16,9 @@ namespace Presentation.ViewModel.ProductViewModel
         public int ProductBrandId { get; set; }
         public string? ProductBrandName { get; set; }
         public string? ImageUrl { get; set; }
+        public int Raiting { get; set; }
+        public int TotalProductStars { get; set; }
+        public double ShowStarsByRatings { get; set; }
 
         public virtual IList<GetProductImages> GetProductImagess { get; set; }
         public GetProductViewModel()

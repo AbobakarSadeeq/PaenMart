@@ -60,6 +60,37 @@ namespace PaenMart.Controllers
         {
             var detailData = await _productService.GetSingleProduct(Id);
 
+            detailData.ShowStarsByRatings = (double)detailData.TotalProductStars / (detailData.Raiting * 5);
+            detailData.ShowStarsByRatings = detailData.ShowStarsByRatings * 5;
+
+                if (detailData.ShowStarsByRatings >= 0.3 && detailData.ShowStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
+                    detailData.ShowStarsByRatings >= 1.3 && detailData.ShowStarsByRatings <= 1.7 ||
+                    detailData.ShowStarsByRatings >= 2.3 && detailData.ShowStarsByRatings <= 2.7 ||
+                    detailData.ShowStarsByRatings >= 3.3 && detailData.ShowStarsByRatings <= 3.7 ||
+                    detailData.ShowStarsByRatings >= 4.3 && detailData.ShowStarsByRatings <= 4.7
+                    )
+                {
+                detailData.ShowStarsByRatings = Math.Ceiling(detailData.ShowStarsByRatings) - 0.5;
+
+
+                }
+                else if (detailData.ShowStarsByRatings >= 0 && detailData.ShowStarsByRatings <= 0.2 || // 0 => 0.2 == 0
+                   detailData.ShowStarsByRatings >= 1 && detailData.ShowStarsByRatings <= 1.2 ||
+                   detailData.ShowStarsByRatings >= 2 && detailData.ShowStarsByRatings <= 2.2 ||
+                   detailData.ShowStarsByRatings >= 3 && detailData.ShowStarsByRatings <= 3.2 ||
+                   detailData.ShowStarsByRatings >= 4 && detailData.ShowStarsByRatings <= 4.2
+                   )
+                {
+                detailData.ShowStarsByRatings = Math.Round(detailData.ShowStarsByRatings);
+
+
+                }
+                else if (detailData.ShowStarsByRatings > 0.7                           // 0.8 => 1 == 1
+                   || detailData.ShowStarsByRatings > 1.7 || detailData.ShowStarsByRatings > 2.7
+                   || detailData.ShowStarsByRatings > 3.7 || detailData.ShowStarsByRatings > 4.7)
+                {
+                detailData.ShowStarsByRatings = Math.Ceiling(detailData.ShowStarsByRatings);
+                }
             return Ok(detailData);
         }
 
@@ -80,6 +111,40 @@ namespace PaenMart.Controllers
         {
             var detailData = await _productService.GetProductsByBrandId(productByBrands);
             var convertProductData = _mapper.Map<List<GetProductViewModel>>(detailData);
+            foreach (var singleProduct in convertProductData)
+            {
+                singleProduct.ShowStarsByRatings = (double)singleProduct.TotalProductStars / (singleProduct.Raiting * 5);
+                singleProduct.ShowStarsByRatings = singleProduct.ShowStarsByRatings * 5;
+
+                if (singleProduct.ShowStarsByRatings >= 0.3 && singleProduct.ShowStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
+                    singleProduct.ShowStarsByRatings >= 1.3 && singleProduct.ShowStarsByRatings <= 1.7 ||
+                    singleProduct.ShowStarsByRatings >= 2.3 && singleProduct.ShowStarsByRatings <= 2.7 ||
+                    singleProduct.ShowStarsByRatings >= 3.3 && singleProduct.ShowStarsByRatings <= 3.7 ||
+                    singleProduct.ShowStarsByRatings >= 4.3 && singleProduct.ShowStarsByRatings <= 4.7
+                    )
+                {
+                    singleProduct.ShowStarsByRatings = Math.Ceiling(singleProduct.ShowStarsByRatings) - 0.5;
+
+
+                }
+                else if (singleProduct.ShowStarsByRatings >= 0 && singleProduct.ShowStarsByRatings <= 0.2 || // 0 => 0.2 == 0
+                   singleProduct.ShowStarsByRatings >= 1 && singleProduct.ShowStarsByRatings <= 1.2 ||
+                   singleProduct.ShowStarsByRatings >= 2 && singleProduct.ShowStarsByRatings <= 2.2 ||
+                   singleProduct.ShowStarsByRatings >= 3 && singleProduct.ShowStarsByRatings <= 3.2 ||
+                   singleProduct.ShowStarsByRatings >= 4 && singleProduct.ShowStarsByRatings <= 4.2
+                   )
+                {
+                    singleProduct.ShowStarsByRatings = Math.Round(singleProduct.ShowStarsByRatings);
+
+
+                }
+                else if (singleProduct.ShowStarsByRatings > 0.7                           // 0.8 => 1 == 1
+                   || singleProduct.ShowStarsByRatings > 1.7 || singleProduct.ShowStarsByRatings > 2.7
+                   || singleProduct.ShowStarsByRatings > 3.7 || singleProduct.ShowStarsByRatings > 4.7)
+                {
+                    singleProduct.ShowStarsByRatings = Math.Ceiling(singleProduct.ShowStarsByRatings);
+                }
+            }
             int countProductsRows = productByBrands.singleCategoryTotalProductsCount;
             return Ok(new { productData = convertProductData, countProducts = countProductsRows });
         }
@@ -88,10 +153,42 @@ namespace PaenMart.Controllers
         [HttpGet("GetProductsByNestSubCategory")]
         public async Task<IActionResult> GetProductsByNestSubCategory([FromQuery] PageSelectedAndNestCategoryId pageSelectedAndNestCategoryId)
         {
+             
             var detailData = await _productService.GetProductsByNestSubCategoryId(pageSelectedAndNestCategoryId);
             var convertProductData = _mapper.Map<List<GetProductViewModel>>(detailData);
-            int countProductsRows = pageSelectedAndNestCategoryId.singleCategoryTotalProductsCount;
+            foreach (var singleProduct in convertProductData)
+            {
+                singleProduct.ShowStarsByRatings = (double) singleProduct.TotalProductStars  / (singleProduct.Raiting * 5);
+                singleProduct.ShowStarsByRatings = singleProduct.ShowStarsByRatings * 5;
 
+                if (singleProduct.ShowStarsByRatings >= 0.3 && singleProduct.ShowStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
+                    singleProduct.ShowStarsByRatings >= 1.3 && singleProduct.ShowStarsByRatings <= 1.7 ||
+                    singleProduct.ShowStarsByRatings >= 2.3 && singleProduct.ShowStarsByRatings <= 2.7 ||
+                    singleProduct.ShowStarsByRatings >= 3.3 && singleProduct.ShowStarsByRatings <= 3.7 ||
+                    singleProduct.ShowStarsByRatings >= 4.3 && singleProduct.ShowStarsByRatings <= 4.7
+                    )
+                {
+                    singleProduct.ShowStarsByRatings = Math.Ceiling(singleProduct.ShowStarsByRatings) - 0.5;
+
+
+                } else if (singleProduct.ShowStarsByRatings >= 0 && singleProduct.ShowStarsByRatings <= 0.2 || // 0 => 0.2 == 0
+                     singleProduct.ShowStarsByRatings >= 1 && singleProduct.ShowStarsByRatings <= 1.2 ||
+                     singleProduct.ShowStarsByRatings >= 2 && singleProduct.ShowStarsByRatings <= 2.2 ||
+                     singleProduct.ShowStarsByRatings >= 3 && singleProduct.ShowStarsByRatings <= 3.2 ||
+                     singleProduct.ShowStarsByRatings >= 4 && singleProduct.ShowStarsByRatings <= 4.2
+                     )
+                {
+                    singleProduct.ShowStarsByRatings = Math.Round(singleProduct.ShowStarsByRatings);
+ 
+
+                } else if (singleProduct.ShowStarsByRatings > 0.7                           // 0.8 => 1 == 1
+                     || singleProduct.ShowStarsByRatings > 1.7 || singleProduct.ShowStarsByRatings > 2.7
+                     || singleProduct.ShowStarsByRatings > 3.7 || singleProduct.ShowStarsByRatings > 4.7)
+                { 
+                    singleProduct.ShowStarsByRatings = Math.Ceiling(singleProduct.ShowStarsByRatings);
+                } 
+            }
+            int countProductsRows = pageSelectedAndNestCategoryId.singleCategoryTotalProductsCount;
             return Ok(new { productData = convertProductData, countProducts = countProductsRows });
         }
 
@@ -109,6 +206,40 @@ namespace PaenMart.Controllers
         {
             var get5MostSellProducts =  await _productService.GetFiveMostSelledProducts();
             var convertProductData = _mapper.Map<List<GetProductViewModel>>(get5MostSellProducts);
+            foreach (var singleProduct in convertProductData)
+            {
+                singleProduct.ShowStarsByRatings = (double)singleProduct.TotalProductStars / (singleProduct.Raiting * 5);
+                singleProduct.ShowStarsByRatings = singleProduct.ShowStarsByRatings * 5;
+
+                if (singleProduct.ShowStarsByRatings >= 0.3 && singleProduct.ShowStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
+                    singleProduct.ShowStarsByRatings >= 1.3 && singleProduct.ShowStarsByRatings <= 1.7 ||
+                    singleProduct.ShowStarsByRatings >= 2.3 && singleProduct.ShowStarsByRatings <= 2.7 ||
+                    singleProduct.ShowStarsByRatings >= 3.3 && singleProduct.ShowStarsByRatings <= 3.7 ||
+                    singleProduct.ShowStarsByRatings >= 4.3 && singleProduct.ShowStarsByRatings <= 4.7
+                    )
+                {
+                    singleProduct.ShowStarsByRatings = Math.Ceiling(singleProduct.ShowStarsByRatings) - 0.5;
+
+
+                }
+                else if (singleProduct.ShowStarsByRatings >= 0 && singleProduct.ShowStarsByRatings <= 0.2 || // 0 => 0.2 == 0
+                   singleProduct.ShowStarsByRatings >= 1 && singleProduct.ShowStarsByRatings <= 1.2 ||
+                   singleProduct.ShowStarsByRatings >= 2 && singleProduct.ShowStarsByRatings <= 2.2 ||
+                   singleProduct.ShowStarsByRatings >= 3 && singleProduct.ShowStarsByRatings <= 3.2 ||
+                   singleProduct.ShowStarsByRatings >= 4 && singleProduct.ShowStarsByRatings <= 4.2
+                   )
+                {
+                    singleProduct.ShowStarsByRatings = Math.Round(singleProduct.ShowStarsByRatings);
+
+
+                }
+                else if (singleProduct.ShowStarsByRatings > 0.7                           // 0.8 => 1 == 1
+                   || singleProduct.ShowStarsByRatings > 1.7 || singleProduct.ShowStarsByRatings > 2.7
+                   || singleProduct.ShowStarsByRatings > 3.7 || singleProduct.ShowStarsByRatings > 4.7)
+                {
+                    singleProduct.ShowStarsByRatings = Math.Ceiling(singleProduct.ShowStarsByRatings);
+                }
+            }
             return Ok(convertProductData);
         }
 

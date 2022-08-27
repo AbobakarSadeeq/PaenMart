@@ -1,4 +1,5 @@
-﻿using Business_Core.Entities.OrderProductReviews.OrderProductReviewsPhoto;
+﻿using Business_Core.Entities.OrderProductReviews;
+using Business_Core.Entities.OrderProductReviews.OrderProductReviewsPhoto;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Data_Access.DataContext_Class;
@@ -121,11 +122,12 @@ namespace PaenMart.Controllers
             return Ok();
         }
 
+
         [HttpGet("GetReviewedReviewByUser/{userId}")]
         public async Task<IActionResult> GetReviewedReviewByUser(string userId)
         {
             var getUserPendingOrderReviews = await _dataContext.OrderProductReviews
-                .Include(a=>a.Photos)
+                .Include(a => a.Photos)
                 .Include(a => a.Product)
                 .ThenInclude(a => a.ProductImages)
                 .Where(x => x.UserId == userId && x.ReviewStatus == "Reviewed")
@@ -148,6 +150,60 @@ namespace PaenMart.Controllers
                 });
             }
             return Ok(convertToViewModel);
+        }
+
+
+        [HttpPost("GetAllUserReviewsOfSingleProduct")]
+        public async Task<IActionResult> GetAllUserReviewsOfSingleProduct(GetSingleProductReviewByProduct productReviews)
+        {
+            var findingReviewsByItsProductId = new List<OrderProductReview>();
+
+            var countList = await _dataContext.OrderProductReviews
+            .Where(a => a.ProductId == productReviews.ProductId && a.ReviewStatus == "Reviewed")
+            .CountAsync();
+
+            if (productReviews.PageNo == 1)
+            {
+                findingReviewsByItsProductId = await _dataContext.OrderProductReviews
+                .Include(a => a.CustomIdentity)
+                .Include(a => a.Photos)
+                .Where(a => a.ProductId == productReviews.ProductId && a.ReviewStatus == "Reviewed")
+                .Take(7)
+                .ToListAsync();
+            }else
+            {
+                int skipPageSize = (productReviews.PageNo - 1) * 7;
+                findingReviewsByItsProductId = await _dataContext.OrderProductReviews
+                .Include(a => a.CustomIdentity)
+                .Include(a => a.Photos)
+                .Where(a => a.ProductId == productReviews.ProductId && a.ReviewStatus == "Reviewed")
+                .Skip(skipPageSize)
+                .Take(7)
+                .ToListAsync();
+            }
+
+            var convertDataToViewModel = new List<GetSingleProductReviews>();
+
+            foreach (var listData in findingReviewsByItsProductId)
+            {
+                convertDataToViewModel.Add(new GetSingleProductReviews
+                {
+                    RatingStars = listData.RaitingStars,
+                    UserFullName = listData.CustomIdentity.FullName,
+                    ProductId = listData.ProductId,
+                    ProductComment = listData.ProductComment,
+                    ProductReviewedPhoto =  listData.Photos.Select(a=> new GetSingleProductReviewPhotos
+                    {
+                        OrderProductReviewsPhotoID = a.OrderProductReviewsPhotoID,
+                        URL = a.URL,
+                    }).ToList()
+                });
+            }
+            return Ok(new
+            {
+                dataCount = countList,
+                reviewList = convertDataToViewModel
+            });
         }
 
 

@@ -189,7 +189,9 @@ namespace Data_Access.Repositories_Implement
                     ProductID = item.ProductID,
                     Modified_at = item.Modified_at,
                     Created_At = item.Created_At,
-                    GetProductImagess = getOnlyOneImage
+                    GetProductImagess = getOnlyOneImage,
+                    Raiting = item.Raitings,
+                    TotalProductStars = item.ProductTotalStars
                 });
                 getOnlyOneImage = new List<GetProductImages>();
             }
@@ -259,7 +261,9 @@ namespace Data_Access.Repositories_Implement
                     ProductID = item.ProductID,
                     Modified_at = item.Modified_at,
                     Created_At = item.Created_At,
-                    GetProductImagess = getOnlyOneImage
+                    GetProductImagess = getOnlyOneImage,
+                    Raiting = item.Raitings,
+                    TotalProductStars = item.ProductTotalStars
                 });
                 getOnlyOneImage = new List<GetProductImages>();
             }
@@ -303,7 +307,9 @@ namespace Data_Access.Repositories_Implement
                 ProductID = gettingDataById.ProductID,
                 Modified_at = gettingDataById.Modified_at,
                 Created_At = gettingDataById.Created_At,
-                GetProductImagess = filterdImages
+                GetProductImagess = filterdImages,
+                Raiting = gettingDataById.Raitings,
+                TotalProductStars = gettingDataById.ProductTotalStars
             };
 
         }
@@ -444,7 +450,9 @@ namespace Data_Access.Repositories_Implement
                     Color = item.Color,
                     Price = item.Price,
                     ProductID = item.ProductID,
-                    GetProductImagess = getOnlyOneImage
+                    GetProductImagess = getOnlyOneImage,
+                    Raiting = item.Raitings,
+                    TotalProductStars = item.ProductTotalStars
                 });
                 getOnlyOneImage = new List<GetProductImages>();
             }
