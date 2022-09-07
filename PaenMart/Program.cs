@@ -51,7 +51,7 @@ builder.Services.AddDbContextPool<DataContext>(options =>
  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-// JWT Token
+// JWT Token schema and it is used for to check the given token is valid or not. without it authorize attribute cannot work.
 var key = Encoding.UTF8.GetBytes(builder.Configuration["ApplicationSettings:JWT_Secret"].ToString());
 builder.Services.AddAuthentication(a =>
 {
@@ -63,6 +63,7 @@ builder.Services.AddAuthentication(a =>
     x.SaveToken = false;
     x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
+        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = false,
@@ -71,6 +72,7 @@ builder.Services.AddAuthentication(a =>
     };
 });
 
+ 
 
 // Validation for Password
 builder.Services.Configure<IdentityOptions>(options =>

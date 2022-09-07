@@ -1,5 +1,6 @@
 ﻿using Business_Core.Entities.Identity.Email;
 using Data_Access.DataContext_Class;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace PaenMart.Controllers
         // ------------------------- Dashboard -------------------------
 
         [HttpGet("DashboardData")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DashboardData()
         {
             var getProductsAndSumTotalWorth = await _dataContext.Products
@@ -170,6 +172,37 @@ namespace PaenMart.Controllers
 
                 foreach (var singleProduct in foundProductList)
                 {
+                    double ShowStarsByRatings = (double)singleProduct.ProductTotalStars / (singleProduct.Raitings * 5);
+                    ShowStarsByRatings = ShowStarsByRatings * 5;
+                    if (ShowStarsByRatings >= 0.3 && ShowStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
+                  ShowStarsByRatings >= 1.3 && ShowStarsByRatings <= 1.7 ||
+                  ShowStarsByRatings >= 2.3 && ShowStarsByRatings <= 2.7 ||
+                  ShowStarsByRatings >= 3.3 && ShowStarsByRatings <= 3.7 ||
+                  ShowStarsByRatings >= 4.3 && ShowStarsByRatings <= 4.7
+                  )
+                    {
+                        ShowStarsByRatings = Math.Ceiling(ShowStarsByRatings) - 0.5;
+
+
+                    }
+                    else if (ShowStarsByRatings >= 0 && ShowStarsByRatings <= 0.2 || // 0 => 0.2 == 0
+                      ShowStarsByRatings >= 1 && ShowStarsByRatings <= 1.2 ||
+                      ShowStarsByRatings >= 2 && ShowStarsByRatings <= 2.2 ||
+                       ShowStarsByRatings >= 3 && ShowStarsByRatings <= 3.2 ||
+                       ShowStarsByRatings >= 4 && ShowStarsByRatings <= 4.2
+                       )
+                    {
+                        ShowStarsByRatings = Math.Round(ShowStarsByRatings);
+
+
+                    }
+                    else if (ShowStarsByRatings > 0.7                           // 0.8 => 1 == 1
+                       || ShowStarsByRatings > 1.7 || ShowStarsByRatings > 2.7
+                       || ShowStarsByRatings > 3.7 || ShowStarsByRatings > 4.7)
+                    {
+                       ShowStarsByRatings = Math.Ceiling(ShowStarsByRatings);
+                    }
+
                     productsFoundList.Add(new GetProductViewModel
                     {
                         ProductID = singleProduct.ProductID,
@@ -179,8 +212,14 @@ namespace PaenMart.Controllers
                         GetProductImagess = null,
                         Price = singleProduct.Price,
                         ProductName = singleProduct.ProductName,
-                        ImageUrl = singleProduct.ProductImages[0].URL
+                        ImageUrl = singleProduct.ProductImages[0].URL,
+                        ShowStarsByRatings = ShowStarsByRatings,
+                        TotalProductStars = singleProduct.ProductTotalStars,
+                        Raiting = singleProduct.Raitings
+
                     });
+
+
                 }
 
                 return Ok(new
@@ -229,6 +268,40 @@ namespace PaenMart.Controllers
 
                 foreach (var singleProduct in foundProductList)
                 {
+
+                    double ShowStarsByRatings = (double)singleProduct.ProductTotalStars / (singleProduct.Raitings * 5);
+                    ShowStarsByRatings = ShowStarsByRatings * 5;
+                    if (ShowStarsByRatings >= 0.3 && ShowStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
+                  ShowStarsByRatings >= 1.3 && ShowStarsByRatings <= 1.7 ||
+                  ShowStarsByRatings >= 2.3 && ShowStarsByRatings <= 2.7 ||
+                  ShowStarsByRatings >= 3.3 && ShowStarsByRatings <= 3.7 ||
+                  ShowStarsByRatings >= 4.3 && ShowStarsByRatings <= 4.7
+                  )
+                    {
+                        ShowStarsByRatings = Math.Ceiling(ShowStarsByRatings) - 0.5;
+
+
+                    }
+                    else if (ShowStarsByRatings >= 0 && ShowStarsByRatings <= 0.2 || // 0 => 0.2 == 0
+                      ShowStarsByRatings >= 1 && ShowStarsByRatings <= 1.2 ||
+                      ShowStarsByRatings >= 2 && ShowStarsByRatings <= 2.2 ||
+                       ShowStarsByRatings >= 3 && ShowStarsByRatings <= 3.2 ||
+                       ShowStarsByRatings >= 4 && ShowStarsByRatings <= 4.2
+                       )
+                    {
+                        ShowStarsByRatings = Math.Round(ShowStarsByRatings);
+
+
+                    }
+                    else if (ShowStarsByRatings > 0.7                           // 0.8 => 1 == 1
+                       || ShowStarsByRatings > 1.7 || ShowStarsByRatings > 2.7
+                       || ShowStarsByRatings > 3.7 || ShowStarsByRatings > 4.7)
+                    {
+                        ShowStarsByRatings = Math.Ceiling(ShowStarsByRatings);
+                    }
+
+
+
                     productsFoundList.Add(new GetProductViewModel
                     {
                         ProductID = singleProduct.ProductID,
@@ -238,7 +311,10 @@ namespace PaenMart.Controllers
                         GetProductImagess = null,
                         Price = singleProduct.Price,
                         ProductName = singleProduct.ProductName,
-                        ImageUrl = singleProduct.ProductImages[0].URL
+                        ImageUrl = singleProduct.ProductImages[0].URL,
+                        ShowStarsByRatings = ShowStarsByRatings,
+                        TotalProductStars = singleProduct.ProductTotalStars,
+                        Raiting = singleProduct.Raitings
                     });
                 }
                 return Ok(new
@@ -287,6 +363,37 @@ namespace PaenMart.Controllers
 
                 foreach (var singleProduct in foundProductList)
                  {
+
+                    double ShowStarsByRatings = (double)singleProduct.ProductTotalStars / (singleProduct.Raitings * 5);
+                    ShowStarsByRatings = ShowStarsByRatings * 5;
+                    if (ShowStarsByRatings >= 0.3 && ShowStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
+                  ShowStarsByRatings >= 1.3 && ShowStarsByRatings <= 1.7 ||
+                  ShowStarsByRatings >= 2.3 && ShowStarsByRatings <= 2.7 ||
+                  ShowStarsByRatings >= 3.3 && ShowStarsByRatings <= 3.7 ||
+                  ShowStarsByRatings >= 4.3 && ShowStarsByRatings <= 4.7
+                  )
+                    {
+                        ShowStarsByRatings = Math.Ceiling(ShowStarsByRatings) - 0.5;
+
+
+                    }
+                    else if (ShowStarsByRatings >= 0 && ShowStarsByRatings <= 0.2 || // 0 => 0.2 == 0
+                      ShowStarsByRatings >= 1 && ShowStarsByRatings <= 1.2 ||
+                      ShowStarsByRatings >= 2 && ShowStarsByRatings <= 2.2 ||
+                       ShowStarsByRatings >= 3 && ShowStarsByRatings <= 3.2 ||
+                       ShowStarsByRatings >= 4 && ShowStarsByRatings <= 4.2
+                       )
+                    {
+                        ShowStarsByRatings = Math.Round(ShowStarsByRatings);
+
+
+                    }
+                    else if (ShowStarsByRatings > 0.7                           // 0.8 => 1 == 1
+                       || ShowStarsByRatings > 1.7 || ShowStarsByRatings > 2.7
+                       || ShowStarsByRatings > 3.7 || ShowStarsByRatings > 4.7)
+                    {
+                        ShowStarsByRatings = Math.Ceiling(ShowStarsByRatings);
+                    }
                     productsFoundList.Add(new GetProductViewModel
                     {
                         ProductID = singleProduct.ProductID,
@@ -296,7 +403,10 @@ namespace PaenMart.Controllers
                         GetProductImagess = null,
                         Price = singleProduct.Price,
                         ProductName = singleProduct.ProductName,
-                        ImageUrl = singleProduct.ProductImages[0].URL
+                        ImageUrl = singleProduct.ProductImages[0].URL,
+                        ShowStarsByRatings = ShowStarsByRatings,
+                        TotalProductStars = singleProduct.ProductTotalStars,
+                        Raiting = singleProduct.Raitings
                     });
                 }
                 return Ok(new
