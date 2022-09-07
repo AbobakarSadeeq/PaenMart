@@ -123,6 +123,87 @@ namespace PaenMart.Controllers
             return Ok(getFiveOrdersShippedList);
         }
 
+        [HttpPost("AutoCompletionSearch")]
+        public async Task<IActionResult> AutoCompletionSearch(SearchProductViewModel viewModel)
+        {
+            // first search by brandName and nest-category
+
+            // finding by complete writing brand-category-name
+            var findingSearchItemBrand = await _dataContext
+              .ProductBrands.Where(a => a.BrandName.Contains(viewModel.SearchText))
+              .Select(a => new
+              {
+                  a.BrandName
+              })
+              .ToListAsync();
+
+            // finding by complete writing nest-category-name
+            var findingSearchItemByNestCategory = await _dataContext
+               .NestSubCategories.Where(a => a.NestSubCategoryName.Contains(viewModel.SearchText))
+               .Select(a => new
+               {
+                   a.NestSubCategoryName
+               }).ToListAsync();
+
+           
+
+          
+
+            // if not fullfulling the count then search it by the product names
+
+            var findingByProductName = await _dataContext.Products
+                .Where(a => a.ProductName.Contains(viewModel.SearchText))
+                .Take(10)
+                .Select(a => new 
+                {
+                    a.ProductName
+                }).ToListAsync();
+
+
+
+
+        
+
+            
+            // found data in list
+            var combiningTheSearchData = new List<string>();
+
+
+
+            int i = 0;
+            while(combiningTheSearchData.Count <= 10)
+            {
+
+                if(findingSearchItemBrand.Count - 1 >= i)
+                {
+                    combiningTheSearchData.Add(findingSearchItemBrand[i].BrandName);
+                }
+
+                if(findingSearchItemByNestCategory.Count - 1 >= i)
+                {
+                    combiningTheSearchData.Add(findingSearchItemByNestCategory[i].NestSubCategoryName);
+                }
+
+                if(findingByProductName.Count -1 >= i)
+                {
+                    combiningTheSearchData.Add(findingByProductName[i].ProductName);
+
+                }
+
+                if(i >= findingByProductName.Count -1 && i >= findingSearchItemBrand.Count - 1 && i >= findingSearchItemByNestCategory.Count)
+                {
+                    break;
+                }
+
+                i++;
+            }
+
+
+
+
+            return Ok(combiningTheSearchData);
+        }
+
         [HttpPost("SearchItems")]
         public async Task<IActionResult> SearchItems(SearchProductViewModel viewModel)
         {
