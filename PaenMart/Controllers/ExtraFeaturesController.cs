@@ -1,11 +1,16 @@
 ﻿using Business_Core.Entities.Identity.Email;
+using Business_Core.Entities.Product;
+using Business_Core.Entities.Product.Product_Images;
 using Data_Access.DataContext_Class;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Presentation.ViewModel.ContactUsViewModel;
 using Presentation.ViewModel.ProductViewModel;
 using Presentation.ViewModel.SearchProductsViewModel;
+using System.Net;
+using System.Net.Mail;
 
 namespace PaenMart.Controllers
 {
@@ -500,6 +505,150 @@ namespace PaenMart.Controllers
             return BadRequest("Sorry your result is not found " + viewModel.SearchText);
         }
 
+
+        [HttpPost("ShopByBrandForFooter")]
+        public async Task<IActionResult> ShopByBrandForFooter(GetAllProductByBrand viewModel)
+        {
+            var findingSelectedBrandProductsCounts = _dataContext.Products
+                .Where(a => a.ProductBrandId == viewModel.brandId)
+                .Count();
+            var selectedBrandProducts = new List<Product>();
+
+
+            if (viewModel.pageNo == 1)
+            {
+                selectedBrandProducts = await _dataContext.Products
+                .Include(a => a.ProductBrand)
+                .Include(a => a.ProductImages)
+                .Where(a => a.ProductBrandId == viewModel.brandId)
+                .Take(24)
+                .ToListAsync();
+
+            }
+            else
+            {
+                selectedBrandProducts = await _dataContext.Products
+               .Include(a => a.ProductBrand)
+               .Include(a => a.ProductImages)
+               .Where(a => a.ProductBrandId == viewModel.brandId)
+               .Skip((viewModel.pageNo - 1) * 24)
+               .Take(24)
+               .ToListAsync();
+            }
+
+            List<GetProduct> filterdProducts = new List<GetProduct>();
+            List<GetProductImages> getOnlyOneImage = new List<GetProductImages>();
+            foreach (var item in selectedBrandProducts)
+            {
+
+                if (item.ProductImages.Count > 0)
+                {
+                    getOnlyOneImage.Add(new GetProductImages
+                    {
+                        ProductId = item.ProductImages[0].ProductId,
+                        ProductImageID = item.ProductImages[0].ProductImageID,
+                        PublicId = item.ProductImages[0].PublicId,
+                        URL = item.ProductImages[0].URL
+                    });
+                }
+
+                double ShowStarsByRatings = (double)item.ProductTotalStars / (item.Raitings * 5);
+                ShowStarsByRatings = ShowStarsByRatings * 5;
+
+                if (ShowStarsByRatings >= 0.3 && ShowStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
+                    ShowStarsByRatings >= 1.3 && ShowStarsByRatings <= 1.7 ||
+                    ShowStarsByRatings >= 2.3 && ShowStarsByRatings <= 2.7 ||
+                    ShowStarsByRatings >= 3.3 && ShowStarsByRatings <= 3.7 ||
+                    ShowStarsByRatings >= 4.3 && ShowStarsByRatings <= 4.7
+                    )
+                {
+                    ShowStarsByRatings = Math.Ceiling(ShowStarsByRatings) - 0.5;
+
+
+                }
+                else if (ShowStarsByRatings >= 0 && ShowStarsByRatings <= 0.2 || // 0 => 0.2 == 0
+                   ShowStarsByRatings >= 1 && ShowStarsByRatings <= 1.2 ||
+                   ShowStarsByRatings >= 2 && ShowStarsByRatings <= 2.2 ||
+                   ShowStarsByRatings >= 3 && ShowStarsByRatings <= 3.2 ||
+                   ShowStarsByRatings >= 4 && ShowStarsByRatings <= 4.2
+                   )
+                {
+                    ShowStarsByRatings = Math.Round(ShowStarsByRatings);
+
+
+                }
+                else if (ShowStarsByRatings > 0.7                           // 0.8 => 1 == 1
+                   || ShowStarsByRatings > 1.7 || ShowStarsByRatings > 2.7
+                   || ShowStarsByRatings > 3.7 || ShowStarsByRatings > 4.7)
+                {
+                    ShowStarsByRatings = Math.Ceiling(ShowStarsByRatings);
+                }
+
+                filterdProducts.Add(new GetProduct
+                {
+                    ProductBrandName = item.ProductBrand.BrandName,
+                    ProductBrandId = item.ProductBrand.ProductBrandID,
+                    ProductName = item.ProductName,
+                    Color = item.Color,
+                    Price = item.Price,
+                    StockAvailiability = item.StockAvailiability,
+                    Quantity = item.Quantity,
+                    SellUnits = item.SellUnits,
+                    ProductDetails = item.ProductDetails,
+                    ProductID = item.ProductID,
+                    Modified_at = item.Modified_at,
+                    Created_At = item.Created_At,
+                    GetProductImagess = getOnlyOneImage,
+                    Raiting = item.Raitings,
+                    TotalProductStars = item.ProductTotalStars,
+                    ShowStarsByRatings = ShowStarsByRatings,
+                });
+                getOnlyOneImage = new List<GetProductImages>();
+            }
+
+
+            return Ok(new
+            {
+                matchingProductsList = filterdProducts,
+                productsFoundCount = findingSelectedBrandProductsCounts
+            });
+        }
+
+        [HttpGet("GetBrandsForFooter")]
+        public async Task<IActionResult> GetBrandsForFooter()
+        {
+            var getBrands = await _dataContext.ProductBrands.Take(10).ToListAsync();
+            return Ok(getBrands);
+        }
+
+        [HttpGet("GetNestCategoriesForFooter")]
+        public async Task<IActionResult> GetNestCategoriesForFooter()
+        {
+            var getNestCategories = await _dataContext.NestSubCategories.Take(10).ToListAsync();
+            return Ok(getNestCategories);
+        }
+
+        [HttpPost("ContactUsSendingEmail")]
+        public async Task<IActionResult> ContactUsSendingEmail(ContactUsViewModel viewModel)
+        {
+            var gettingTheOwnerEmail =  await _dataContext.SendingEmails.FirstOrDefaultAsync();
+            string emailFormat = @$"<span><strong>From:</strong> {viewModel.FullName}, </span><br>
+                                <span><strong>Email:</strong> {viewModel.Email}, </span><br>
+                                <span><strong>Subject:</strong> New customer message on {DateTime.Now.ToString("G")} </span><br>
+                                <span><strong>Message:</strong> {viewModel.MessageTextArea}</p></span><br>";
+            var msgObj = new MailMessage(gettingTheOwnerEmail.OwnerEmail, gettingTheOwnerEmail.OwnerEmail);
+            msgObj.Subject = "New customer message on " + DateTime.Now.ToString("G");
+            msgObj.IsBodyHtml = true;
+            msgObj.Body = emailFormat;
+
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+            client.EnableSsl = true;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.UseDefaultCredentials = false;
+            client.Credentials = new NetworkCredential() { UserName = gettingTheOwnerEmail.OwnerEmail, Password = gettingTheOwnerEmail.AppPassword };
+            client.Send(msgObj);
+            return Ok();
+        }
 
     }
 
