@@ -79,21 +79,20 @@ namespace PaenMart.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateSponsoreAds([FromForm] AddUpdateSponsoredAdsViewModel viewModel)
         {
+            var findingUpdateObj = await _dataContext.SponsorsAds
+                .FirstOrDefaultAsync(a => a.AdID == viewModel.AdID);
 
-            var convertingViewModel = new SponsorsAds
-            {
-                AdPrice = viewModel.AdPrice,
-                SponsoredByName = viewModel.SponsoredByName,
-                ShowAdOnPage = viewModel.ShowAdOn,
-                Update_At = DateTime.Now,
-                AdStatus = "Live",
-                AdUrlDestination = viewModel.AdUrlDestination,
-                Expire_At = viewModel.Expire_At
-            };
+            findingUpdateObj.AdPrice = viewModel.AdPrice;
+            findingUpdateObj.SponsoredByName = viewModel.SponsoredByName;
+            findingUpdateObj.ShowAdOnPage = viewModel.ShowAdOn;
+            findingUpdateObj.Update_At = DateTime.Now;
+            findingUpdateObj.AdStatus = "Live";
+            findingUpdateObj.AdUrlDestination = viewModel.AdUrlDestination;
+            findingUpdateObj.Expire_At = viewModel.Expire_At;
             if (viewModel.File != null)
             {
                 // first delete the image from cloud
-                var deletePrams = new DeletionParams(viewModel.PublicId);
+                var deletePrams = new DeletionParams(findingUpdateObj.PublicId);
                 var cloudinaryDeletePhoto = _cloudinary.Destroy(deletePrams);
 
                 // uploading the new image to cloudinary
@@ -106,15 +105,15 @@ namespace PaenMart.Controllers
                     };
                     uploadResult = _cloudinary.Upload(uploadparams);
                 }
-                convertingViewModel.AdPictureUrl = uploadResult.Url.ToString();
-                convertingViewModel.PublicId = uploadResult.PublicId;
+                findingUpdateObj.AdPictureUrl = uploadResult.Url.ToString();
+                findingUpdateObj.PublicId = uploadResult.PublicId;
 
             }
-            _dataContext.SponsorsAds.Update(convertingViewModel);
+            _dataContext.SponsorsAds.Update(findingUpdateObj);
             await _dataContext.SaveChangesAsync();
             return Ok();
         }
-      
+
 
         [HttpGet("{adId}")]
         public async Task<IActionResult> GetingleSponsoredAdDetail(int adId)
@@ -142,7 +141,7 @@ namespace PaenMart.Controllers
         [HttpDelete("{adId}")]
         public async Task<IActionResult> DeleteOrExpireLiveSponser(int adId)
         {
-            var findingSponserId = await _dataContext.SponsorsAds.Where(a=>a.AdID == adId).FirstOrDefaultAsync();
+            var findingSponserId = await _dataContext.SponsorsAds.Where(a => a.AdID == adId).FirstOrDefaultAsync();
             findingSponserId.AdStatus = "Expire";
             _dataContext.SponsorsAds.Update(findingSponserId);
             await _dataContext.SaveChangesAsync();

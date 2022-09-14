@@ -9,14 +9,15 @@ namespace Presentation.ViewModel.SponsoredAdsViewModel
 {
     public class AddUpdateSponsoredAdsViewModel
     {
+        public int AdID { get; set; } = 0;
         public string? SponsoredByName { get; set; }
         public string? AdUrlDestination { get; set; }
         public int AdPrice { get; set; }
         public string? AdStatus { get; set; }
         public string? ShowAdOn { get; set; }
         public string? PublicId { get; set; }
-        public IFormFile? File { get; set; }
-        public DateTime? Created_At { get; set; }
+        public IFormFile? File { get; set; } = null;
+        public DateTime? Created_At { get; set; } = null;
         public DateTime? Update_At { get; set; }
         public DateTime? Expire_At { get; set; }
     }
