@@ -148,6 +148,52 @@ namespace PaenMart.Controllers
             return Ok();
         }
 
+        [HttpGet("SearchingAdsForPageAvailable/{pageName}")]
+        public async Task<IActionResult> SearchingAdsForPageAvailable(string pageName)
+        {
+            var findingAdsByPageName = await _dataContext.SponsorsAds
+                .Where(a => a.AdStatus == "Live").ToListAsync();
+            if (pageName == "Home")
+            {
+                List<SearchingSponsoreAdsViewModel> list = new List<SearchingSponsoreAdsViewModel>();
+                foreach (var sponser in findingAdsByPageName)
+                {
+                    if (sponser.ShowAdOnPage == "HomePage")
+                    {
+                        list.Add(new SearchingSponsoreAdsViewModel
+                        {
+                            liveOnPageName = "HomePage",
+                            SponsoreImageUrl = sponser.AdPictureUrl,
+                            SponsoreWebsiteUrl = sponser.AdUrlDestination,
+                        });
+                    }
+                    else if (sponser.ShowAdOnPage == "HomePopUpPage")
+                    {
+                        list.Add(new SearchingSponsoreAdsViewModel
+                        {
+                            liveOnPageName = "HomePopUpPage",
+                            SponsoreImageUrl = sponser.AdPictureUrl,
+                            SponsoreWebsiteUrl = sponser.AdUrlDestination,
+                        });
+                    }
+                }
+
+                return Ok(list);
+
+            }
+            else
+            {
+                var findingSelectedPage = findingAdsByPageName.FirstOrDefault(a => a.ShowAdOnPage == pageName);
+                return Ok(new SearchingSponsoreAdsViewModel
+                {
+                    liveOnPageName = findingSelectedPage.ShowAdOnPage,
+                    SponsoreImageUrl = findingSelectedPage.AdPictureUrl,
+                    SponsoreWebsiteUrl = findingSelectedPage.AdUrlDestination
+                });
+            }
+
+        }
+
 
 
 
