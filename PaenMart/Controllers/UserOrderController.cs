@@ -26,7 +26,7 @@ namespace PaenMart.Controllers
         private readonly IProductService _ProductService;
 
 
-        public UserOrderController(DataContext dataContext, IMapper mapper, IProductService  ProductService)
+        public UserOrderController(DataContext dataContext, IMapper mapper, IProductService ProductService)
         {
             _dataContext = dataContext;
             _ProductService = ProductService;
@@ -83,7 +83,7 @@ namespace PaenMart.Controllers
             client.EnableSsl = true;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.UseDefaultCredentials = false;
-            client.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword};
+            client.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword };
             client.Send(msgObj);
 
             return Ok();
@@ -113,9 +113,9 @@ namespace PaenMart.Controllers
             {
 
                 var updateProductData = await _dataContext.Products
-                    .FirstOrDefaultAsync(a=>a.ProductID== data.ProductId);
+                    .FirstOrDefaultAsync(a => a.ProductID == data.ProductId);
 
-                if(updateProductData.Quantity < data.Quantity)
+                if (updateProductData.Quantity < data.Quantity)
                 {
                     // send email as well here to user and skip this product
                     string adminName = "";
@@ -157,7 +157,7 @@ namespace PaenMart.Controllers
                     }
                     await _dataContext.SaveChangesAsync();
 
-                    if(viewModel.OrderDetail.Count == 1)
+                    if (viewModel.OrderDetail.Count == 1)
                     {
                         return Ok();
                     }
@@ -172,7 +172,7 @@ namespace PaenMart.Controllers
                 {
                     updateProductData.StockAvailiability = false;
                 }
-               await _dataContext.SaveChangesAsync();
+                await _dataContext.SaveChangesAsync();
 
 
 
@@ -246,16 +246,17 @@ namespace PaenMart.Controllers
                     .CountAsync();
             if (pageNo == 1)
             {
-                 
+
                 gettingOrdersData = await _dataContext.Orders
                 .Include(a => a.CustomIdentity)
                 .ThenInclude(a => a.Address)
                 .ThenInclude(a => a.City)
                 .ThenInclude(a => a.Country)
                 .Include(a => a.OrderDetails)
-                .Where(a=>a.OrderStatus == "Pending")
+                .Where(a => a.OrderStatus == "Pending")
                 .Take(12).ToListAsync();
-            }else
+            }
+            else
             {
                 int skipPageSize = (pageNo - 1) * 12;
                 gettingOrdersData = await _dataContext.Orders
@@ -465,35 +466,35 @@ namespace PaenMart.Controllers
               .ThenInclude(a => a.Country)
               .Include(a => a.OrderDetails)
               .ThenInclude(a => a.Product)
-              .ThenInclude(a=>a.ProductImages)
+              .ThenInclude(a => a.ProductImages)
               .FirstOrDefaultAsync(a => a.OrderID == Id);
 
-            if(gettingOrdersData == null)
+            if (gettingOrdersData == null)
             {
                 return BadRequest("No data found");
             }
 
             var convertDataToViewModel = new
             {
-            OrderId = gettingOrdersData.OrderID,
-            FullName = gettingOrdersData.CustomIdentity.FullName,
-            Email = gettingOrdersData.CustomIdentity.Email,
-            CompleteAddress = gettingOrdersData.CustomIdentity.Address.CompleteAddress,
-            CountryName = gettingOrdersData.CustomIdentity.Address.City.CityName,
-            CityName = gettingOrdersData.CustomIdentity.Address.City.Country.CountryName,
-            PhoneNumber = gettingOrdersData.CustomIdentity.Address.PhoneNumber,
-            OrderStatus = gettingOrdersData.OrderStatus,
-            OrderDate = gettingOrdersData.OrderDate.ToString(),
-            ShippedDate = gettingOrdersData.ShippedDate.ToString(),
-            OrderDetail = new List<GetOrderDetail>(),
-            PaymentMethod = gettingOrdersData.PaymentMethod,
-            ShipperId = gettingOrdersData.ShipperId
+                OrderId = gettingOrdersData.OrderID,
+                FullName = gettingOrdersData.CustomIdentity.FullName,
+                Email = gettingOrdersData.CustomIdentity.Email,
+                CompleteAddress = gettingOrdersData.CustomIdentity.Address.CompleteAddress,
+                CountryName = gettingOrdersData.CustomIdentity.Address.City.CityName,
+                CityName = gettingOrdersData.CustomIdentity.Address.City.Country.CountryName,
+                PhoneNumber = gettingOrdersData.CustomIdentity.Address.PhoneNumber,
+                OrderStatus = gettingOrdersData.OrderStatus,
+                OrderDate = gettingOrdersData.OrderDate.ToString(),
+                ShippedDate = gettingOrdersData.ShippedDate.ToString(),
+                OrderDetail = new List<GetOrderDetail>(),
+                PaymentMethod = gettingOrdersData.PaymentMethod,
+                ShipperId = gettingOrdersData.ShipperId
             };
 
             // Adding Its OrderDetails
             foreach (var item in gettingOrdersData.OrderDetails)
             {
-                
+
                 convertDataToViewModel.OrderDetail.Add(new GetOrderDetail
                 {
                     ProductId = item.ProductId,
@@ -655,7 +656,7 @@ namespace PaenMart.Controllers
         [HttpGet("ShipperDetail/{Id}")]
         public async Task<IActionResult> ShipperDetail(int Id)
         {
-           var gettingShipperDetailById = await _dataContext.Shippers.FirstOrDefaultAsync(a=>a.ShipperID == Id);
+            var gettingShipperDetailById = await _dataContext.Shippers.FirstOrDefaultAsync(a => a.ShipperID == Id);
             return Ok(new
             {
                 ShipperId = gettingShipperDetailById.ShipperID,
@@ -724,8 +725,8 @@ namespace PaenMart.Controllers
             });
         }
 
-     
-       // ------------------------- user order section -------------------------
+
+        // ------------------------- user order section -------------------------
 
         // Getting sinle user all his order 
         [HttpGet("GetSingleUserOrders/{userId}")]
@@ -810,8 +811,10 @@ namespace PaenMart.Controllers
             <p>Email: <strong>{userOrders[0].UserEmail}</strong></p>
             <p>Phone Number: <strong> {userOrders[0].PhoneNumber} </strong></p>
             <p>Address: <strong> {userOrders[0].UserAddress} </strong></p>
-            <p>Order Requested: <strong> {DateTime.Now.ToString("F")} </strong></p>
-            </div>
+            <p>Order Requested: <strong> {DateTime.Now.ToString("F")} </strong></p><br>
+            <a href='http://localhost:4200/Client/Order-Track' target='_blank' style=' text-decoration: none; padding: 20px; color: white;background-color: green;border-color: #ccc;width: 200px;'>Track Order</a>
+            </div>   
+   
             <br><br>
             <table style='border-collapse:collapse;'>
             <thead>
@@ -876,6 +879,62 @@ namespace PaenMart.Controllers
             return Ok();
 
         }
+
+
+        [HttpPost("OrderTracking")]
+        public async Task<IActionResult> OrderTracking(OrderTrackViewModel viewModel)
+        {
+            var findingOrder = await _dataContext.Orders
+                .Include(a => a.CustomIdentity)
+                .ThenInclude(a => a.Address)
+                .Include(a => a.OrderDetails)
+                .ThenInclude(a => a.Product)
+                .ThenInclude(a => a.ProductImages)
+                .Where(a => a.CustomIdentityId == viewModel.UserId && a.OrderID == viewModel.OrderTrackNumber).FirstOrDefaultAsync();
+
+
+
+            if (findingOrder == null)
+            {
+                return BadRequest("Sorry we didn't find your order by given order number");
+            }
+
+            int totalInvoice = 0;
+            List<GetOrderDetail> orderDetails = new List<GetOrderDetail>();
+            foreach (var item in findingOrder.OrderDetails)
+            {
+                orderDetails.Add(new GetOrderDetail
+                {
+                    ProductName = item.Product.ProductName + " (" + item.Product.Color + ")",
+                    Quantity = item.Quantity,
+                    ProductId = item.ProductId,
+                    ProductImageUrl = item.Product.ProductImages[0].URL,
+                    Price = item.Price,
+                    QuantityAvailability = false
+
+                });
+
+                totalInvoice += item.Price;
+            }
+
+            return Ok(new
+            {
+                OrderId = findingOrder.OrderID,
+                OrderStatus = findingOrder.OrderStatus,
+                OrderDate = findingOrder.OrderDate,
+                OrderShippedDate = findingOrder.ShippedDate,
+                PaymentMethod = findingOrder.PaymentMethod,
+                OrderDetail = orderDetails,
+                CustomerName = findingOrder.CustomIdentity.FullName,
+                CustomerEmail = findingOrder.CustomIdentity.Email,
+                CustomerPhoneNumber = findingOrder.CustomIdentity.Address.PhoneNumber,
+                CustomerAddress = findingOrder.CustomIdentity.Address.CompleteAddress,
+                TotalInvoice = totalInvoice
+            });
+        }
+
+
+
 
     }
 }
