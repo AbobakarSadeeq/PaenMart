@@ -24,8 +24,9 @@ namespace Business_Core.Entities.Identity
         public virtual ICollection<Business_Core.Entities.Order.Order>?  Orders{ get; set; }
 
         public virtual ICollection<OrderProductReview>? OrderProductReview { get; set; }
+        public virtual ICollection<Business_Core.Entities.ProductWishlist.ProductWishlist>? ProductWishlists{ get; set; }
 
-       public CustomIdentity()
+        public CustomIdentity()
         {
             UserImages = new HashSet<UserImage>();
         }

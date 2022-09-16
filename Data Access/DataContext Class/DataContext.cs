@@ -12,6 +12,7 @@ using Business_Core.Entities.OrderProductReviews;
 using Business_Core.Entities.OrderProductReviews.OrderProductReviewsPhoto;
 using Business_Core.Entities.Product;
 using Business_Core.Entities.Product.Product_Images;
+using Business_Core.Entities.ProductWishlist;
 using Business_Core.Entities.SponsoredAd;
 using Bussiness_Core.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -59,6 +60,7 @@ namespace Data_Access.DataContext_Class
 
         public DbSet<SponsorsAds>  SponsorsAds { get; set; }
 
+        public DbSet<ProductWishlist>  ProductWishlists { get; set; }
 
 
 
@@ -87,6 +89,7 @@ namespace Data_Access.DataContext_Class
             modelBuilder.ApplyConfiguration(new OrderProductReviewConfiguration());
             modelBuilder.ApplyConfiguration(new OrderProductReviewsPhotoConfiguration());
             modelBuilder.ApplyConfiguration(new SponsorsAdsConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductWishlistConfiguration());
 
 
 

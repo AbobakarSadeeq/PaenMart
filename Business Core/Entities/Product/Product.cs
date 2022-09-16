@@ -35,6 +35,8 @@ namespace Business_Core.Entities.Product
         public virtual IList<ProductImages>?  ProductImages { get; set; }
         public virtual ICollection<Business_Core.Entities.Order.OrderDetail.OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<OrderProductReview> OrderProductReview { get; set; }
+        public virtual ICollection<Business_Core.Entities.ProductWishlist.ProductWishlist>? ProductWishlists { get; set; }
+
 
 
         public Product()
