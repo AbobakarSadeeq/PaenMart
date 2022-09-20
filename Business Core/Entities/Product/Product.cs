@@ -29,6 +29,7 @@ namespace Business_Core.Entities.Product
         public DateTime? Modified_at { get; set; }
         public int ProductTotalStars { get; set; }
         public int Raitings { get; set; }
+        public bool OnDiscount { get; set; }
 
 
         // Navigation Properties
@@ -36,6 +37,7 @@ namespace Business_Core.Entities.Product
         public virtual ICollection<Business_Core.Entities.Order.OrderDetail.OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<OrderProductReview> OrderProductReview { get; set; }
         public virtual ICollection<Business_Core.Entities.ProductWishlist.ProductWishlist>? ProductWishlists { get; set; }
+        public virtual ICollection<ProductDiscountDeal>?  ProductDiscountDeals { get; set; }
 
 
 

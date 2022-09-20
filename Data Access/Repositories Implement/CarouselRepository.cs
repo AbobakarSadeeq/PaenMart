@@ -54,7 +54,8 @@ namespace Data_Access.Repositories_Implement
                 URL = uploadResult.Url.ToString(),
                 ImageDescription = carousel.ImageDescription,
                 ImagePriority = carousel.ImagePriority,
-                ImageTitle = carousel.ImageTitle
+                ImageTitle = carousel.ImageTitle,
+                NavigationUrl = carousel.NavigationUrl
             });
             return carousel;
         }

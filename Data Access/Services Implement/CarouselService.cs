@@ -48,6 +48,7 @@ namespace Data_Access.Services_Implement
             OldData.ImageTitle = NewData.ImageTitle;
             OldData.ImagePriority = NewData.ImagePriority;
             OldData.ImageDescription = NewData.ImageDescription;
+            OldData.NavigationUrl = NewData.NavigationUrl;
             await _unitOfWork.CommitAsync();
             return OldData;
         }

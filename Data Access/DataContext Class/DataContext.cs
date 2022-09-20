@@ -1,5 +1,6 @@
 ﻿using Business_Core.Entities;
 using Business_Core.Entities.Carousel;
+using Business_Core.Entities.DiscountDeal;
 using Business_Core.Entities.Identity;
 using Business_Core.Entities.Identity.AdminAccount;
 using Business_Core.Entities.Identity.Email;
@@ -61,6 +62,8 @@ namespace Data_Access.DataContext_Class
         public DbSet<SponsorsAds>  SponsorsAds { get; set; }
 
         public DbSet<ProductWishlist>  ProductWishlists { get; set; }
+        public DbSet<DiscountDeal>   DiscountDeals { get; set; }
+        public DbSet<ProductDiscountDeal>   ProductDiscountDeals{ get; set; }
 
 
 
@@ -90,6 +93,8 @@ namespace Data_Access.DataContext_Class
             modelBuilder.ApplyConfiguration(new OrderProductReviewsPhotoConfiguration());
             modelBuilder.ApplyConfiguration(new SponsorsAdsConfiguration());
             modelBuilder.ApplyConfiguration(new ProductWishlistConfiguration());
+            modelBuilder.ApplyConfiguration(new DiscountDealConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductDiscountDealConfiguration());
 
 
 

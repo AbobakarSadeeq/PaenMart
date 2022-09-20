@@ -16,6 +16,7 @@ namespace Business_Core.Entities.Carousel
         public int ImagePriority { get; set; }
         public string? ImageTitle { get; set; }
         public string? ImageDescription { get; set; }
+        public string? NavigationUrl { get; set; }
     }
 
     public class CarouselConfiguration : IEntityTypeConfiguration<Carousel>

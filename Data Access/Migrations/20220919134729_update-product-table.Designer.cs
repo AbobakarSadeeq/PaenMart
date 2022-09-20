@@ -4,6 +4,7 @@ using Data_Access.DataContext_Class;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220919134729_update-product-table")]
+    partial class updateproducttable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,31 +73,6 @@ namespace Data_Access.Migrations
                     b.HasKey("CategoryID");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Business_Core.Entities.DiscountDeal.DiscountDeal", b =>
-                {
-                    b.Property<int>("DiscountDealID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiscountDealID"), 1L, 1);
-
-                    b.Property<DateTime?>("DealCreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DealExpireAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DealName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DealStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DiscountDealID");
-
-                    b.ToTable("DiscountDeals");
                 });
 
             modelBuilder.Entity("Business_Core.Entities.DynamicFormStructure", b =>
@@ -716,38 +693,6 @@ namespace Data_Access.Migrations
                     b.ToTable("ProductBrands");
                 });
 
-            modelBuilder.Entity("Business_Core.Entities.ProductDiscountDeal", b =>
-                {
-                    b.Property<int>("ProductDiscountDealID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductDiscountDealID"), 1L, 1);
-
-                    b.Property<int>("DiscountDealId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductAfterDiscountPrice")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductBeforePrice")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductPercentage")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductDiscountDealID");
-
-                    b.HasIndex("DiscountDealId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductDiscountDeals");
-                });
-
             modelBuilder.Entity("Business_Core.Entities.ProductWishlist.ProductWishlist", b =>
                 {
                     b.Property<int>("ProductWishlistID")
@@ -1247,25 +1192,6 @@ namespace Data_Access.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Business_Core.Entities.ProductDiscountDeal", b =>
-                {
-                    b.HasOne("Business_Core.Entities.DiscountDeal.DiscountDeal", "DiscountDeal")
-                        .WithMany("ProductDiscountDeals")
-                        .HasForeignKey("DiscountDealId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Business_Core.Entities.Product.Product", "Product")
-                        .WithMany("ProductDiscountDeals")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DiscountDeal");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("Business_Core.Entities.ProductWishlist.ProductWishlist", b =>
                 {
                     b.HasOne("Business_Core.Entities.Product.Product", "Product")
@@ -1378,11 +1304,6 @@ namespace Data_Access.Migrations
                     b.Navigation("SubCategories");
                 });
 
-            modelBuilder.Entity("Business_Core.Entities.DiscountDeal.DiscountDeal", b =>
-                {
-                    b.Navigation("ProductDiscountDeals");
-                });
-
             modelBuilder.Entity("Business_Core.Entities.Identity.CustomIdentity", b =>
                 {
                     b.Navigation("Address");
@@ -1450,8 +1371,6 @@ namespace Data_Access.Migrations
                     b.Navigation("OrderDetails");
 
                     b.Navigation("OrderProductReview");
-
-                    b.Navigation("ProductDiscountDeals");
 
                     b.Navigation("ProductImages");
 

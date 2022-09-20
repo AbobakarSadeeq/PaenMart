@@ -15,6 +15,7 @@ namespace Presentation.ViewModel.CarouselViewModel.cs
         public int ImagePriority { get; set; }
         public string? ImageTitle { get; set; }
         public string? ImageDescription { get; set; }
+        public string? NavigationUrl { get; set; }
         public virtual IFormFile? File { get; set; }
 
     }
