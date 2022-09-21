@@ -1,4 +1,5 @@
 ﻿using Business_Core.Entities;
+using Business_Core.Entities.Product;
 using Data_Access.DataContext_Class;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,9 +28,8 @@ namespace PaenMart.Controllers
                     ProductImageUrl = a.ProductImages[0].URL,
                     ProductPrice = a.Price,
                     OnDiscount = a.OnDiscount,
-                    ProductId = a.ProductID
+                    ProductId = a.ProductID,
                 }).ToListAsync();
-            // featuer filtering by onDiscount in client side
 
             return Ok(findingProductsByCategory);
         }
@@ -40,6 +40,7 @@ namespace PaenMart.Controllers
         public async Task<IActionResult> AddProductsInDiscountDeal(AddProductsInDiscountDealViewModel viewModel)
         {
             var listAdding = new List<ProductDiscountDeal>();
+            var products = new List<Product>();
             foreach (var item in viewModel.SelectedProductsInDeal)
             {
                 listAdding.Add(new ProductDiscountDeal
@@ -48,8 +49,11 @@ namespace PaenMart.Controllers
                     ProductAfterDiscountPrice = item.ProductAfterDiscountPrice,
                     ProductBeforePrice = item.ProductBeforePrice,
                     ProductPercentage = item.ProductPercentage,
-                    
                 });
+
+                var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
+                findingSelectedProduct.OnDiscount = true;
+                products.Add(findingSelectedProduct);
             }
 
             var discountDeal = new Business_Core.Entities.DiscountDeal.DiscountDeal
@@ -61,6 +65,7 @@ namespace PaenMart.Controllers
                 ProductDiscountDeals = listAdding
             };
             await _dataContext.DiscountDeals.AddAsync(discountDeal);
+             _dataContext.Products.UpdateRange(products);
             await _dataContext.SaveChangesAsync();
             
             return Ok();
@@ -79,6 +84,59 @@ namespace PaenMart.Controllers
                 a.DealName,
             }).ToListAsync();
             return Ok(fetchingAllDiscountDeals);
+        }
+
+        [HttpDelete("{selectedDiscountDealId}")]
+        public async Task<IActionResult> DeleteDeal(int selectedDiscountDealId)
+        {
+            var productList = new List<Product>();
+
+            var findingSelectedDealAllProducts = await _dataContext.ProductDiscountDeals
+                .Where(a => a.DiscountDealId == selectedDiscountDealId).ToListAsync();
+
+            foreach (var item in findingSelectedDealAllProducts)
+            {
+                var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
+                findingSelectedProduct.OnDiscount = false;
+                productList.Add(findingSelectedProduct);
+            }
+
+            var findingSelectedDeal = await _dataContext.DiscountDeals
+                .FirstOrDefaultAsync(a => a.DiscountDealID == selectedDiscountDealId);
+            _dataContext.DiscountDeals.Remove(findingSelectedDeal);
+            _dataContext.Products.UpdateRange(productList);
+            await _dataContext.SaveChangesAsync();
+            return Ok();
+        }
+
+
+        [HttpGet("SelectedDealProductsDetail/{selectedDealId}")]
+        public async Task<IActionResult> SelectedDealProductsDetail(int selectedDealId)
+        {
+            var findingSelectedDealDetails = await _dataContext.DiscountDeals.Include(a => a.ProductDiscountDeals)
+                .ThenInclude(a=>a.Product).ThenInclude(a=>a.ProductImages)
+                .Where(a => a.DiscountDealID == selectedDealId).FirstOrDefaultAsync();
+            var detailList = new List<GetDiscountDealDetailViewModel>();
+            foreach (var item in findingSelectedDealDetails.ProductDiscountDeals)
+            {
+                detailList.Add(new GetDiscountDealDetailViewModel
+                {
+                    ProductImageUrl = item.Product.ProductImages[0].URL,
+                    DealName = findingSelectedDealDetails.DealName,
+                    DiscountPercentage = item.ProductPercentage,
+                    AfterPrice = item.ProductAfterDiscountPrice,
+                    BeforePrice = item.ProductBeforePrice,
+                    ProductName = item.Product.ProductName + " (" + item.Product.Color + ")",
+                    ProductsLiveCount = findingSelectedDealDetails.ProductDiscountDeals.Count(),
+                    ProductId = item.Product.ProductID,
+                    Created_At = findingSelectedDealDetails.DealCreatedAt,
+                    Expire_At = findingSelectedDealDetails.DealExpireAt
+                    
+                });
+            }
+
+
+            return Ok(detailList);
         }
 
 
