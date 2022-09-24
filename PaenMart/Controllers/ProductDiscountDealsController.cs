@@ -1,4 +1,5 @@
-﻿using Business_Core.Entities;
+﻿using AutoMapper;
+using Business_Core.Entities;
 using Business_Core.Entities.Product;
 using Data_Access.DataContext_Class;
 using Microsoft.AspNetCore.Http;
@@ -13,8 +14,11 @@ namespace PaenMart.Controllers
     public class ProductDiscountDealsController : ControllerBase
     {
         private readonly DataContext _dataContext;
-        public ProductDiscountDealsController(DataContext dataContext)
+        private readonly IMapper _mapper;
+
+        public ProductDiscountDealsController(DataContext dataContext, IMapper mapper)
         {
+            _mapper = mapper;
             _dataContext = dataContext;
         }
 
@@ -138,6 +142,42 @@ namespace PaenMart.Controllers
 
             return Ok(detailList);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateDealProductsList(UpdateDiscountDealViewModel viewModel)
+        {
+            if(viewModel.UpdateProductDiscountDealList.Count > 0)
+            {
+
+            var productList = new List<Product>();
+
+            foreach (var item in viewModel.UpdateProductDiscountDealList)
+            {
+                var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
+                findingSelectedProduct.OnDiscount = true;
+                productList.Add(findingSelectedProduct);
+            }
+
+            // update the ondiscount property as well in product
+            _dataContext.Products.UpdateRange(productList);
+
+            // add products to product discount deal table.
+            var convertingData = _mapper.Map<List<ProductDiscountDeal>>(viewModel.UpdateProductDiscountDealList);
+            await _dataContext.ProductDiscountDeals.AddRangeAsync(convertingData);
+            }
+
+
+            // update the discountDeal table
+            var findingDiscountDealSelectedObj = await _dataContext.DiscountDeals.FirstOrDefaultAsync(a => a.DiscountDealID == viewModel.DiscountDealId);
+            findingDiscountDealSelectedObj.DealName = viewModel.DealName;
+            findingDiscountDealSelectedObj.DealExpireAt = viewModel.ExpireAt;
+            _dataContext.DiscountDeals.Update(findingDiscountDealSelectedObj);
+
+           
+           await _dataContext.SaveChangesAsync();
+            return Ok();
+        }
+
 
 
     }

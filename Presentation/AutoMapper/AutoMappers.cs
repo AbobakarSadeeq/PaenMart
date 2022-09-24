@@ -8,6 +8,7 @@ using Presentation.ViewModel;
 using Presentation.ViewModel.CarouselViewModel.cs;
 using Presentation.ViewModel.IdentityViewModel.AdminAccountBalance;
 using Presentation.ViewModel.IdentityViewModel.User;
+using Presentation.ViewModel.ProductsInDiscountDealsViewModel;
 using Presentation.ViewModel.ProductViewModel;
 using Presentation.ViewModels.Identity;
 using System;
@@ -63,6 +64,7 @@ namespace Presentation.AutoMapper
 
             CreateMap<UserAddress, UserAddressViewModel>().ReverseMap();
             CreateMap<AdminAccount, AddAdminAccountBalanceViewModel>().ReverseMap();
+            CreateMap<ProductDiscountDeal, ProductsUpdatedOnDiscountSaleViewModel>().ReverseMap();
 
 
 
