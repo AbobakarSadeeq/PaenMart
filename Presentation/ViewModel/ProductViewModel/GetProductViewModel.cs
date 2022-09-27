@@ -19,7 +19,8 @@ namespace Presentation.ViewModel.ProductViewModel
         public int Raiting { get; set; }
         public int TotalProductStars { get; set; }
         public double ShowStarsByRatings { get; set; }
-
+        public int AfterDiscountPrice { get; set; }
+        public int DiscountPercentage { get; set; }
         public virtual IList<GetProductImages> GetProductImagess { get; set; }
         public GetProductViewModel()
         {

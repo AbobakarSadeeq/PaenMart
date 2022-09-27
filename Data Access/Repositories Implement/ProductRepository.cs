@@ -191,7 +191,8 @@ namespace Data_Access.Repositories_Implement
                     Created_At = item.Created_At,
                     GetProductImagess = getOnlyOneImage,
                     Raiting = item.Raitings,
-                    TotalProductStars = item.ProductTotalStars
+                    TotalProductStars = item.ProductTotalStars,
+                    OnDiscount = item.OnDiscount
                 });
                 getOnlyOneImage = new List<GetProductImages>();
             }

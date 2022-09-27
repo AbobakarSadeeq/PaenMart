@@ -184,12 +184,17 @@ namespace PaenMart.Controllers
             else
             {
                 var findingSelectedPage = findingAdsByPageName.FirstOrDefault(a => a.ShowAdOnPage == pageName);
-                return Ok(new SearchingSponsoreAdsViewModel
+                if(findingSelectedPage != null)
                 {
-                    liveOnPageName = findingSelectedPage.ShowAdOnPage,
-                    SponsoreImageUrl = findingSelectedPage.AdPictureUrl,
-                    SponsoreWebsiteUrl = findingSelectedPage.AdUrlDestination
-                });
+                    return Ok(new SearchingSponsoreAdsViewModel
+                    {
+                        liveOnPageName = findingSelectedPage.ShowAdOnPage,
+                        SponsoreImageUrl = findingSelectedPage.AdPictureUrl,
+                        SponsoreWebsiteUrl = findingSelectedPage.AdUrlDestination
+                    });
+                }
+
+                return BadRequest();
             }
 
         }

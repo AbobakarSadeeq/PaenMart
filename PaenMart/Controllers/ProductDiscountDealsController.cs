@@ -179,6 +179,54 @@ namespace PaenMart.Controllers
         }
 
 
+        [HttpGet("GetLiveDiscountDealForCheckingExpiration")]
+        public async Task<IActionResult> GetLiveDiscountDealForCheckingExpiration()
+        
+        {
+            var getListLiveDiscountDeal = await _dataContext.DiscountDeals.Where(a => a.DealStatus == "Live")
+                .OrderBy(a=>a.DealExpireAt).FirstOrDefaultAsync();
+            return Ok(getListLiveDiscountDeal);
+        }
+
+        [HttpGet("ExpiringDiscountDeal/{discountDealId}")]
+        public async Task<IActionResult> ExpiringDiscountDeal(int discountDealId)
+        {
+            var productList = new List<Product>();
+            var findingDeal = await _dataContext.DiscountDeals
+                .Include(a=>a.ProductDiscountDeals)
+                .FirstOrDefaultAsync(a=>a.DiscountDealID == discountDealId);
+            findingDeal.DealStatus = "Expire";
+            _dataContext.DiscountDeals.UpdateRange(findingDeal);
+
+
+            foreach (var item in findingDeal.ProductDiscountDeals)
+            {
+                var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
+                findingSelectedProduct.OnDiscount = false;
+                productList.Add(findingSelectedProduct);
+            }
+
+            _dataContext.Products.UpdateRange(productList);
+            await _dataContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpGet("GetExpireDiscountDeal")]
+        public async Task<IActionResult> GetExpireDiscountDeal()
+        {
+            var fetchingAllDiscountDeals = await _dataContext.DiscountDeals.Where(a => a.DealStatus == "Expire").Select(a => new
+            {
+                CountProducts = a.ProductDiscountDeals.Count,
+                a.DiscountDealID,
+                a.DealStatus,
+                a.DealCreatedAt,
+                a.DealExpireAt,
+                a.DealName,
+            }).ToListAsync();
+            return Ok(fetchingAllDiscountDeals);
+        }
+
+
 
     }
 }

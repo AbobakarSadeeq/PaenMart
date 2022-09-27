@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Business_Core.Entities.Product;
 using Business_Core.IServices;
+using Data_Access.DataContext_Class;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Presentation.ViewModel.ProductViewModel;
 
 namespace PaenMart.Controllers
@@ -13,9 +15,12 @@ namespace PaenMart.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IProductService _productService;
-        public ProductController(IMapper mapper, IProductService productService)
+        private readonly DataContext _dataContext;
+        public ProductController(IMapper mapper, IProductService productService, DataContext dataContext)
         {
             _mapper = mapper;
+            _dataContext = dataContext;
+
             _productService = productService;
         }
 
@@ -155,8 +160,36 @@ namespace PaenMart.Controllers
         {
              
             var detailData = await _productService.GetProductsByNestSubCategoryId(pageSelectedAndNestCategoryId);
-            var convertProductData = _mapper.Map<List<GetProductViewModel>>(detailData);
-            foreach (var singleProduct in convertProductData)
+
+            // loop on list 
+            // if onDiscount product find then
+            foreach (var item in detailData)
+            {
+                if (item.OnDiscount)
+                {
+                    var filteringLiveDiscountDeal = await _dataContext.DiscountDeals
+                        .Include(a => a.ProductDiscountDeals)
+                        .Where(a => a.DealStatus == "Live")
+                        .Select(a => new
+                        {
+                            ProductDiscountDeals = a.ProductDiscountDeals.Where(a => a.ProductId == item.ProductID)
+                        })
+                        .FirstOrDefaultAsync();
+                    foreach (var item2 in filteringLiveDiscountDeal.ProductDiscountDeals)
+                    {
+                        item.AfterDiscountPrice = item2.ProductAfterDiscountPrice;
+                       item.DiscountPercentage = item2.ProductPercentage;
+                    }
+                 //   item.DiscountPercentage = filteringLiveDiscountDeal.ProductDiscountDeals.Select(a=> new {a.ProductPercentage});
+
+
+
+                }
+            }
+            
+
+                var convertProductData = _mapper.Map<List<GetProductViewModel>>(detailData);
+                foreach (var singleProduct in convertProductData)
             {
                 singleProduct.ShowStarsByRatings = (double) singleProduct.TotalProductStars  / (singleProduct.Raiting * 5);
                 singleProduct.ShowStarsByRatings = singleProduct.ShowStarsByRatings * 5;
