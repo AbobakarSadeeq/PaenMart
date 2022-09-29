@@ -13,6 +13,7 @@ namespace Business_Core.Entities.DiscountDeal
         public int DiscountDealID { get; set; }
         public string? DealName { get; set; }
         public string?  DealStatus { get; set; }
+        public int?  BackgroundJobId { get; set; }
         public DateTime? DealExpireAt { get; set; }
         public DateTime? DealCreatedAt { get; set; }
         public virtual ICollection<ProductDiscountDeal>?  ProductDiscountDeals { get; set; }

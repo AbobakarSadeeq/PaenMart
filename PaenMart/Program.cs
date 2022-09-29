@@ -4,6 +4,7 @@ using Business_Core.IUnitOfWork;
 using Data_Access.DataContext_Class;
 using Data_Access.Extensions;
 using Data_Access.UnitOfWork;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -84,6 +85,10 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.SignIn.RequireConfirmedEmail = false;
 });
 
+builder.Services.AddHangfire(configuration =>
+{
+    configuration.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")); // hangfire need a storage to store its own data so give your sql database or anything you want to give.
+});
 
 
 // AutoMapper
@@ -117,6 +122,7 @@ builder.Services.AddCors(opt => {
 
 // --------Configure Method of startup class--------
 var app = builder.Build();
+app.UseHangfireServer();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -126,7 +132,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 // middleware of connection with client-side
  
 app.UseCors(a=> {

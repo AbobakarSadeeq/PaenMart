@@ -27,6 +27,7 @@ namespace Business_Core.Entities.Product
         public bool OnDiscount { get; set; }
         public int AfterDiscountPrice { get; set; }
         public int DiscountPercentage { get; set; }
+        public DateTime? DiscountExpireAt { get; set; }
         public double ShowStarsByRatings { get; set; } = 0;
         public DateTime? Created_At { get; set; }
         public DateTime? Modified_at { get; set; }

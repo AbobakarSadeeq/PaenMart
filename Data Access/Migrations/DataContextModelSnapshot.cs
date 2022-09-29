@@ -81,6 +81,9 @@ namespace Data_Access.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiscountDealID"), 1L, 1);
 
+                    b.Property<int?>("BackgroundJobId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("DealCreatedAt")
                         .HasColumnType("datetime2");
 

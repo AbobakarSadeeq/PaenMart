@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "gaM74YPezVesieB9GUC9HBlDIQAlSD3XTbUk6adDLLOQHJk+gAlDDYoT//qL+zCn+QRVGZMEsg1qxC1lU/sikg==",
+  "dgSpecHash": "uDzKFl0SQl1jJ2ElRGeGFaMpN7aI19nda1jo/x4Hb9CDxgCEfz4fW6Yiru3iPzjA3IKDB5l3pLiTR1/FTK3qgg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Data Access\\Data Access.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\automapper\\11.0.1\\automapper.11.0.1.nupkg.sha512",
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\11.0.0\\automapper.extensions.microsoft.dependencyinjection.11.0.0.nupkg.sha512",
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\cloudinarydotnet\\1.17.0\\cloudinarydotnet.1.17.0.nupkg.sha512",
+    "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\hangfire.core\\1.7.31\\hangfire.core.1.7.31.nupkg.sha512",
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.3\\microsoft.aspnetcore.cryptography.internal.6.0.3.nupkg.sha512",
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\6.0.3\\microsoft.aspnetcore.cryptography.keyderivation.6.0.3.nupkg.sha512",

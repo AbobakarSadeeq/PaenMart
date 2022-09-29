@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "Zwjzu/pLGlgr2y0WtQ2rItZdP95M15po8C1xG2lbsg9ZA2sXedbfxdVsZ/QA3iE5nyxyPEKCfV9NBVROChMirg==",
+  "dgSpecHash": "8xW2JPnZqJPWuhaYQRvEob9Gafp9y5NIRYZqoviIDIjct7h5ZEU+Hn0o+d4XXTNdDg/SfkalZW4XKhjn5Oa/fg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Abobakar Sadeeq\\Documents\\GitHub\\PaenMart\\Presentation\\Presentation.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\automapper\\11.0.1\\automapper.11.0.1.nupkg.sha512",
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\11.0.0\\automapper.extensions.microsoft.dependencyinjection.11.0.0.nupkg.sha512",
+    "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\hangfire.core\\1.7.31\\hangfire.core.1.7.31.nupkg.sha512",
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\6.0.3\\microsoft.aspnetcore.cryptography.internal.6.0.3.nupkg.sha512",
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\6.0.3\\microsoft.aspnetcore.cryptography.keyderivation.6.0.3.nupkg.sha512",
     "C:\\Users\\Abobakar Sadeeq\\.nuget\\packages\\microsoft.aspnetcore.http.features\\5.0.15\\microsoft.aspnetcore.http.features.5.0.15.nupkg.sha512",

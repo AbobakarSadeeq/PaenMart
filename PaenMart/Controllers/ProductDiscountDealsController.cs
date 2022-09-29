@@ -2,6 +2,9 @@
 using Business_Core.Entities;
 using Business_Core.Entities.Product;
 using Data_Access.DataContext_Class;
+using Hangfire;
+using Hangfire.Common;
+using Hangfire.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -71,7 +74,8 @@ namespace PaenMart.Controllers
             await _dataContext.DiscountDeals.AddAsync(discountDeal);
              _dataContext.Products.UpdateRange(products);
             await _dataContext.SaveChangesAsync();
-            
+           await SettingTheDelayCode(discountDeal.DiscountDealID);
+
             return Ok();
         }
 
@@ -123,6 +127,38 @@ namespace PaenMart.Controllers
             var detailList = new List<GetDiscountDealDetailViewModel>();
             foreach (var item in findingSelectedDealDetails.ProductDiscountDeals)
             {
+                var showStarsByRatings = (double) item.Product.ProductTotalStars / (item.Product.Raitings * 5);
+                showStarsByRatings = showStarsByRatings * 5;
+
+                if (showStarsByRatings >= 0.3 && showStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
+                    showStarsByRatings >= 1.3 && showStarsByRatings <= 1.7 ||
+                    showStarsByRatings >= 2.3 && showStarsByRatings <= 2.7 ||
+                    showStarsByRatings >= 3.3 && showStarsByRatings <= 3.7 ||
+                    showStarsByRatings >= 4.3 && showStarsByRatings <= 4.7
+                    )
+                {
+                    showStarsByRatings = Math.Ceiling(showStarsByRatings) - 0.5;
+
+
+                }
+                else if (showStarsByRatings >= 0 && showStarsByRatings <= 0.2 || // 0 => 0.2 == 0
+                   showStarsByRatings >= 1 && showStarsByRatings <= 1.2 ||
+                   showStarsByRatings >= 2 && showStarsByRatings <= 2.2 ||
+                   showStarsByRatings >= 3 && showStarsByRatings <= 3.2 ||
+                   showStarsByRatings >= 4 && showStarsByRatings <= 4.2
+                   )
+                {
+                    showStarsByRatings = Math.Round(showStarsByRatings);
+
+
+                }
+                else if (showStarsByRatings > 0.7                           // 0.8 => 1 == 1
+                   || showStarsByRatings > 1.7 || showStarsByRatings > 2.7
+                   || showStarsByRatings > 3.7 || showStarsByRatings > 4.7)
+                {
+                    showStarsByRatings = Math.Ceiling(showStarsByRatings);
+                }
+
                 detailList.Add(new GetDiscountDealDetailViewModel
                 {
                     ProductImageUrl = item.Product.ProductImages[0].URL,
@@ -134,8 +170,10 @@ namespace PaenMart.Controllers
                     ProductsLiveCount = findingSelectedDealDetails.ProductDiscountDeals.Count(),
                     ProductId = item.Product.ProductID,
                     Created_At = findingSelectedDealDetails.DealCreatedAt,
-                    Expire_At = findingSelectedDealDetails.DealExpireAt
-                    
+                    Expire_At = findingSelectedDealDetails.DealExpireAt,
+                    ShowStarsByRatings =showStarsByRatings,
+                    TotalProductStars = item.Product.ProductTotalStars,
+                    Raiting = item.Product.Raitings
                 });
             }
 
@@ -172,44 +210,10 @@ namespace PaenMart.Controllers
             findingDiscountDealSelectedObj.DealName = viewModel.DealName;
             findingDiscountDealSelectedObj.DealExpireAt = viewModel.ExpireAt;
             _dataContext.DiscountDeals.Update(findingDiscountDealSelectedObj);
-
-           
            await _dataContext.SaveChangesAsync();
             return Ok();
         }
 
-
-        [HttpGet("GetLiveDiscountDealForCheckingExpiration")]
-        public async Task<IActionResult> GetLiveDiscountDealForCheckingExpiration()
-        
-        {
-            var getListLiveDiscountDeal = await _dataContext.DiscountDeals.Where(a => a.DealStatus == "Live")
-                .OrderBy(a=>a.DealExpireAt).FirstOrDefaultAsync();
-            return Ok(getListLiveDiscountDeal);
-        }
-
-        [HttpGet("ExpiringDiscountDeal/{discountDealId}")]
-        public async Task<IActionResult> ExpiringDiscountDeal(int discountDealId)
-        {
-            var productList = new List<Product>();
-            var findingDeal = await _dataContext.DiscountDeals
-                .Include(a=>a.ProductDiscountDeals)
-                .FirstOrDefaultAsync(a=>a.DiscountDealID == discountDealId);
-            findingDeal.DealStatus = "Expire";
-            _dataContext.DiscountDeals.UpdateRange(findingDeal);
-
-
-            foreach (var item in findingDeal.ProductDiscountDeals)
-            {
-                var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
-                findingSelectedProduct.OnDiscount = false;
-                productList.Add(findingSelectedProduct);
-            }
-
-            _dataContext.Products.UpdateRange(productList);
-            await _dataContext.SaveChangesAsync();
-            return Ok();
-        }
 
         [HttpGet("GetExpireDiscountDeal")]
         public async Task<IActionResult> GetExpireDiscountDeal()
@@ -225,6 +229,65 @@ namespace PaenMart.Controllers
             }).ToListAsync();
             return Ok(fetchingAllDiscountDeals);
         }
+
+
+        public async Task SettingTheDelayCode(int currentlyLiveDiscountId)
+        {
+
+            var getDiscountLive = await _dataContext.DiscountDeals.Where(a => a.DiscountDealID == currentlyLiveDiscountId)
+                .FirstOrDefaultAsync(); // because first one is not yet on exipire thats why it didnt goto another to also expire it
+            if(getDiscountLive != null)
+            {
+                DateTime startTime = DateTime.Now;
+                var endTime = getDiscountLive.DealExpireAt.Value;
+
+                TimeSpan span = endTime - startTime;
+                var totalMinutesDifferences = span.TotalMinutes;
+
+               BackgroundJob.Schedule(
+        () => ExpiringDiscountDeal(getDiscountLive.DiscountDealID),
+                 TimeSpan.FromMinutes(totalMinutesDifferences));
+
+
+            }
+        }
+
+
+
+
+
+        public async Task ExpiringDiscountDeal(int discountDealId)
+        {
+             var productList = new List<Product>();
+            var findingDeal = await _dataContext.DiscountDeals
+                .Include(a=>a.ProductDiscountDeals)
+                .FirstOrDefaultAsync(a=>a.DiscountDealID == discountDealId);
+            if(findingDeal != null)
+            {
+
+            if(findingDeal.DealStatus != "Expire")
+            {
+                findingDeal.DealStatus = "Expire";
+                _dataContext.DiscountDeals.UpdateRange(findingDeal);
+
+
+                foreach (var item in findingDeal.ProductDiscountDeals)
+                {
+                    var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
+                    findingSelectedProduct.OnDiscount = false;
+                    productList.Add(findingSelectedProduct);
+                }
+
+                _dataContext.Products.UpdateRange(productList);
+                await _dataContext.SaveChangesAsync();
+            }
+            }
+
+        }
+
+       
+
+
 
 
 

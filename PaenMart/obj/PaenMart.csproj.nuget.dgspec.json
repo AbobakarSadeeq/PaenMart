@@ -40,6 +40,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Hangfire.Core": {
+              "target": "Package",
+              "version": "[1.7.31, )"
+            },
             "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
               "target": "Package",
               "version": "[6.0.3, )"
@@ -232,6 +236,22 @@
             "Google.Apis.Storage.v1": {
               "target": "Package",
               "version": "[1.56.0.2597, )"
+            },
+            "Hangfire.AspNetCore": {
+              "target": "Package",
+              "version": "[1.7.31, )"
+            },
+            "Hangfire.Core": {
+              "target": "Package",
+              "version": "[1.7.31, )"
+            },
+            "Hangfire.MemoryStorage": {
+              "target": "Package",
+              "version": "[1.7.0, )"
+            },
+            "Hangfire.SqlServer": {
+              "target": "Package",
+              "version": "[1.7.31, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",

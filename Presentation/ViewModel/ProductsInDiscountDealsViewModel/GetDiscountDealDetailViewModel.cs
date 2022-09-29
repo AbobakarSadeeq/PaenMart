@@ -14,6 +14,9 @@ namespace Presentation.ViewModel.ProductsInDiscountDealsViewModel
         public int BeforePrice { get; set; }
         public int AfterPrice { get; set; }
         public int ProductId { get; set; }
+        public int Raiting { get; set; }
+        public int TotalProductStars { get; set; }
+        public double ShowStarsByRatings { get; set; }
 
         public string DealName { get; set; }
         public int ProductsLiveCount { get; set; }
