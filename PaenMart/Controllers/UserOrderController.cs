@@ -182,7 +182,7 @@ namespace PaenMart.Controllers
                                  <p>Your Address is {viewModel.CompleteAddress},</p><p>Your Email Is: {viewModel.Email}</p>
                                   <p>Your Product Name is: {data.ProductName} and Quantity is {data.Quantity}</p>
                                   <p>Your Mobile Number Is: {viewModel.PhoneNumber}</p><p>Your Order Date Was: {viewModel.OrderDate}</p><hr>
-                                   <p><strong>Your Total Amount of this Products Rs{data.Price * data.Quantity}</strong></p>
+                                   <p><strong>Your Total Amount of this Products Rs {data.Price * data.Quantity}</strong></p>
                                    <h3>Thank You For Order and your Order Has been Succeussfully done and delivering tommarow!</h3><p>Regards From <strong>Paen Mart Shop</strong></p><hr><br>";
                 multipleProductDataConcatinating = multipleProductDataConcatinating + newData;
                 if (noProduct == viewModel.OrderDetail.Count)
@@ -494,15 +494,18 @@ namespace PaenMart.Controllers
             // Adding Its OrderDetails
             foreach (var item in gettingOrdersData.OrderDetails)
             {
-
                 convertDataToViewModel.OrderDetail.Add(new GetOrderDetail
                 {
                     ProductId = item.ProductId,
                     ProductImageUrl = item.Product.ProductImages[0].URL,
                     ProductName = item.Product.ProductName + " " + item.Product.Color,
                     Quantity = item.Quantity,
-                    Price = item.Price,
+                    Price = item.Price, // this price is afterDiscount Price
                     QuantityAvailability = item.Product.Quantity > item.Quantity ? true : false,
+                    DiscountPercentage = item.DiscountPercentage == null ? 0 : item.DiscountPercentage, // null ternary
+                    ProductOriginalPrice = item.Product.Price,
+                    AfterDiscountPrice = item.Price
+                    
                 });
             }
             return Ok(convertDataToViewModel);
@@ -603,8 +606,25 @@ namespace PaenMart.Controllers
             var addingProductReviews = new List<OrderProductReview>();
             foreach (var OrderData in viewModel.OrderDetails)
             {
+                if (OrderData.DiscountPercentage > 0)
+                {
+                    orderDetailsProduct.Append($@"
+                <tr style='   border-bottom: 1pt solid black; '> 
+                <td style='padding-right: 200px;' > {OrderData.ProductName} </td>
+                <td style='padding-right: 200px;' > {OrderData.Quantity} </td>
+                <td style='padding-right: 200px;' ><p>Rs {OrderData.Price}</p>
+                <p><del>Rs {OrderData.ProductOriginalPrice}</del></p>
+                <p>- {OrderData.DiscountPercentage} %</p>
+                 </td>
+                <td style='padding-right: 200px;' >Rs {OrderData.Price * OrderData.Quantity}</td>
+                </tr>
+                ");
 
-                orderDetailsProduct.Append($@"
+                    totalPrice = totalPrice + (OrderData.AfterDiscountPrice * OrderData.Quantity);
+                }else
+                {
+
+                    orderDetailsProduct.Append($@"
                 <tr style='   border-bottom: 1pt solid black; '> 
                 <td style='padding-right: 200px;' > {OrderData.ProductName} </td>
                 <td style='padding-right: 200px;' > {OrderData.Quantity} </td>
@@ -614,6 +634,7 @@ namespace PaenMart.Controllers
                 ");
 
                 totalPrice = totalPrice + (OrderData.Price * OrderData.Quantity);
+                }
 
                 // Adding Reviews for pending
 
@@ -831,15 +852,42 @@ namespace PaenMart.Controllers
             int totalPrice = 0;
             foreach (var OrderData in userOrders)
             {
-                orderDetailData.Add(new OrderDetail
+                if (OrderData.AfterDiscountPrice > 0)
                 {
-                    OrderId = orderAcceptData.OrderID,
-                    ProductId = OrderData.ProductId,
-                    Quantity = OrderData.Quantity,
-                    Price = OrderData.Price
-                });
+                    orderDetailData.Add(new OrderDetail
+                    {
+                        OrderId = orderAcceptData.OrderID,
+                        ProductId = OrderData.ProductId,
+                        Quantity = OrderData.Quantity,
+                        Price = OrderData.AfterDiscountPrice,
+                        DiscountPercentage = OrderData.DiscountPercentage
+                    });
 
-                emailMsg.Append($@"
+                    emailMsg.Append($@"
+                <tr style='   border-bottom: 1pt solid black; '> 
+                <td style='padding-right: 200px;' > {OrderData.ProductName} </td>
+                <td style='padding-right: 200px;' > {OrderData.Quantity} </td>
+                <td style='padding-right: 200px;' ><p>Rs {OrderData.AfterDiscountPrice}</p>
+                <p><del>Rs {OrderData.Price}</del></p>
+                <p>- {OrderData.DiscountPercentage} %</p>
+                 </td>
+                <td style='padding-right: 200px;' >Rs {OrderData.AfterDiscountPrice * OrderData.Quantity}</td>
+                </tr>
+                ");
+
+                    totalPrice = totalPrice + (OrderData.AfterDiscountPrice * OrderData.Quantity);
+                }
+                else
+                {
+                    orderDetailData.Add(new OrderDetail
+                    {
+                        OrderId = orderAcceptData.OrderID,
+                        ProductId = OrderData.ProductId,
+                        Quantity = OrderData.Quantity,
+                        Price = OrderData.Price
+                    });
+
+                    emailMsg.Append($@"
                 <tr style='   border-bottom: 1pt solid black; '> 
                 <td style='padding-right: 200px;' > {OrderData.ProductName} </td>
                 <td style='padding-right: 200px;' > {OrderData.Quantity} </td>
@@ -848,7 +896,11 @@ namespace PaenMart.Controllers
                 </tr>
                 ");
 
-                totalPrice = totalPrice + (OrderData.Price * OrderData.Quantity);
+                    totalPrice = totalPrice + (OrderData.Price * OrderData.Quantity);
+                }
+
+
+
 
             }
 
@@ -906,14 +958,19 @@ namespace PaenMart.Controllers
             List<GetOrderDetail> orderDetails = new List<GetOrderDetail>();
             foreach (var item in findingOrder.OrderDetails)
             {
+                
                 orderDetails.Add(new GetOrderDetail
                 {
+
                     ProductName = item.Product.ProductName + " (" + item.Product.Color + ")",
                     Quantity = item.Quantity,
                     ProductId = item.ProductId,
                     ProductImageUrl = item.Product.ProductImages[0].URL,
                     Price = item.Price,
-                    QuantityAvailability = false
+                    QuantityAvailability = false,
+                    AfterDiscountPrice = item.Price,
+                    DiscountPercentage = item.DiscountPercentage, // null ternary
+                    ProductOriginalPrice = item.Product.Price
 
                 });
 

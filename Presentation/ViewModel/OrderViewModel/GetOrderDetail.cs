@@ -15,6 +15,9 @@ namespace Presentation.ViewModel.OrderViewModel
         // Order Detail
         public int Quantity { get; set; }
         public int Price { get; set; }
+        public int ProductOriginalPrice { get; set; }
+        public int DiscountPercentage { get; set; }
+        public int AfterDiscountPrice { get; set; } = 0;
         public string ProductImageUrl { get; set; }
         public bool QuantityAvailability { get; set; }
     }

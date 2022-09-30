@@ -61,7 +61,7 @@ namespace PaenMart.Controllers
             var totalUsers = await _dataContext.Users.CountAsync();
 
             var totalOrdersShipped = await _dataContext.Orders
-                .Where(a=>a.OrderStatus == "Shipped")
+                .Where(a => a.OrderStatus == "Shipped")
                 .CountAsync();
 
             var totalOrdersPending = await _dataContext.Orders
@@ -115,7 +115,7 @@ namespace PaenMart.Controllers
         public async Task<IActionResult> GetLastFiveShippedOrders()
         {
             var getFiveOrdersShippedList = await _dataContext.Orders
-                .OrderByDescending(a=>a.OrderID)
+                .OrderByDescending(a => a.OrderID)
                 .Where(a => a.OrderStatus == "Shipped")
                 .Take(5)
                 .ToListAsync();
@@ -150,16 +150,16 @@ namespace PaenMart.Controllers
                    a.NestSubCategoryName
                }).ToListAsync();
 
-           
 
-          
+
+
 
             // if not fullfulling the count then search it by the product names
 
             var findingByProductName = await _dataContext.Products
                 .Where(a => a.ProductName.Contains(viewModel.SearchText))
                 .Take(10)
-                .Select(a => new 
+                .Select(a => new
                 {
                     a.ProductName
                 }).ToListAsync();
@@ -167,35 +167,35 @@ namespace PaenMart.Controllers
 
 
 
-        
 
-            
+
+
             // found data in list
             var combiningTheSearchData = new List<string>();
 
 
 
             int i = 0;
-            while(combiningTheSearchData.Count <= 10)
+            while (combiningTheSearchData.Count <= 10)
             {
 
-                if(findingSearchItemBrand.Count - 1 >= i)
+                if (findingSearchItemBrand.Count - 1 >= i)
                 {
                     combiningTheSearchData.Add(findingSearchItemBrand[i].BrandName);
                 }
 
-                if(findingSearchItemByNestCategory.Count - 1 >= i)
+                if (findingSearchItemByNestCategory.Count - 1 >= i)
                 {
                     combiningTheSearchData.Add(findingSearchItemByNestCategory[i].NestSubCategoryName);
                 }
 
-                if(findingByProductName.Count -1 >= i)
+                if (findingByProductName.Count - 1 >= i)
                 {
                     combiningTheSearchData.Add(findingByProductName[i].ProductName);
 
                 }
 
-                if(i >= findingByProductName.Count -1 && i >= findingSearchItemBrand.Count - 1 && i >= findingSearchItemByNestCategory.Count)
+                if (i >= findingByProductName.Count - 1 && i >= findingSearchItemBrand.Count - 1 && i >= findingSearchItemByNestCategory.Count)
                 {
                     break;
                 }
@@ -233,7 +233,7 @@ namespace PaenMart.Controllers
                 countFoundProductByNestCategory = await _dataContext.Products
                     .Where(a => a.NestSubCategoryId == findingSearchItemByNestCategory.NestSubCategoryID)
                     .CountAsync();
-                    
+
                 // pagination
                 if (viewModel.PageNo == 1)
                 {
@@ -258,6 +258,12 @@ namespace PaenMart.Controllers
 
                 foreach (var singleProduct in foundProductList)
                 {
+
+                    var filteringLiveDiscountDeal2 = await _dataContext.ProductDiscountDeals.Include(a => a.DiscountDeal)
+                 .Where(a => a.ProductId == singleProduct.ProductID &&
+             a.DiscountDeal.DealStatus == "Live").FirstOrDefaultAsync();
+
+
                     double ShowStarsByRatings = (double)singleProduct.ProductTotalStars / (singleProduct.Raitings * 5);
                     ShowStarsByRatings = ShowStarsByRatings * 5;
                     if (ShowStarsByRatings >= 0.3 && ShowStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
@@ -286,7 +292,7 @@ namespace PaenMart.Controllers
                        || ShowStarsByRatings > 1.7 || ShowStarsByRatings > 2.7
                        || ShowStarsByRatings > 3.7 || ShowStarsByRatings > 4.7)
                     {
-                       ShowStarsByRatings = Math.Ceiling(ShowStarsByRatings);
+                        ShowStarsByRatings = Math.Ceiling(ShowStarsByRatings);
                     }
 
                     productsFoundList.Add(new GetProductViewModel
@@ -301,8 +307,9 @@ namespace PaenMart.Controllers
                         ImageUrl = singleProduct.ProductImages[0].URL,
                         ShowStarsByRatings = ShowStarsByRatings,
                         TotalProductStars = singleProduct.ProductTotalStars,
-                        Raiting = singleProduct.Raitings
-
+                        Raiting = singleProduct.Raitings,
+                        DiscountPercentage = filteringLiveDiscountDeal2 == null ? 0: filteringLiveDiscountDeal2.ProductPercentage,
+                        AfterDiscountPrice = filteringLiveDiscountDeal2 == null ? 0 : filteringLiveDiscountDeal2.ProductAfterDiscountPrice
                     });
 
 
@@ -411,14 +418,14 @@ namespace PaenMart.Controllers
             }
 
 
-                // search data by product name
+            // search data by product name
 
-            if(viewModel.PageNo == 1)
+            if (viewModel.PageNo == 1)
             {
                 foundProductList = await _dataContext.Products
                 .Include(a => a.ProductBrand)
                 .Include(a => a.ProductImages)
-                .Where(a => a.ProductName.Contains(viewModel.SearchText)) 
+                .Where(a => a.ProductName.Contains(viewModel.SearchText))
                 .Take(12)
                 .ToListAsync();
 
@@ -428,27 +435,27 @@ namespace PaenMart.Controllers
             }
             else
             {
-                 foundProductList =  await _dataContext.Products
-                .Include(a => a.ProductBrand)
-                .Include(a => a.ProductImages)
-                .Where(a => a.ProductName
-                .Contains(viewModel.SearchText))
-                .Skip((viewModel.PageNo - 1) * 12)
-                .Take(12)
-                .ToListAsync();
+                foundProductList = await _dataContext.Products
+               .Include(a => a.ProductBrand)
+               .Include(a => a.ProductImages)
+               .Where(a => a.ProductName
+               .Contains(viewModel.SearchText))
+               .Skip((viewModel.PageNo - 1) * 12)
+               .Take(12)
+               .ToListAsync();
             }
 
-            if(foundProductList.Count > 0)
+            if (foundProductList.Count > 0)
             {
                 //a.ProductName.Contains(upperCaseLettersSearchString) ||
                 //a.ProductName.Contains(toUpperCaseSearchStringFirstLetter))
 
                 countFoundProductByProductName = await _dataContext
                 .Products.Where(a => a.ProductName.Contains(viewModel.SearchText))
-                .CountAsync();  
+                .CountAsync();
 
                 foreach (var singleProduct in foundProductList)
-                 {
+                {
 
                     double ShowStarsByRatings = (double)singleProduct.ProductTotalStars / (singleProduct.Raitings * 5);
                     ShowStarsByRatings = ShowStarsByRatings * 5;
@@ -631,7 +638,7 @@ namespace PaenMart.Controllers
         [HttpPost("ContactUsSendingEmail")]
         public async Task<IActionResult> ContactUsSendingEmail(ContactUsViewModel viewModel)
         {
-            var gettingTheOwnerEmail =  await _dataContext.SendingEmails.FirstOrDefaultAsync();
+            var gettingTheOwnerEmail = await _dataContext.SendingEmails.FirstOrDefaultAsync();
             string emailFormat = @$"<span><strong>From:</strong> {viewModel.FullName}, </span><br>
                                 <span><strong>Email:</strong> {viewModel.Email}, </span><br>
                                 <span><strong>Subject:</strong> New customer message on {DateTime.Now.ToString("G")} </span><br>

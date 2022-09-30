@@ -26,17 +26,30 @@ namespace PaenMart.Controllers
                 ThenInclude(a => a.UserImages)
                 .Include(a => a.Product)
                 .ThenInclude(a => a.ProductImages)
-                .Where(x => x.UserId == UserId).Select(a => new
+                .Where(x => x.UserId == UserId).Select(a => new GetProductWishListViewModel
                 {
-                    a.ProductId,
-                    a.ProductWishlistID,
-                    a.Created_At,
-                    a.UserId,
+                    ProductId = a.ProductId,
+                    ProductWishlistID = a.ProductWishlistID,
+                    Created_At = a.Created_At,
+                    UserId = a.UserId,
                     FullName = a.CustomIdentity.FullName,
                     ProductName = a.Product.ProductName + " (" + a.Product.Color + ")",
                     ProductImageUrl = a.Product.ProductImages[0].URL,
                     ProductPrice = a.Product.Price
                 }).ToListAsync();
+
+            foreach (var item in findingSingleUserAllWishList)
+            {
+                var filteringLiveDiscountDeal2 = await _dataContext.ProductDiscountDeals.Include(a => a.DiscountDeal)
+                 .Where(a => a.ProductId == item.ProductId &&
+                  a.DiscountDeal.DealStatus == "Live").FirstOrDefaultAsync();
+
+                if (filteringLiveDiscountDeal2 != null)
+                {
+                    item.AfterDiscountPrice = filteringLiveDiscountDeal2.ProductAfterDiscountPrice;
+                    item.DiscountPercentage = filteringLiveDiscountDeal2.ProductPercentage;
+                }
+            }
 
             return Ok(findingSingleUserAllWishList);
         }
