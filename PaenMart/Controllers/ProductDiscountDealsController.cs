@@ -28,7 +28,7 @@ namespace PaenMart.Controllers
         [HttpGet("{nestSubCategoryId}")]
         public async Task<IActionResult> SelectedCategoriesProducts(int nestSubCategoryId)
         {
-            var findingProductsByCategory = await _dataContext.Products.Include(a=>a.ProductImages)
+            var findingProductsByCategory = await _dataContext.Products.Include(a => a.ProductImages)
                 .Where(a => a.NestSubCategoryId == nestSubCategoryId).Select(a => new
                 {
                     ProductName = a.ProductName + " (" + a.Color + ")",
@@ -72,9 +72,9 @@ namespace PaenMart.Controllers
                 ProductDiscountDeals = listAdding
             };
             await _dataContext.DiscountDeals.AddAsync(discountDeal);
-             _dataContext.Products.UpdateRange(products);
+            _dataContext.Products.UpdateRange(products);
             await _dataContext.SaveChangesAsync();
-           await SettingTheDelayCode(discountDeal.DiscountDealID);
+            await SettingTheDelayCode(discountDeal.DiscountDealID);
 
             return Ok();
         }
@@ -82,7 +82,7 @@ namespace PaenMart.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDiscountDeals()
         {
-            var fetchingAllDiscountDeals = await _dataContext.DiscountDeals.Where(a=>a.DealStatus == "Live").Select(a=> new
+            var fetchingAllDiscountDeals = await _dataContext.DiscountDeals.Where(a => a.DealStatus == "Live").Select(a => new
             {
                 CountProducts = a.ProductDiscountDeals.Count,
                 a.DiscountDealID,
@@ -122,12 +122,12 @@ namespace PaenMart.Controllers
         public async Task<IActionResult> SelectedDealProductsDetail(int selectedDealId)
         {
             var findingSelectedDealDetails = await _dataContext.DiscountDeals.Include(a => a.ProductDiscountDeals)
-                .ThenInclude(a=>a.Product).ThenInclude(a=>a.ProductImages)
+                .ThenInclude(a => a.Product).ThenInclude(a => a.ProductImages)
                 .Where(a => a.DiscountDealID == selectedDealId).FirstOrDefaultAsync();
             var detailList = new List<GetDiscountDealDetailViewModel>();
             foreach (var item in findingSelectedDealDetails.ProductDiscountDeals)
             {
-                var showStarsByRatings = (double) item.Product.ProductTotalStars / (item.Product.Raitings * 5);
+                var showStarsByRatings = (double)item.Product.ProductTotalStars / (item.Product.Raitings * 5);
                 showStarsByRatings = showStarsByRatings * 5;
 
                 if (showStarsByRatings >= 0.3 && showStarsByRatings <= 0.7 ||  // 0.3 => 0.7 == 0.5
@@ -171,7 +171,7 @@ namespace PaenMart.Controllers
                     ProductId = item.Product.ProductID,
                     Created_At = findingSelectedDealDetails.DealCreatedAt,
                     Expire_At = findingSelectedDealDetails.DealExpireAt,
-                    ShowStarsByRatings =showStarsByRatings,
+                    ShowStarsByRatings = showStarsByRatings,
                     TotalProductStars = item.Product.ProductTotalStars,
                     Raiting = item.Product.Raitings
                 });
@@ -184,24 +184,24 @@ namespace PaenMart.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateDealProductsList(UpdateDiscountDealViewModel viewModel)
         {
-            if(viewModel.UpdateProductDiscountDealList.Count > 0)
+            if (viewModel.UpdateProductDiscountDealList.Count > 0)
             {
 
-            var productList = new List<Product>();
+                var productList = new List<Product>();
 
-            foreach (var item in viewModel.UpdateProductDiscountDealList)
-            {
-                var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
-                findingSelectedProduct.OnDiscount = true;
-                productList.Add(findingSelectedProduct);
-            }
+                foreach (var item in viewModel.UpdateProductDiscountDealList)
+                {
+                    var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
+                    findingSelectedProduct.OnDiscount = true;
+                    productList.Add(findingSelectedProduct);
+                }
 
-            // update the ondiscount property as well in product
-            _dataContext.Products.UpdateRange(productList);
+                // update the ondiscount property as well in product
+                _dataContext.Products.UpdateRange(productList);
 
-            // add products to product discount deal table.
-            var convertingData = _mapper.Map<List<ProductDiscountDeal>>(viewModel.UpdateProductDiscountDealList);
-            await _dataContext.ProductDiscountDeals.AddRangeAsync(convertingData);
+                // add products to product discount deal table.
+                var convertingData = _mapper.Map<List<ProductDiscountDeal>>(viewModel.UpdateProductDiscountDealList);
+                await _dataContext.ProductDiscountDeals.AddRangeAsync(convertingData);
             }
 
 
@@ -210,7 +210,7 @@ namespace PaenMart.Controllers
             findingDiscountDealSelectedObj.DealName = viewModel.DealName;
             findingDiscountDealSelectedObj.DealExpireAt = viewModel.ExpireAt;
             _dataContext.DiscountDeals.Update(findingDiscountDealSelectedObj);
-           await _dataContext.SaveChangesAsync();
+            await _dataContext.SaveChangesAsync();
             return Ok();
         }
 
@@ -236,7 +236,7 @@ namespace PaenMart.Controllers
 
             var getDiscountLive = await _dataContext.DiscountDeals.Where(a => a.DiscountDealID == currentlyLiveDiscountId)
                 .FirstOrDefaultAsync(); // because first one is not yet on exipire thats why it didnt goto another to also expire it
-            if(getDiscountLive != null)
+            if (getDiscountLive != null)
             {
                 DateTime startTime = DateTime.Now;
                 var endTime = getDiscountLive.DealExpireAt.Value;
@@ -244,9 +244,9 @@ namespace PaenMart.Controllers
                 TimeSpan span = endTime - startTime;
                 var totalMinutesDifferences = span.TotalMinutes;
 
-               BackgroundJob.Schedule(
-        () => ExpiringDiscountDeal(getDiscountLive.DiscountDealID),
-                 TimeSpan.FromMinutes(totalMinutesDifferences));
+                BackgroundJob.Schedule(
+         () => ExpiringDiscountDeal(getDiscountLive.DiscountDealID),
+                  TimeSpan.FromMinutes(totalMinutesDifferences));
 
 
             }
@@ -258,34 +258,75 @@ namespace PaenMart.Controllers
 
         public async Task ExpiringDiscountDeal(int discountDealId)
         {
-             var productList = new List<Product>();
+            var productList = new List<Product>();
             var findingDeal = await _dataContext.DiscountDeals
-                .Include(a=>a.ProductDiscountDeals)
-                .FirstOrDefaultAsync(a=>a.DiscountDealID == discountDealId);
-            if(findingDeal != null)
+                .Include(a => a.ProductDiscountDeals)
+                .FirstOrDefaultAsync(a => a.DiscountDealID == discountDealId);
+            if (findingDeal != null)
             {
 
-            if(findingDeal.DealStatus != "Expire")
-            {
-                findingDeal.DealStatus = "Expire";
-                _dataContext.DiscountDeals.UpdateRange(findingDeal);
-
-
-                foreach (var item in findingDeal.ProductDiscountDeals)
+                if (findingDeal.DealStatus != "Expire")
                 {
-                    var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
-                    findingSelectedProduct.OnDiscount = false;
-                    productList.Add(findingSelectedProduct);
-                }
+                    findingDeal.DealStatus = "Expire";
+                    _dataContext.DiscountDeals.UpdateRange(findingDeal);
 
-                _dataContext.Products.UpdateRange(productList);
-                await _dataContext.SaveChangesAsync();
-            }
+
+                    foreach (var item in findingDeal.ProductDiscountDeals)
+                    {
+                        var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
+                        findingSelectedProduct.OnDiscount = false;
+                        productList.Add(findingSelectedProduct);
+                    }
+
+                    _dataContext.Products.UpdateRange(productList);
+                    await _dataContext.SaveChangesAsync();
+                }
             }
 
         }
 
-       
+        [HttpPost("SelectedLocalStorageProducts")]
+        public async Task<IActionResult> SelectedLocalStorageProducts(int[] productsId)
+        {
+
+           
+            List<SearchingCartProductsInDeal> list = new List<SearchingCartProductsInDeal>();
+            foreach (var singleCartProductId in productsId)
+            {
+                var findingProductInDeal = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == singleCartProductId);
+                if (findingProductInDeal != null && findingProductInDeal.OnDiscount == true)
+                {
+                    // it means product is in still in deal r8 now
+                    var filteringLiveDiscountDeal2 = await _dataContext.ProductDiscountDeals.Include(a => a.DiscountDeal)
+                         .Where(a => a.ProductId == findingProductInDeal.ProductID &&
+                     a.DiscountDeal.DealStatus == "Live").FirstOrDefaultAsync();
+
+
+                    list.Add(new SearchingCartProductsInDeal
+                    {
+                        ProductId = findingProductInDeal.ProductID,
+                        ProductInDeal = true,
+                        AfterDiscountPrice = filteringLiveDiscountDeal2.ProductAfterDiscountPrice,
+                        DiscountPercentage = filteringLiveDiscountDeal2.ProductPercentage
+                    });
+
+                }
+                else
+                {
+                    list.Add(new SearchingCartProductsInDeal
+                    {
+                        ProductId = findingProductInDeal.ProductID,
+                        ProductInDeal = false
+                    });
+
+                }
+
+            }
+            return Ok(list);
+        }
+
+
+
 
 
 
