@@ -3,6 +3,7 @@ using Business_Core.Entities.SponsoredAd;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Data_Access.DataContext_Class;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -72,6 +73,16 @@ namespace PaenMart.Controllers
 
             await _dataContext.SponsorsAds.AddAsync(convertingViewModel);
             await _dataContext.SaveChangesAsync();
+
+            DateTime startTime = DateTime.Now;
+            var endTime = convertingViewModel.Expire_At.Value;
+
+            TimeSpan span = endTime - startTime;
+            var totalMinutesDifferences = span.TotalMinutes;
+
+            BackgroundJob.Schedule(
+                () => DeleteOrExpireLiveSponser(convertingViewModel.AdID),
+              TimeSpan.FromMinutes(totalMinutesDifferences));
 
             return Ok();
         }
@@ -194,7 +205,7 @@ namespace PaenMart.Controllers
                     });
                 }
 
-                return BadRequest();
+                return Ok();
             }
 
         }

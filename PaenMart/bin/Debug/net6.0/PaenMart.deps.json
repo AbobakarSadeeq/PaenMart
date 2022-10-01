@@ -20,6 +20,7 @@
           "Microsoft.AspNetCore.Authentication.OpenIdConnect": "6.0.3",
           "Microsoft.AspNetCore.Cors": "2.2.0",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "6.0.3",
+          "Microsoft.AspNetCore.SignalR.Common": "6.0.9",
           "Microsoft.EntityFrameworkCore.Design": "6.0.3",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.8",
           "Presentation": "1.0.0",
@@ -232,6 +233,18 @@
           }
         }
       },
+      "Microsoft.AspNetCore.Connections.Abstractions/6.0.9": {
+        "dependencies": {
+          "Microsoft.Extensions.Features": "6.0.9",
+          "System.IO.Pipelines": "6.0.3"
+        },
+        "runtime": {
+          "lib/net6.0/Microsoft.AspNetCore.Connections.Abstractions.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.922.41926"
+          }
+        }
+      },
       "Microsoft.AspNetCore.Cors/2.2.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Http.Extensions": "2.2.0",
@@ -282,7 +295,7 @@
       "Microsoft.AspNetCore.Http.Features/5.0.15": {
         "dependencies": {
           "Microsoft.Extensions.Primitives": "6.0.0",
-          "System.IO.Pipelines": "5.0.2"
+          "System.IO.Pipelines": "6.0.3"
         }
       },
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore/6.0.3": {
@@ -319,6 +332,18 @@
           "lib/net6.0/Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll": {
             "assemblyVersion": "6.0.3.0",
             "fileVersion": "6.0.322.12401"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.SignalR.Common/6.0.9": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Connections.Abstractions": "6.0.9",
+          "Microsoft.Extensions.Options": "6.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/Microsoft.AspNetCore.SignalR.Common.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.922.41926"
           }
         }
       },
@@ -476,6 +501,14 @@
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions/6.0.0": {},
+      "Microsoft.Extensions.Features/6.0.9": {
+        "runtime": {
+          "lib/net6.0/Microsoft.Extensions.Features.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.922.41926"
+          }
+        }
+      },
       "Microsoft.Extensions.FileProviders.Abstractions/2.2.0": {
         "dependencies": {
           "Microsoft.Extensions.Primitives": "6.0.0"
@@ -819,7 +852,14 @@
           }
         }
       },
-      "System.IO.Pipelines/5.0.2": {},
+      "System.IO.Pipelines/6.0.3": {
+        "runtime": {
+          "lib/net6.0/System.IO.Pipelines.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.522.21309"
+          }
+        }
+      },
       "System.Runtime.Caching/4.7.0": {
         "dependencies": {
           "System.Configuration.ConfigurationManager": "4.7.0"
@@ -1045,6 +1085,13 @@
       "path": "microsoft.aspnetcore.authentication.openidconnect/6.0.3",
       "hashPath": "microsoft.aspnetcore.authentication.openidconnect.6.0.3.nupkg.sha512"
     },
+    "Microsoft.AspNetCore.Connections.Abstractions/6.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-45fg/Le6B0ErVDU2KIIdvO+NVcweHbywIyyCOz4NOFZMJ1NOznOuW2dSYGb8D4FI2GNlEk7/Za0351wMZqhNYw==",
+      "path": "microsoft.aspnetcore.connections.abstractions/6.0.9",
+      "hashPath": "microsoft.aspnetcore.connections.abstractions.6.0.9.nupkg.sha512"
+    },
     "Microsoft.AspNetCore.Cors/2.2.0": {
       "type": "package",
       "serviceable": true,
@@ -1114,6 +1161,13 @@
       "sha512": "sha512-h0ZMz0yR6HiqjKo2wrZP4WWBaioelPDljvCewdl6Qo7n2iTZpIRjukB0O5idyzATUJRDKltBDex0pGLH3Q0utQ==",
       "path": "microsoft.aspnetcore.mvc.newtonsoftjson/6.0.3",
       "hashPath": "microsoft.aspnetcore.mvc.newtonsoftjson.6.0.3.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.SignalR.Common/6.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9ZsrsapkHX42Gbzi4AYAYsdtZh5U9Rje1pXs8yv4sT086UPAU058dcQ6qR4uX8CxTtuknNKvjNkjW4fsCNU8OA==",
+      "path": "microsoft.aspnetcore.signalr.common/6.0.9",
+      "hashPath": "microsoft.aspnetcore.signalr.common.6.0.9.nupkg.sha512"
     },
     "Microsoft.CSharp/4.7.0": {
       "type": "package",
@@ -1219,6 +1273,13 @@
       "sha512": "sha512-xlzi2IYREJH3/m6+lUrQlujzX8wDitm4QGnUu6kUXTQAWPuZY8i+ticFJbzfqaetLA6KR/rO6Ew/HuYD+bxifg==",
       "path": "microsoft.extensions.dependencyinjection.abstractions/6.0.0",
       "hashPath": "microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Features/6.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BB+I1mpsgb+j/zlJ2ynEWi3RmuFjtD5QpVu45ZaPk4m6piHFIp2i+Wv2Kf2Lb+MRnNIDgThv11fjiAe67zS2Ag==",
+      "path": "microsoft.extensions.features/6.0.9",
+      "hashPath": "microsoft.extensions.features.6.0.9.nupkg.sha512"
     },
     "Microsoft.Extensions.FileProviders.Abstractions/2.2.0": {
       "type": "package",
@@ -1479,12 +1540,12 @@
       "path": "system.identitymodel.tokens.jwt/6.10.0",
       "hashPath": "system.identitymodel.tokens.jwt.6.10.0.nupkg.sha512"
     },
-    "System.IO.Pipelines/5.0.2": {
+    "System.IO.Pipelines/6.0.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-Iew+dfa6FFiyvWBdRmXApixRY1db+beyutpIck4SOSe0NLM8FD/7AD54MscqVLhvfSMLHO7KadjTRT7fqxOGTA==",
-      "path": "system.io.pipelines/5.0.2",
-      "hashPath": "system.io.pipelines.5.0.2.nupkg.sha512"
+      "sha512": "sha512-ryTgF+iFkpGZY1vRQhfCzX0xTdlV3pyaTTqRu2ETbEv+HlV7O6y7hyQURnghNIXvctl5DuZ//Dpks6HdL/Txgw==",
+      "path": "system.io.pipelines/6.0.3",
+      "hashPath": "system.io.pipelines.6.0.3.nupkg.sha512"
     },
     "System.Runtime.Caching/4.7.0": {
       "type": "package",

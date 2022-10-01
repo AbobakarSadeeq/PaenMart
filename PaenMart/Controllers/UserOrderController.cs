@@ -8,7 +8,9 @@ using Business_Core.IServices;
 using Data_Access.DataContext_Class;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using PaenMart.SignalR;
 using Presentation.ViewModel.OrderViewModel;
 using System.Diagnostics;
 using System.Net;
@@ -24,13 +26,15 @@ namespace PaenMart.Controllers
         private readonly DataContext _dataContext;
         private readonly IMapper mapper;
         private readonly IProductService _ProductService;
+        private IHubContext<NotificationHub> HubContext{ get; set; }
 
-
-        public UserOrderController(DataContext dataContext, IMapper mapper, IProductService ProductService)
+        public UserOrderController(DataContext dataContext, IMapper mapper, IProductService ProductService,
+            IHubContext<NotificationHub> hubcontext)
         {
             _dataContext = dataContext;
             _ProductService = ProductService;
             this.mapper = mapper;
+            HubContext = hubcontext;
         }
 
         // ------------------------- Admin section -------------------------
@@ -85,6 +89,9 @@ namespace PaenMart.Controllers
             client.UseDefaultCredentials = false;
             client.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword };
             client.Send(msgObj);
+
+            var findingPendingOrderCount = await _dataContext.Orders.Where(a => a.OrderStatus == "Pending").CountAsync();
+            HubContext.Clients.All.SendAsync("PendingLiveOrders", findingPendingOrderCount);
 
             return Ok();
         }
@@ -231,6 +238,10 @@ namespace PaenMart.Controllers
             client.UseDefaultCredentials = false;
             client.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword };
             client.Send(msgObj);
+            var findingPendingOrderCount = await _dataContext.Orders.Where(a => a.OrderStatus == "Pending").CountAsync();
+
+            HubContext.Clients.All.SendAsync("PendingLiveOrders", findingPendingOrderCount);
+
 
             return Ok();
         }
@@ -927,6 +938,11 @@ namespace PaenMart.Controllers
             client.UseDefaultCredentials = false;
             client.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword };
             client.Send(msgObj);
+
+
+            // sending notification
+            var findingPendingOrderCount = await _dataContext.Orders.Where(a => a.OrderStatus == "Pending").CountAsync();
+            HubContext.Clients.All.SendAsync("PendingLiveOrders", findingPendingOrderCount);
 
             return Ok();
 
