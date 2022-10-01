@@ -258,6 +258,14 @@ namespace PaenMart.Controllers
             var convertProductData = _mapper.Map<List<GetProductViewModel>>(get5MostSellProducts);
             foreach (var singleProduct in convertProductData)
             {
+
+                var filteringLiveDiscountDeal2 = await _dataContext.ProductDiscountDeals.Include(a => a.DiscountDeal)
+                        .Where(a => a.ProductId == singleProduct.ProductID &&
+                    a.DiscountDeal.DealStatus == "Live").FirstOrDefaultAsync();
+
+                singleProduct.AfterDiscountPrice = filteringLiveDiscountDeal2 == null ? 0 : filteringLiveDiscountDeal2.ProductAfterDiscountPrice;
+                singleProduct.DiscountPercentage = filteringLiveDiscountDeal2 == null ? 0 : filteringLiveDiscountDeal2.ProductPercentage;
+
                 singleProduct.ShowStarsByRatings = (double)singleProduct.TotalProductStars / (singleProduct.Raiting * 5);
                 singleProduct.ShowStarsByRatings = singleProduct.ShowStarsByRatings * 5;
 
@@ -292,6 +300,8 @@ namespace PaenMart.Controllers
             }
             return Ok(convertProductData);
         }
+
+   
 
     }
 }
