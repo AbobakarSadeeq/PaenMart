@@ -26,7 +26,7 @@ namespace PaenMart.Controllers
         private readonly DataContext _dataContext;
         private readonly IMapper mapper;
         private readonly IProductService _ProductService;
-        private IHubContext<NotificationHub> HubContext{ get; set; }
+        private IHubContext<NotificationHub> HubContext { get; set; }
 
         public UserOrderController(DataContext dataContext, IMapper mapper, IProductService ProductService,
             IHubContext<NotificationHub> hubcontext)
@@ -187,7 +187,7 @@ namespace PaenMart.Controllers
                 totalPrice = totalPrice + (data.Quantity * data.Price);
                 var newData = @$"<h3 style='text-decoration: underline;'>{viewModel.FullName},</h3><h3 style='text-decoration: underline;'>Product No: {noProduct},</h3><p>Your Order Has been Succeussfully Done!</p>  
                                  <p>Your Address is {viewModel.CompleteAddress},</p><p>Your Email Is: {viewModel.Email}</p>
-                                  <p>Your Product Name is: {data.ProductName} and Quantity is {data.Quantity}</p>
+                                  <p>Your Product Name is: {data.ProductName + " " + (data.ProductSize != "" ? "Size: " + data.ProductSize : "")} and Quantity is {data.Quantity}</p>
                                   <p>Your Mobile Number Is: {viewModel.PhoneNumber}</p><p>Your Order Date Was: {viewModel.OrderDate}</p><hr>
                                    <p><strong>Your Total Amount of this Products Rs {data.Price * data.Quantity}</strong></p>
                                    <h3>Thank You For Order and your Order Has been Succeussfully done and delivering tommarow!</h3><p>Regards From <strong>Paen Mart Shop</strong></p><hr><br>";
@@ -500,6 +500,7 @@ namespace PaenMart.Controllers
                 OrderDetail = new List<GetOrderDetail>(),
                 PaymentMethod = gettingOrdersData.PaymentMethod,
                 ShipperId = gettingOrdersData.ShipperId
+
             };
 
             // Adding Its OrderDetails
@@ -515,8 +516,9 @@ namespace PaenMart.Controllers
                     QuantityAvailability = item.Product.Quantity > item.Quantity ? true : false,
                     DiscountPercentage = item.DiscountPercentage == null ? 0 : item.DiscountPercentage, // null ternary
                     ProductOriginalPrice = item.Product.Price,
-                    AfterDiscountPrice = item.Price
-                    
+                    AfterDiscountPrice = item.Price,
+                    ProductSize = item.ProductSize
+
                 });
             }
             return Ok(convertDataToViewModel);
@@ -621,7 +623,12 @@ namespace PaenMart.Controllers
                 {
                     orderDetailsProduct.Append($@"
                 <tr style='   border-bottom: 1pt solid black; '> 
-                <td style='padding-right: 200px;' > {OrderData.ProductName} </td>
+                     <td style='padding-right: 200px;' > <p>{OrderData.ProductName}
+{(OrderData.ProductSize != "" ? $@"<p><strong style='padding-right:6px;'>Size: </strong>{OrderData.ProductSize}</p>" : "")}
+
+</p>
+</td>
+            
                 <td style='padding-right: 200px;' > {OrderData.Quantity} </td>
                 <td style='padding-right: 200px;' ><p>Rs {OrderData.Price}</p>
                 <p><del>Rs {OrderData.ProductOriginalPrice}</del></p>
@@ -632,19 +639,24 @@ namespace PaenMart.Controllers
                 ");
 
                     totalPrice = totalPrice + (OrderData.AfterDiscountPrice * OrderData.Quantity);
-                }else
+                }
+                else
                 {
 
                     orderDetailsProduct.Append($@"
                 <tr style='   border-bottom: 1pt solid black; '> 
-                <td style='padding-right: 200px;' > {OrderData.ProductName} </td>
+                <td style='padding-right: 200px;' > <p>{OrderData.ProductName}
+{(OrderData.ProductSize != "" ? $@"<p><strong style='padding-right:6px;'>Size: </strong>{OrderData.ProductSize}</p>" : "")}
+</p>
+</td>
+            
                 <td style='padding-right: 200px;' > {OrderData.Quantity} </td>
                 <td style='padding-right: 200px;' >Rs {OrderData.Price}</td>
                 <td style='padding-right: 200px;' >Rs {OrderData.Price * OrderData.Quantity}</td>
                 </tr>
                 ");
 
-                totalPrice = totalPrice + (OrderData.Price * OrderData.Quantity);
+                    totalPrice = totalPrice + (OrderData.Price * OrderData.Quantity);
                 }
 
                 // Adding Reviews for pending
@@ -784,7 +796,8 @@ namespace PaenMart.Controllers
                     OrderStatus = listData.OrderStatus,
                     OrderDate = listData.OrderDate.ToString(),
                     CountryName = listData.CustomIdentity.Address.City.Country.CountryName,
-                    OrderItemsCount = listData.OrderDetails.Count
+                    OrderItemsCount = listData.OrderDetails.Count,
+                    
                 });
             }
 
@@ -871,12 +884,16 @@ namespace PaenMart.Controllers
                         ProductId = OrderData.ProductId,
                         Quantity = OrderData.Quantity,
                         Price = OrderData.AfterDiscountPrice,
-                        DiscountPercentage = OrderData.DiscountPercentage
+                        DiscountPercentage = OrderData.DiscountPercentage,
+                        ProductSize = OrderData.ProductSize != "" ? OrderData.ProductSize : null
+
                     });
 
                     emailMsg.Append($@"
                 <tr style='   border-bottom: 1pt solid black; '> 
-                <td style='padding-right: 200px;' > {OrderData.ProductName} </td>
+                <td style='padding-right: 200px;' > {OrderData.ProductName}
+                {(OrderData.ProductSize != "" ? $@"<p><strong style='padding-right:6px;'>Size: </strong>{OrderData.ProductSize}</p>" : "")}
+                </td>
                 <td style='padding-right: 200px;' > {OrderData.Quantity} </td>
                 <td style='padding-right: 200px;' ><p>Rs {OrderData.AfterDiscountPrice}</p>
                 <p><del>Rs {OrderData.Price}</del></p>
@@ -895,12 +912,15 @@ namespace PaenMart.Controllers
                         OrderId = orderAcceptData.OrderID,
                         ProductId = OrderData.ProductId,
                         Quantity = OrderData.Quantity,
-                        Price = OrderData.Price
+                        Price = OrderData.Price,
+                        ProductSize = OrderData.ProductSize
                     });
 
                     emailMsg.Append($@"
                 <tr style='   border-bottom: 1pt solid black; '> 
-                <td style='padding-right: 200px;' > {OrderData.ProductName} </td>
+                <td style='padding-right: 200px;' > {OrderData.ProductName}
+                {(OrderData.ProductSize != "" ? $@"<p><strong style='padding-right:6px;'>Size: </strong>{OrderData.ProductSize}</p>" : "")}
+                </td>
                 <td style='padding-right: 200px;' > {OrderData.Quantity} </td>
                 <td style='padding-right: 200px;' >Rs {OrderData.Price}</td>
                 <td style='padding-right: 200px;' >Rs {OrderData.Price * OrderData.Quantity}</td>
@@ -974,11 +994,12 @@ namespace PaenMart.Controllers
             List<GetOrderDetail> orderDetails = new List<GetOrderDetail>();
             foreach (var item in findingOrder.OrderDetails)
             {
-                
+
                 orderDetails.Add(new GetOrderDetail
                 {
 
                     ProductName = item.Product.ProductName + " (" + item.Product.Color + ")",
+                    ProductSize = item.ProductSize,
                     Quantity = item.Quantity,
                     ProductId = item.ProductId,
                     ProductImageUrl = item.Product.ProductImages[0].URL,

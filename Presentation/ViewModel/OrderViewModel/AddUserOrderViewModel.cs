@@ -21,6 +21,7 @@ namespace Presentation.ViewModel.OrderViewModel
         public string UserAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string ProductName { get; set; }
+        public string ProductSize { get; set; }
 
 
     }
