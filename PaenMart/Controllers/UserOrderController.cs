@@ -12,10 +12,12 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using PaenMart.SignalR;
 using Presentation.ViewModel.OrderViewModel;
+using Presentation.ViewModel.ProductViewModel;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PaenMart.Controllers
 {
@@ -46,6 +48,18 @@ namespace PaenMart.Controllers
         [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteOrder(int Id)
         {
+           // var findingProduct = await _dataContext.Products.Where(a => a.ProductID == 19).FirstOrDefaultAsync();
+           // var replaceString = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(findingProduct.ProductDetails);
+           // var replaceStrin2g = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(replaceString);
+
+
+           // var myString = "sizeName\\\":\\\"S\\\",\\\"sizeQuantity\\\":\\\"32\\\"";
+           // var gettingProductDetail = findingProduct.ProductDetails;
+           // var findingIndex = gettingProductDetail.(myString);
+           // var resultOfIndex = gettingProductDetail[findingIndex];
+           //var resultString = Regex.Match(myString, @"\d+").Value;
+
+
             var findingOrderId = await _dataContext.Orders
                 .Include(a => a.CustomIdentity)
                 .Include(a => a.OrderDetails)
@@ -97,6 +111,7 @@ namespace PaenMart.Controllers
         }
 
 
+
         // accepting the user order by employee, admin
 
         [HttpPut("AcceptOrder")]
@@ -114,7 +129,7 @@ namespace PaenMart.Controllers
             int noProduct = 1;
             int totalPrice = 0;
 
-
+            var changingProductSizeQuantity = new List<Business_Core.Entities.Product.Product>();
 
             foreach (var data in viewModel.OrderDetail)
             {
@@ -158,7 +173,7 @@ namespace PaenMart.Controllers
                     clientt.Credentials = new NetworkCredential() { UserName = getEmailSendEmailData.OwnerEmail, Password = getEmailSendEmailData.AppPassword };
                     clientt.Send(cancelMsgObj);
 
-                    if (updateProductData.Quantity == 0)
+                    if (updateProductData.Quantity <= 0)
                     {
                         updateProductData.StockAvailiability = false;
                     }
@@ -173,7 +188,14 @@ namespace PaenMart.Controllers
 
 
                 updateProductData.Quantity = updateProductData.Quantity - data.Quantity;
+
                 updateProductData.SellUnits = updateProductData.SellUnits + data.Quantity;
+
+                if (data.ProductSize != "")
+                {
+                    changingProductSizeQuantity.Add(updateProductData);
+                }
+
 
                 if (updateProductData.Quantity == 0)
                 {
@@ -221,6 +243,8 @@ namespace PaenMart.Controllers
                     clientData.Send(emailMessage);
                 }
 
+                
+
             }
 
             // Sending Email to the User that your order has been accepted
@@ -243,6 +267,22 @@ namespace PaenMart.Controllers
             HubContext.Clients.All.SendAsync("PendingLiveOrders", findingPendingOrderCount);
 
 
+            return Ok(changingProductSizeQuantity);
+        }
+
+        [HttpPut("ProductSizeQuantityChanging")]
+        public async Task<IActionResult> ProductSizeQuantityChanging(List<ProductSizeQuantityChangingViewModel> viewModels)
+        {
+            var updatedProductList = new List<Business_Core.Entities.Product.Product>();
+            foreach (var item in viewModels)
+            {
+                var findingProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
+                findingProduct.ProductDetails = item.ProductDetails;
+                updatedProductList.Add(findingProduct);
+            }
+
+            _dataContext.UpdateRange(updatedProductList);
+            await _dataContext.SaveChangesAsync();
             return Ok();
         }
 
