@@ -12,6 +12,7 @@ namespace Presentation.ViewModel.OrderViewModel
         public string ProductName { get; set; }
         public string ProductSize { get; set; }
         public int ProductId { get; set; }
+        public bool? QuantityAvailability { get; set; }
 
 
         // Order Detail

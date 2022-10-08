@@ -137,7 +137,7 @@ namespace PaenMart.Controllers
                 var updateProductData = await _dataContext.Products
                     .FirstOrDefaultAsync(a => a.ProductID == data.ProductId);
 
-                if (updateProductData.Quantity < data.Quantity)
+                if (updateProductData.Quantity < data.Quantity || data.QuantityAvailability == false)
                 {
                     // send email as well here to user and skip this product
                     string adminName = "";
@@ -557,7 +557,8 @@ namespace PaenMart.Controllers
                     DiscountPercentage = item.DiscountPercentage == null ? 0 : item.DiscountPercentage, // null ternary
                     ProductOriginalPrice = item.Product.Price,
                     AfterDiscountPrice = item.Price,
-                    ProductSize = item.ProductSize
+                    ProductSize = item.ProductSize,
+                    ProductDetails = item.ProductSize != "" ? item.Product.ProductDetails : ""
 
                 });
             }
