@@ -9,10 +9,11 @@ namespace Presentation.ViewModel.OrderViewModel
     public class UpdateOrderDetailsDataViewModel
     {
         // Product
-        public string ProductName { get; set; }
-        public string ProductSize { get; set; }
+        public string? ProductName { get; set; }
+        public string? ProductSize { get; set; }
         public int ProductId { get; set; }
         public bool? QuantityAvailability { get; set; }
+        public int OrderDetailId { get; set; }
 
 
         // Order Detail

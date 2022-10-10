@@ -63,7 +63,13 @@ namespace PaenMart.Controllers
             var findingOrderId = await _dataContext.Orders
                 .Include(a => a.CustomIdentity)
                 .Include(a => a.OrderDetails)
+                .ThenInclude(a=>a.Product)
                 .FirstOrDefaultAsync(a => a.OrderID == Id);
+
+            foreach (var item in findingOrderId.OrderDetails)
+            {
+                item.ProductActuallQuantity = item.Product.Quantity;
+            }
 
             findingOrderId.OrderStatus = "Canceled";
             await _dataContext.SaveChangesAsync();
@@ -130,15 +136,16 @@ namespace PaenMart.Controllers
             int totalPrice = 0;
 
             var changingProductSizeQuantity = new List<Business_Core.Entities.Product.Product>();
-
             foreach (var data in viewModel.OrderDetail)
             {
 
                 var updateProductData = await _dataContext.Products
                     .FirstOrDefaultAsync(a => a.ProductID == data.ProductId);
+                var findingOrderDetail = await _dataContext.OrderDetails.FirstOrDefaultAsync(a => a.OrderDetailID == data.OrderDetailId);
 
                 if (updateProductData.Quantity < data.Quantity || data.QuantityAvailability == false)
                 {
+                    findingOrderDetail.ProductActuallQuantity = 0;
                     // send email as well here to user and skip this product
                     string adminName = "";
                     for (var a = 0; a < getEmailSendEmailData.OwnerEmail.Length; a++)
@@ -187,10 +194,10 @@ namespace PaenMart.Controllers
                 }
 
 
+                findingOrderDetail.ProductActuallQuantity = updateProductData.Quantity;
                 updateProductData.Quantity = updateProductData.Quantity - data.Quantity;
 
                 updateProductData.SellUnits = updateProductData.SellUnits + data.Quantity;
-
                 if (data.ProductSize != "")
                 {
                     changingProductSizeQuantity.Add(updateProductData);
@@ -558,8 +565,9 @@ namespace PaenMart.Controllers
                     ProductOriginalPrice = item.Product.Price,
                     AfterDiscountPrice = item.Price,
                     ProductSize = item.ProductSize,
-                    ProductDetails = item.ProductSize != "" ? item.Product.ProductDetails : ""
-
+                    ProductDetails = item.ProductSize != "" ? item.Product.ProductDetails : "",
+                    ProductActuallQuantity = item.ProductActuallQuantity,
+                    OrderDetailId = item.OrderDetailID
                 });
             }
             return Ok(convertDataToViewModel);
@@ -859,16 +867,16 @@ namespace PaenMart.Controllers
         [HttpPost("{userId}")]
         public async Task<IActionResult> AddUserOrder(string userId, List<AddUserOrderViewModel> userOrders)
         {
-            // checking quantity
+            //// checking quantity
 
-            foreach (var order in userOrders)
-            {
-                var productFinding = await _dataContext.Products.Where(a => a.ProductID == order.ProductId).FirstOrDefaultAsync();
-                if (productFinding.Quantity < order.Quantity)
-                {
-                    return BadRequest("Sorry we don't have that much quantity of " + productFinding.ProductName + " you asking for");
-                }
-            }
+            //foreach (var order in userOrders)
+            //{
+            //    var productFinding = await _dataContext.Products.Where(a => a.ProductID == order.ProductId).FirstOrDefaultAsync();
+            //    if (productFinding.Quantity < order.Quantity)
+            //    {
+            //        return BadRequest("Sorry we don't have that much quantity of " + productFinding.ProductName + " you asking for");
+            //    }
+            //}
 
             // First Add the Order Table Data and Save it
             var orderAcceptData = new Order
@@ -917,6 +925,8 @@ namespace PaenMart.Controllers
             int totalPrice = 0;
             foreach (var OrderData in userOrders)
             {
+
+                var productFinding = await _dataContext.Products.Where(a => a.ProductID == OrderData.ProductId).FirstOrDefaultAsync();
                 if (OrderData.AfterDiscountPrice > 0)
                 {
                     orderDetailData.Add(new OrderDetail
@@ -926,7 +936,8 @@ namespace PaenMart.Controllers
                         Quantity = OrderData.Quantity,
                         Price = OrderData.AfterDiscountPrice,
                         DiscountPercentage = OrderData.DiscountPercentage,
-                        ProductSize = OrderData.ProductSize != "" ? OrderData.ProductSize : null
+                        ProductSize = OrderData.ProductSize != "" ? OrderData.ProductSize : null,
+                   //     ProductActuallQuantity = productFinding.Quantity
 
                     });
 
@@ -954,7 +965,9 @@ namespace PaenMart.Controllers
                         ProductId = OrderData.ProductId,
                         Quantity = OrderData.Quantity,
                         Price = OrderData.Price,
-                        ProductSize = OrderData.ProductSize
+                        ProductSize = OrderData.ProductSize != "" ? OrderData.ProductSize : null,
+                    //    ProductActuallQuantity = productFinding.Quantity
+
                     });
 
                     emailMsg.Append($@"
@@ -1035,24 +1048,26 @@ namespace PaenMart.Controllers
             List<GetOrderDetail> orderDetails = new List<GetOrderDetail>();
             foreach (var item in findingOrder.OrderDetails)
             {
-
-                orderDetails.Add(new GetOrderDetail
+                if(item.ProductActuallQuantity > item.Quantity)
                 {
+                    orderDetails.Add(new GetOrderDetail
+                    {
+                        ProductName = item.Product.ProductName + " (" + item.Product.Color + ")",
+                        ProductSize = item.ProductSize,
+                        Quantity = item.Quantity,
+                        ProductId = item.ProductId,
+                        ProductImageUrl = item.Product.ProductImages[0].URL,
+                        Price = item.Price,
+                        QuantityAvailability = false,
+                        AfterDiscountPrice = item.Price,
+                        DiscountPercentage = item.DiscountPercentage, // null ternary
+                        ProductOriginalPrice = item.Product.Price
+                    });
+                    totalInvoice += item.Price;
 
-                    ProductName = item.Product.ProductName + " (" + item.Product.Color + ")",
-                    ProductSize = item.ProductSize,
-                    Quantity = item.Quantity,
-                    ProductId = item.ProductId,
-                    ProductImageUrl = item.Product.ProductImages[0].URL,
-                    Price = item.Price,
-                    QuantityAvailability = false,
-                    AfterDiscountPrice = item.Price,
-                    DiscountPercentage = item.DiscountPercentage, // null ternary
-                    ProductOriginalPrice = item.Product.Price
+                }
 
-                });
 
-                totalInvoice += item.Price;
             }
 
             return Ok(new

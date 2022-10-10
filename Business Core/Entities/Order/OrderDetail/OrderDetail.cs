@@ -20,6 +20,8 @@ namespace Business_Core.Entities.Order.OrderDetail
         public int DiscountPercentage { get; set; }
         public int Quantity { get; set; }
         public string? ProductSize { get; set; }
+        public int ProductActuallQuantity { get; set; } 
+
     }
 
     public class OrderDetailConfiguration : IEntityTypeConfiguration<OrderDetail>

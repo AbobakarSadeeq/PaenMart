@@ -9,13 +9,16 @@ namespace Presentation.ViewModel.OrderViewModel
     public class GetOrderDetail
     {
         // Product
-        public string ProductName { get; set; }
-        public string ProductSize { get; set; }
-        public string ProductDetails { get; set; }
+        public string? ProductName { get; set; }
+        public string? ProductSize { get; set; } = "";
+        public string? ProductDetails { get; set; }
         public int ProductId { get; set; }
+        public int? OrderDetailId { get; set; }
+
 
         // Order Detail
         public int Quantity { get; set; }
+        public int ProductActuallQuantity { get; set; }
         public int Price { get; set; }
         public int ProductOriginalPrice { get; set; }
         public int DiscountPercentage { get; set; }
