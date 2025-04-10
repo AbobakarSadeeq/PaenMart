@@ -34,3 +34,23 @@ C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\
 C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\obj\Debug\net6.0\ref\Data Access.dll
 C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Presentation.dll
 C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Data Access\bin\Debug\net6.0\Presentation.pdb
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\bin\Debug\net6.0\Data Access.deps.json
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\bin\Debug\net6.0\Data Access.runtimeconfig.json
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\bin\Debug\net6.0\Data Access.dll
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\bin\Debug\net6.0\Data Access.pdb
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\bin\Debug\net6.0\Business Core.dll
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\bin\Debug\net6.0\Presentation.dll
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\bin\Debug\net6.0\Business Core.pdb
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\bin\Debug\net6.0\Presentation.pdb
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\Data Access.csproj.AssemblyReference.cache
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\Data Access.GeneratedMSBuildEditorConfig.editorconfig
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\Data Access.AssemblyInfoInputs.cache
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\Data Access.AssemblyInfo.cs
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\Data Access.csproj.CoreCompileInputs.cache
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\Data Access.sourcelink.json
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\Data Acc.2A753020.Up2Date
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\Data Access.dll
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\refint\Data Access.dll
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\Data Access.pdb
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\Data Access.genruntimeconfig.cache
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Data Access\obj\Debug\net6.0\ref\Data Access.dll

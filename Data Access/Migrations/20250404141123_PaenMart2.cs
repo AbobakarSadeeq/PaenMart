@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Data_Access.Migrations
 {
-    public partial class addingOrderProductReviewTable : Migration
+    public partial class PaenMart2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -59,7 +59,8 @@ namespace Data_Access.Migrations
                     PublicId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImagePriority = table.Column<int>(type: "int", nullable: false),
                     ImageTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ImageDescription = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ImageDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NavigationUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -94,6 +95,23 @@ namespace Data_Access.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DiscountDeals",
+                columns: table => new
+                {
+                    DiscountDealID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DealName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DealStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BackgroundJobId = table.Column<int>(type: "int", nullable: true),
+                    DealExpireAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DealCreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountDeals", x => x.DiscountDealID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProductBrands",
                 columns: table => new
                 {
@@ -119,6 +137,28 @@ namespace Data_Access.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SendingEmails", x => x.SendingEmailID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SponsorsAds",
+                columns: table => new
+                {
+                    AdID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SponsoredByName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AdUrlDestination = table.Column<string>(type: "nvarchar(2083)", maxLength: 2083, nullable: true),
+                    AdPrice = table.Column<int>(type: "int", nullable: false),
+                    AdStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShowAdOnPage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PublicId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AdPictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Created_At = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Update_At = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Expire_At = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SponsorsAds", x => x.AdID);
                 });
 
             migrationBuilder.CreateTable(
@@ -561,7 +601,8 @@ namespace Data_Access.Migrations
                     Created_At = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Modified_at = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ProductTotalStars = table.Column<int>(type: "int", nullable: false),
-                    Raitings = table.Column<int>(type: "int", nullable: false)
+                    Raitings = table.Column<int>(type: "int", nullable: false),
+                    OnDiscount = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -589,7 +630,10 @@ namespace Data_Access.Migrations
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false)
+                    DiscountPercentage = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    ProductSize = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductActuallQuantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -617,9 +661,9 @@ namespace Data_Access.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     RaitingStars = table.Column<double>(type: "float", nullable: false),
-                    ProductComment = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Add_Review_Date = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ReviewStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ProductComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReviewStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Add_Review_Date = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -632,6 +676,35 @@ namespace Data_Access.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrderProductReviews_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductDiscountDeals",
+                columns: table => new
+                {
+                    ProductDiscountDealID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductBeforePrice = table.Column<int>(type: "int", nullable: false),
+                    ProductAfterDiscountPrice = table.Column<int>(type: "int", nullable: false),
+                    ProductPercentage = table.Column<int>(type: "int", nullable: false),
+                    DiscountDealId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductDiscountDeals", x => x.ProductDiscountDealID);
+                    table.ForeignKey(
+                        name: "FK_ProductDiscountDeals_DiscountDeals_DiscountDealId",
+                        column: x => x.DiscountDealId,
+                        principalTable: "DiscountDeals",
+                        principalColumn: "DiscountDealID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductDiscountDeals_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductID",
@@ -653,6 +726,33 @@ namespace Data_Access.Migrations
                     table.PrimaryKey("PK_ProductImages", x => x.ProductImageID);
                     table.ForeignKey(
                         name: "FK_ProductImages_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductWishlists",
+                columns: table => new
+                {
+                    ProductWishlistID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Created_At = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductWishlists", x => x.ProductWishlistID);
+                    table.ForeignKey(
+                        name: "FK_ProductWishlists_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductWishlists_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductID",
@@ -792,6 +892,16 @@ namespace Data_Access.Migrations
                 column: "ShipperId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductDiscountDeals_DiscountDealId",
+                table: "ProductDiscountDeals",
+                column: "DiscountDealId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductDiscountDeals_ProductId",
+                table: "ProductDiscountDeals",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductImages_ProductId",
                 table: "ProductImages",
                 column: "ProductId");
@@ -805,6 +915,16 @@ namespace Data_Access.Migrations
                 name: "IX_Products_ProductBrandId",
                 table: "Products",
                 column: "ProductBrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductWishlists_ProductId",
+                table: "ProductWishlists",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductWishlists_UserId",
+                table: "ProductWishlists",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ShipperPayments_ShipperId",
@@ -879,13 +999,22 @@ namespace Data_Access.Migrations
                 name: "OrderProductReviewsPhotos");
 
             migrationBuilder.DropTable(
+                name: "ProductDiscountDeals");
+
+            migrationBuilder.DropTable(
                 name: "ProductImages");
+
+            migrationBuilder.DropTable(
+                name: "ProductWishlists");
 
             migrationBuilder.DropTable(
                 name: "SendingEmails");
 
             migrationBuilder.DropTable(
                 name: "ShipperPayments");
+
+            migrationBuilder.DropTable(
+                name: "SponsorsAds");
 
             migrationBuilder.DropTable(
                 name: "UserAddresses");
@@ -904,6 +1033,9 @@ namespace Data_Access.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderProductReviews");
+
+            migrationBuilder.DropTable(
+                name: "DiscountDeals");
 
             migrationBuilder.DropTable(
                 name: "Cities");

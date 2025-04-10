@@ -230,61 +230,6 @@ namespace PaenMart.Controllers
             return Ok(fetchingAllDiscountDeals);
         }
 
-
-        public async Task SettingTheDelayCode(int currentlyLiveDiscountId)
-        {
-
-            var getDiscountLive = await _dataContext.DiscountDeals.Where(a => a.DiscountDealID == currentlyLiveDiscountId)
-                .FirstOrDefaultAsync(); // because first one is not yet on exipire thats why it didnt goto another to also expire it
-            if (getDiscountLive != null)
-            {
-                DateTime startTime = DateTime.Now;
-                var endTime = getDiscountLive.DealExpireAt.Value;
-
-                TimeSpan span = endTime - startTime;
-                var totalMinutesDifferences = span.TotalMinutes;
-
-                BackgroundJob.Schedule(
-         () => ExpiringDiscountDeal(getDiscountLive.DiscountDealID),
-                  TimeSpan.FromMinutes(totalMinutesDifferences));
-
-
-            }
-        }
-
-
-
-
-
-        public async Task ExpiringDiscountDeal(int discountDealId)
-        {
-            var productList = new List<Product>();
-            var findingDeal = await _dataContext.DiscountDeals
-                .Include(a => a.ProductDiscountDeals)
-                .FirstOrDefaultAsync(a => a.DiscountDealID == discountDealId);
-            if (findingDeal != null)
-            {
-
-                if (findingDeal.DealStatus != "Expire")
-                {
-                    findingDeal.DealStatus = "Expire";
-                    _dataContext.DiscountDeals.UpdateRange(findingDeal);
-
-
-                    foreach (var item in findingDeal.ProductDiscountDeals)
-                    {
-                        var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
-                        findingSelectedProduct.OnDiscount = false;
-                        productList.Add(findingSelectedProduct);
-                    }
-
-                    _dataContext.Products.UpdateRange(productList);
-                    await _dataContext.SaveChangesAsync();
-                }
-            }
-
-        }
-
         [HttpPost("SelectedLocalStorageProducts")]
         public async Task<IActionResult> SelectedLocalStorageProducts(int[] productsId)
         {
@@ -325,9 +270,54 @@ namespace PaenMart.Controllers
             return Ok(list);
         }
 
+        private async Task SettingTheDelayCode(int currentlyLiveDiscountId)
+        {
+
+            var getDiscountLive = await _dataContext.DiscountDeals.Where(a => a.DiscountDealID == currentlyLiveDiscountId)
+                .FirstOrDefaultAsync(); // because first one is not yet on exipire thats why it didnt goto another to also expire it
+            if (getDiscountLive != null)
+            {
+                DateTime startTime = DateTime.Now;
+                var endTime = getDiscountLive.DealExpireAt.Value;
+
+                TimeSpan span = endTime - startTime;
+                var totalMinutesDifferences = span.TotalMinutes;
+
+                BackgroundJob.Schedule(
+         () => ExpiringDiscountDeal(getDiscountLive.DiscountDealID),
+                  TimeSpan.FromMinutes(totalMinutesDifferences));
 
 
+            }
+        }
+        private async Task ExpiringDiscountDeal(int discountDealId)
+        {
+            var productList = new List<Product>();
+            var findingDeal = await _dataContext.DiscountDeals
+                .Include(a => a.ProductDiscountDeals)
+                .FirstOrDefaultAsync(a => a.DiscountDealID == discountDealId);
+            if (findingDeal != null)
+            {
 
+                if (findingDeal.DealStatus != "Expire")
+                {
+                    findingDeal.DealStatus = "Expire";
+                    _dataContext.DiscountDeals.UpdateRange(findingDeal);
+
+
+                    foreach (var item in findingDeal.ProductDiscountDeals)
+                    {
+                        var findingSelectedProduct = await _dataContext.Products.FirstOrDefaultAsync(a => a.ProductID == item.ProductId);
+                        findingSelectedProduct.OnDiscount = false;
+                        productList.Add(findingSelectedProduct);
+                    }
+
+                    _dataContext.Products.UpdateRange(productList);
+                    await _dataContext.SaveChangesAsync();
+                }
+            }
+
+        }
 
 
 

@@ -284,7 +284,10 @@
           "System.ComponentModel.Annotations": "5.0.0"
         },
         "runtime": {
-          "Business Core.dll": {}
+          "Business Core.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       }
     }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PaenMart")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1bdeaf30cd0ba386c89dc243b5812a88e38f2dfe")]
 [assembly: System.Reflection.AssemblyProductAttribute("PaenMart")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PaenMart")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

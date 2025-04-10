@@ -13,3 +13,19 @@ C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0
 C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\refint\Presentation.dll
 C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\Presentation.pdb
 C:\Users\Abobakar Sadeeq\Documents\GitHub\PaenMart\Presentation\obj\Debug\net6.0\ref\Presentation.dll
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\bin\Debug\net6.0\Presentation.deps.json
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\bin\Debug\net6.0\Presentation.dll
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\bin\Debug\net6.0\Presentation.pdb
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\bin\Debug\net6.0\Business Core.dll
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\bin\Debug\net6.0\Business Core.pdb
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\Presentation.csproj.AssemblyReference.cache
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\Presentation.GeneratedMSBuildEditorConfig.editorconfig
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\Presentation.AssemblyInfoInputs.cache
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\Presentation.AssemblyInfo.cs
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\Presentation.csproj.CoreCompileInputs.cache
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\Presentation.sourcelink.json
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\Presenta.BC777DBE.Up2Date
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\Presentation.dll
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\refint\Presentation.dll
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\Presentation.pdb
+E:\Studies\final year project\Main\paen-mart project source code\backend\PaenMart\Presentation\obj\Debug\net6.0\ref\Presentation.dll

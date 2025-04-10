@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data_Access.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220928052834_addinghangefire")]
-    partial class addinghangefire
+    [Migration("20250404141123_PaenMart2")]
+    partial class PaenMart2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -82,6 +82,9 @@ namespace Data_Access.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiscountDealID"), 1L, 1);
+
+                    b.Property<int?>("BackgroundJobId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DealCreatedAt")
                         .HasColumnType("datetime2");
@@ -534,14 +537,23 @@ namespace Data_Access.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailID"), 1L, 1);
 
+                    b.Property<int>("DiscountPercentage")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProductActuallQuantity")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProductSize")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
